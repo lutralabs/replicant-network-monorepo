@@ -1,28 +1,28 @@
 {
-  "name": "org",
+  "name": "replicant-network-monorepo",
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
   "scripts": {
     "build": "pnpm nx run-many --target=build",
     "lint": "biome check --config-path configs . && pnpm nx run-many --target=lint",
-    "lint:fix": "biome check --config-path configs --apply . && pnpm nx run-many --target=lint:fix",
-    "prepare": "husky install",
+    "lint:fix": "biome check --config-path configs --write . && pnpm nx run-many --target=lint:fix",
+    "prepare": "husky",
     "test": "pnpm nx run-many --target=test",
     "test:ci": "pnpm nx run-many --target=test:ci",
     "test:cron": "cross-env CRON=true pnpm nx run-many --target=test:cron"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.6.0",
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3",
-    "@nx/js": "17.2.6",
-    "husky": "^8.0.3",
-    "lint-staged": "^15.2.0",
-    "nx": "17.2.6"
+    "@biomejs/biome": "1.9.4",
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "@nx/js": "20.4.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
+    "nx": "20.4.6"
   },
-  "packageManager": "pnpm@8.12.1",
+  "packageManager": "pnpm@9.14.2",
   "engines": {
-    "node": ">=20.10.0"
+    "node": ">=20.18.0"
   }
 }

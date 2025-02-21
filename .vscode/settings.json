@@ -27,5 +27,6 @@
   },
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
-  }
+  },
+  "git.detectSubmodules": false
 }
