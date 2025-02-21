@@ -1,0 +1,13 @@
+{
+  "name": "contracts",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "forge build",
+    "lint": "forge fmt"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
