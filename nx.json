@@ -4,14 +4,12 @@
   "targetDefaults": {
     "build": {
       "cache": true,
-      "dependsOn": [
-        "^build"
-      ]
+      "dependsOn": ["^build"]
     },
     "lint": {
       "cache": true
     }
   },
-  "nxCloudAccessToken": "",
+  "nxCloudAccessToken": "OWY1NjRiYzMtODg5OC00YWMzLWE1NDYtZDVjMmNiN2RiNjlmfHJlYWQ=",
   "nxCloudId": "67b8c48a9d7ff0c273a3dac9"
 }
