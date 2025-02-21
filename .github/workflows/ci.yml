@@ -14,8 +14,6 @@ permissions:
 
 env:
   FOUNDRY_PROFILE: ci
-  SEPOLIA_PRIVATE_KEY: ${{ secrets.SEPOLIA_PRIVATE_KEY }}
-  AMOY_PRIVATE_KEY: ${{ secrets.AMOY_PRIVATE_KEY }}
 jobs:
   main:
     name: Main CI
