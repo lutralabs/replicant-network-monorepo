@@ -1,0 +1,9 @@
+{
+  "name": "hello-world",
+  "version": "1.0.0",
+  "author": {
+    "name": "Urban Vidovič",
+    "email": "urban@bunnys.cloud",
+    "url": "https://pseudobun.dev"
+  }
+}

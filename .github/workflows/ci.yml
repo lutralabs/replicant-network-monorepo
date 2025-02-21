@@ -1,0 +1,58 @@
+name: CI
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  FOUNDRY_PROFILE: ci
+  SEPOLIA_PRIVATE_KEY: ${{ secrets.SEPOLIA_PRIVATE_KEY }}
+  AMOY_PRIVATE_KEY: ${{ secrets.AMOY_PRIVATE_KEY }}
+jobs:
+  main:
+    name: Main CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v3
+      - uses: pnpm/action-setup@v3
+        with: 
+          version: 8
+          package_json_file: "package.json"
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: "pnpm"
+      - uses: jetli/wasm-pack-action@v0.4.0
+        with:
+          # Optional version of wasm-pack to install(eg. 'v0.9.1', 'latest')
+          version: 'v0.12.1'
+      # This job connects to nx cloud and distributes the build across multiple agents
+      # - name: Set up nx-cloud ...
+      #   run: npx nx-cloud start-ci-run --distribute-on="4 linux-medium-js" --stop-agents-after="test:ci"
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      # - name: Gas snapshot
+      #   run: forge snapshot
+      # - name: Check gas snapshots
+      #   run: forge snapshot --check
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm nx affected -t lint --parallel=4
+      - run: pnpm nx affected -t build --parallel=4
+      - run: pnpm nx affected -t test --parallel=4
