@@ -1,14 +1,16 @@
 'use client';
-import '@rainbow-me/rainbowkit/styles.css';
+// import '@rainbow-me/rainbowkit/styles.css';
 import type { AppProps } from 'next/app';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider } from 'wagmi';
+import { WagmiProvider } from '@privy-io/wagmi';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import type { ComponentProps } from 'react';
-import { config } from '@/wagmi';
+import { config, monad } from '@/wagmi';
+
+import { PrivyProvider } from '@privy-io/react-auth';
 
 const client = new QueryClient();
 
@@ -17,12 +19,29 @@ export const Providers = ({
   ...props
 }: ComponentProps<typeof NextThemesProvider>) => {
   return (
-    <NextThemesProvider {...props}>
-      <WagmiProvider config={config}>
+    <NextThemesProvider forcedTheme="light" {...props}>
+      <PrivyProvider
+        appId={process.env.PRIVY_APPID}
+        config={{
+          // Customize Privy's appearance in your app
+          appearance: {
+            theme: 'light',
+            accentColor: '#676FFF',
+            logo: 'https://lutralabs.io/ll-logo.svg',
+          },
+          defaultChain: monad,
+          supportedChains: [monad],
+          // Create embedded wallets for users who don't have a wallet
+          embeddedWallets: {
+            createOnLogin: 'users-without-wallets',
+            showWalletUIs: true,
+          },
+        }}
+      >
         <QueryClientProvider client={client}>
-          <RainbowKitProvider>{children}</RainbowKitProvider>
+          <WagmiProvider config={config}>{children}</WagmiProvider>
         </QueryClientProvider>
-      </WagmiProvider>
+      </PrivyProvider>
     </NextThemesProvider>
   );
 };

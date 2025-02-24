@@ -3,6 +3,9 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
+  env: {
+    PRIVY_APPID: process.env.PRIVY_APPID,
+  },
   images: {
     remotePatterns: [
       {

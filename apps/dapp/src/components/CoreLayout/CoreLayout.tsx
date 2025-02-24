@@ -1,3 +1,4 @@
+'use client';
 import type { PropsWithChildren } from 'react';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../ui/sidebar';
 import { AppSidebar } from '../AppSidebar';
@@ -5,6 +6,7 @@ import { Separator } from '@radix-ui/react-separator';
 
 import DynamicBreadcrumb from '../DynamicBreadcrumb';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { LoginButton } from './LoginButton';
 
 export const CoreLayout = ({ children }) => {
   return (
@@ -21,7 +23,7 @@ export const CoreLayout = ({ children }) => {
               />
               <div className="w-full flex justify-between items-center">
                 <DynamicBreadcrumb />
-                <ConnectButton />
+                <LoginButton />
               </div>
             </div>
           </header>

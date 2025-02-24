@@ -1,5 +1,6 @@
-import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { createPublicClient, defineChain, http } from 'viem';
+
+import { createConfig } from '@privy-io/wagmi';
 
 export const monad = defineChain({
   id: 10143,
@@ -19,14 +20,9 @@ export const monad = defineChain({
   testnet: true,
 });
 
-export const config = getDefaultConfig({
-  appName: 'RainbowKit App',
-  projectId: 'YOUR_PROJECT_ID',
-  chains: [monad],
-  ssr: false,
-});
-
-export const publicClient = createPublicClient({
-  chain: monad,
-  transport: http(),
+export const config = createConfig({
+  chains: [monad], // Pass your required chains as an array
+  transports: {
+    [monad.id]: http(),
+  },
 });

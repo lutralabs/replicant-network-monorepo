@@ -10,12 +10,13 @@
     "next:lint": "next lint",
     "lint": "pnpm run next:lint && eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,scss}'",
-    "prepare": "husky install",
     "check-types": "tsc",
     "validate": "pnpm run prettier & pnpm run lint & pnpm run check-types && pnpm run build"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
+    "@privy-io/react-auth": "^2.4.5",
+    "@privy-io/wagmi": "^1.0.3",
     "@radix-ui/react-accordion": "^1.2.3",
     "@radix-ui/react-alert-dialog": "^1.1.6",
     "@radix-ui/react-aspect-ratio": "^1.1.2",
