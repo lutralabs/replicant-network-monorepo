@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Airfoil x Monad Hackathon UI Kit
 
-## Getting Started
+This is a Next.js project template proudly presented by Airfoil Engineering to build modern websites and applications with a UI kit built using shadcn/ui and Tailwind CSS v4 and default-themed to Monad's branding to get teams started immediately with extensive flexibility from styling to ready-to-use components.
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Next.js** for server-side rendering and routing
+- **Tailwind CSS v4** for utility-first styling
+- **shadcn/ui** for pre-built, customizable UI components
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Pages
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+<a href="https://ibb.co.com/p6NVTzpw"><img src="https://i.ibb.co.com/fVZ6Wp7F/Clean-Shot-2025-02-21-at-6-10-50.png" alt="Clean-Shot-2025-02-21-at-6-10-50" border="0"></a>
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+<a href="https://ibb.co.com/nsdvtWp2"><img src="https://i.ibb.co.com/3y6qQJKX/Clean-Shot-2025-02-21-at-6-15-48.png" alt="Clean-Shot-2025-02-21-at-6-15-48" border="0"></a>
 
-## Learn More
+- **/dashboard**: Dashboard layout showcasing client data and analytics.
+- **/login**: Login page example for user authentication.
+- **/components**: Collection of reusable UI components.
+- **/components/payments**: Example implementation of a data table using shadcn components.
 
-To learn more about Next.js, take a look at the following resources:
+## Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Clone the repository:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```sh
+   git clone https://github.com/airfoil-frontend/monad
+   cd monad
+   ```
 
-## Deploy on Vercel
+2. Install dependencies (assuming you're using pnpm):
+   ```sh
+    pnpm install
+   ```
+3. Run the development server:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```sh
+    pnpm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   Visit `http://localhost:3000` to view the application.
+
+## Getting started
+
+- Navigate to /dashboard for the dashboard layout
+- Head to /login to see the login example in action
+- Explore /components for a list of reusable UI components
+- Check out /components/payments to view a data table demonstration
+
+## Additional information
+
+- **Tailwind CSS**: [Documentation](https://tailwindcss.com/docs)
+- **shadcn/ui**: [Documentation](https://ui.shadcn.com/)
+- **Next.js**: [Documentation](https://nextjs.org/docs)
