@@ -1,6 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
-import * as React from 'react';
-import { tv, VariantProps } from 'tailwind-variants';
+import type * as React from 'react';
+import { tv, type VariantProps } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
 
@@ -9,7 +9,7 @@ const badgeVariants = tv({
   variants: {
     variant: {
       default:
-        'border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90',
+        'border-transparent bg-purple-600 text-primary-foreground [a&]:hover:bg-primary/90',
       secondary:
         'border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90',
       destructive:
