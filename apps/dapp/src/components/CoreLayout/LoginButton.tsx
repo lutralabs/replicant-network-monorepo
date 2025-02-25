@@ -33,7 +33,7 @@ export function LoginButton() {
   }
 
   return (
-    <Button disabled={disableLogin} onClick={login}>
+    <Button variant="cta-solid" disabled={disableLogin} onClick={login}>
       Log in
     </Button>
   );

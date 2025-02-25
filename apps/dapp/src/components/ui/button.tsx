@@ -19,9 +19,9 @@ const buttonVariants = tv({
       ghost: 'hover:bg-accent hover:text-accent-foreground',
       link: 'text-primary underline-offset-4 hover:underline',
       'cta-solid':
-        'bg-purple-600 border border-purple-400 text-background dark:text-foreground shadow-sm hover:bg-purple-400',
+        'bg-purple-600 border border-purple-400 text-background dark:text-white shadow-sm hover:bg-purple-400',
       'cta-gradient':
-        'bg-linear-[90deg,#6e54ff_39%,#b4a7fb_100%] border border-purple-400 text-background dark:text-foreground shadow-sm hover:bg-linear-[90deg,#9A89FA_0%,#9A89FA_100%]',
+        'bg-linear-[90deg,#6e54ff_39%,#b4a7fb_100%] border border-purple-400 text-background dark:text-white shadow-sm hover:bg-linear-[90deg,#9A89FA_0%,#9A89FA_100%]',
     },
     size: {
       default: 'h-9 px-4 py-2 has-[>svg]:px-3',
