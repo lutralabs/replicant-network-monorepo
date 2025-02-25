@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "next:lint": "next lint",
+    "next:lint": "next lint --fix",
     "lint": "pnpm run next:lint && eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,scss}'",
     "check-types": "tsc",
@@ -94,11 +94,7 @@
     "typescript": "^5.7.3"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "pnpm run lint"
-    ],
-    "*.{js,jsx,ts,tsx,scss}": [
-      "pnpm run prettier"
-    ]
+    "*.{js,jsx,ts,tsx}": ["pnpm run lint"],
+    "*.{js,jsx,ts,tsx,scss}": ["pnpm run prettier"]
   }
 }

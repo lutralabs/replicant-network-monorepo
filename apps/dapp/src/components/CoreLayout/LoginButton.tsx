@@ -1,4 +1,9 @@
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import {
+  type ConnectedWallet,
+  usePrivy,
+  useWallets,
+} from '@privy-io/react-auth';
+
 import { Button } from '../ui/button';
 
 export function LoginButton() {
@@ -8,7 +13,7 @@ export function LoginButton() {
   const disableLogin = !ready || (ready && authenticated);
   const wallet = wallets[0]; // Replace this with your desired wallet
 
-  const switchChain = async (wallet: any) => {
+  const switchChain = async (wallet: ConnectedWallet) => {
     await wallet.switchChain(10143);
   };
 
@@ -33,7 +38,7 @@ export function LoginButton() {
   }
 
   return (
-    <Button variant="cta-solid" disabled={disableLogin} onClick={login}>
+    <Button disabled={disableLogin} variant="cta-solid" onClick={login}>
       Log in
     </Button>
   );

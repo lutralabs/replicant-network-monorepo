@@ -1,6 +1,9 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useWallets } from '@privy-io/react-auth';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { useBalance } from 'wagmi';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
@@ -23,11 +26,8 @@ import {
 } from '@/components/ui/select';
 import { SmartDatetimeInput } from '@/components/ui/smart-datetime-input';
 import { Textarea } from '@/components/ui/textarea';
-import { config } from '@/wagmi';
-import { useBalance } from 'wagmi';
-import { useWallets } from '@privy-io/react-auth';
-import { useMemo } from 'react';
 import { formatBalance } from '@/lib/utils';
+import { config } from '@/wagmi';
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -150,7 +150,7 @@ export const BountyForm = () => {
                 Title
               </FormLabel>
               <FormControl>
-                <Input placeholder="Title of the Model" required {...field} />
+                <Input required placeholder="Title of the Model" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -187,11 +187,11 @@ export const BountyForm = () => {
               </FormLabel>
               <FormControl>
                 <Textarea
+                  className="resize-none"
                   placeholder={`Introduction to the Problem: Provide a clear explanation of the issue. \n
   - Provide details about the issues model needs to solve
   - Provide access to data, if Applicable
   - Provide examples of expected results`}
-                  className="resize-none"
                   {...field}
                 />
               </FormControl>
@@ -247,12 +247,12 @@ export const BountyForm = () => {
         </div>
         <div className="h-[8px]" />
         <FormLabel className="text-lg">Contact Information</FormLabel>
-        <div className="flex gap-x-12 mt-4 w-full">
+        <div className="mt-4 flex w-full gap-x-12">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem className=" grow">
+              <FormItem className="grow">
                 <FormLabel>
                   <div>Email</div>
                 </FormLabel>
@@ -309,25 +309,25 @@ export const BountyForm = () => {
 
         <div className="h-[8px]" />
         <FormLabel className="text-lg">Bounty Timeline</FormLabel>
-        <div className="flex gap-x-12 mt-4 w-full">
+        <div className="mt-4 flex w-full gap-x-12">
           <FormField
             control={form.control}
             name="endOfFunding"
             render={({ field }) => (
-              <FormItem className="flex flex-col grow">
+              <FormItem className="flex grow flex-col">
                 <FormLabel>
                   <span className="text-red-500">*</span>Funding Period
                 </FormLabel>
                 <SmartDatetimeInput
-                  name="endOfFunding"
-                  value={field.value}
-                  // onChange={field.onChange}
-                  onValueChange={field.onChange}
-                  placeholder="e.g. tomorrow at 3pm"
                   disabled={(date) =>
                     date < new Date() ||
                     date > form.getValues('endOfSubmissions')
                   }
+                  name="endOfFunding"
+                  placeholder="e.g. tomorrow at 3pm"
+                  value={field.value}
+                  // onChange={field.onChange}
+                  onValueChange={field.onChange}
                 />
                 <FormDescription>
                   Time when the funding period ends.
@@ -341,21 +341,21 @@ export const BountyForm = () => {
             control={form.control}
             name="endOfSubmissions"
             render={({ field }) => (
-              <FormItem className="flex flex-col grow">
+              <FormItem className="flex grow flex-col">
                 <FormLabel>
                   <span className="text-red-500">*</span>Submissions Period
                 </FormLabel>
                 <SmartDatetimeInput
-                  name="endOfSubmissions"
-                  value={field.value}
-                  // onChange={field.onChange}
-                  onValueChange={field.onChange}
-                  placeholder="e.g. tomorrow at 3pm"
                   disabled={(date) =>
                     date < new Date() ||
                     date < form.getValues('endOfFunding') ||
                     date > form.getValues('endOfVoting')
                   }
+                  name="endOfSubmissions"
+                  placeholder="e.g. tomorrow at 3pm"
+                  value={field.value}
+                  // onChange={field.onChange}
+                  onValueChange={field.onChange}
                 />
                 <FormDescription>
                   Time when the submissions period ends.
@@ -369,20 +369,20 @@ export const BountyForm = () => {
             control={form.control}
             name="endOfVoting"
             render={({ field }) => (
-              <FormItem className="flex flex-col grow">
+              <FormItem className="flex grow flex-col">
                 <FormLabel>
                   <span className="text-red-500">*</span>Voting Period
                 </FormLabel>
                 <SmartDatetimeInput
-                  name="endOfVoting"
-                  value={field.value}
-                  // onChange={field.onChange}
-                  onValueChange={field.onChange}
-                  placeholder="e.g. tomorrow at 3pm"
                   disabled={(date) =>
                     date < new Date() ||
                     date < form.getValues('endOfSubmissions')
                   }
+                  name="endOfVoting"
+                  placeholder="e.g. tomorrow at 3pm"
+                  value={field.value}
+                  // onChange={field.onChange}
+                  onValueChange={field.onChange}
                 />
                 <FormDescription>
                   Time when the voting period ends.
@@ -454,10 +454,10 @@ export const BountyForm = () => {
                     <Button
                       size="sm"
                       type="button"
+                      variant="cta-solid"
                       onClick={() => {
                         form.setValue('contribution', formattedBalance);
                       }}
-                      variant="cta-solid"
                     >
                       MAX
                     </Button>
@@ -470,7 +470,7 @@ export const BountyForm = () => {
         />
 
         <div className="flex w-full justify-end">
-          <Button variant="cta-solid" type="submit">
+          <Button type="submit" variant="cta-solid">
             Create Bounty
           </Button>
         </div>

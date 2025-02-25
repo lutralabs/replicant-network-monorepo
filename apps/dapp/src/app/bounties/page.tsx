@@ -1,10 +1,11 @@
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
   return (
     <div className="w-full">
-      <div className="w-full flex justify-between items-center">
+      <div className="flex w-full items-center justify-between">
         <div className="max-w-[500px]">
           <div className="text-lg font-semibold">Models</div>
           <div className="text-md text-gray-600">

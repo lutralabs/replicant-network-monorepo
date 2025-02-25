@@ -1,6 +1,5 @@
-import { createPublicClient, defineChain, http } from 'viem';
-
 import { createConfig } from '@privy-io/wagmi';
+import { createPublicClient, defineChain, http } from 'viem';
 
 export const monad = defineChain({
   id: 10143,

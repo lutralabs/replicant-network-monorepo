@@ -1,11 +1,12 @@
 'use client';
-import type { PropsWithChildren } from 'react';
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '../ui/sidebar';
-import { AppSidebar } from '../AppSidebar';
 import { Separator } from '@radix-ui/react-separator';
-
-import DynamicBreadcrumb from '../DynamicBreadcrumb';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import type { PropsWithChildren } from 'react';
+
+import { AppSidebar } from '../AppSidebar';
+import DynamicBreadcrumb from '../DynamicBreadcrumb';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '../ui/sidebar';
+
 import { LoginButton } from './LoginButton';
 
 export const CoreLayout = ({ children }) => {
@@ -21,7 +22,7 @@ export const CoreLayout = ({ children }) => {
                 className="mr-2 data-[orientation=vertical]:h-4"
                 orientation="vertical"
               />
-              <div className="w-full flex justify-between items-center">
+              <div className="flex w-full items-center justify-between">
                 <DynamicBreadcrumb />
                 <LoginButton />
               </div>

@@ -1,20 +1,21 @@
 'use client';
 
-import React from 'react';
 import { parseDate } from 'chrono-node';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon, LucideTextCursorInput } from 'lucide-react';
+import React from 'react';
+import type { ActiveModifiers } from 'react-day-picker';
+
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Calendar, type CalendarProps } from '@/components/ui/calendar';
+import { Input } from '@/components/ui/input';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import type { ActiveModifiers } from 'react-day-picker';
-import { Calendar, type CalendarProps } from '@/components/ui/calendar';
-import { Input } from '@/components/ui/input';
-import { Button, buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Calendar as CalendarIcon, LucideTextCursorInput } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 /* -------------------------------------------------------------------------- */
 /*                               Inspired By:                                 */
@@ -59,7 +60,7 @@ export const getDateTimeLocal = (timestamp?: Date): string => {
  * @returns A `Date` object representing the earliest valid date.
  */
 const getValidBaseDate = (
-  disabled?: boolean | ((date: Date) => boolean)
+  disabled?: boolean | ((date: Date) => boolean),
 ): Date => {
   if (typeof disabled !== 'function') return new Date();
   let potential = new Date();
@@ -124,7 +125,7 @@ const useSmartDateInput = () => {
   const context = React.useContext(SmartDatetimeInputContext);
   if (!context) {
     throw new Error(
-      'useSmartDateInput must be used within SmartDateInputProvider'
+      'useSmartDateInput must be used within SmartDateInputProvider',
     );
   }
   return context;
@@ -157,17 +158,17 @@ export const SmartDatetimeInput = React.forwardRef<
         <div
           className={cn(
             'bg-white',
-            'flex gap-1 w-full p-1 items-center justify-between rounded-md border transition-all',
-            'focus-within:outline-0 focus:outline-0 focus:ring-0',
-            'placeholder:text-muted-foreground focus-visible:outline-0 ',
-            className
+            'flex w-full items-center justify-between gap-1 rounded-md border p-1 transition-all',
+            'focus-within:outline-0 focus:ring-0 focus:outline-0',
+            'placeholder:text-muted-foreground focus-visible:outline-0',
+            className,
           )}
         >
           <DateTimeLocalInput disabled={disabled} />
           <NaturalLanguageInput
-            placeholder={placeholder}
-            disabled={typeof disabled === 'boolean' ? disabled : false}
             ref={ref}
+            disabled={typeof disabled === 'boolean' ? disabled : false}
+            placeholder={placeholder}
           />
         </div>
       </div>
@@ -196,14 +197,14 @@ const TimePicker = () => {
 
       newVal.setHours(
         hour,
-        partStamp === 0 ? Number.parseInt('00') : timestamp * partStamp
+        partStamp === 0 ? Number.parseInt('00') : timestamp * partStamp,
       );
 
       // ? refactor needed check if we want to use the new date
 
       onValueChange(newVal);
     },
-    [value]
+    [value],
   );
 
   const handleKeydown = React.useCallback(
@@ -247,7 +248,7 @@ const TimePicker = () => {
 
         const PM_AM = timeValue.split(' ')[1];
         const PM_AM_hour = Number.parseInt(
-          timeValue.split(' ')[0].split(':')[0]
+          timeValue.split(' ')[0].split(':')[0],
         );
         const hour =
           PM_AM === 'AM'
@@ -259,7 +260,7 @@ const TimePicker = () => {
               : PM_AM_hour + 12;
 
         const part = Math.floor(
-          Number.parseInt(timeValue.split(' ')[0].split(':')[1]) / 15
+          Number.parseInt(timeValue.split(' ')[0].split(':')[1]) / 15,
         );
 
         formateSelectedTime(timeValue, hour, part);
@@ -289,7 +290,7 @@ const TimePicker = () => {
           break;
       }
     },
-    [activeIndex, formateSelectedTime]
+    [activeIndex, formateSelectedTime],
   );
 
   const handleClick = React.useCallback(
@@ -297,11 +298,11 @@ const TimePicker = () => {
       formateSelectedTime(
         `${hour}:${part === 0 ? '00' : timestamp * part} ${PM_AM}`,
         hour,
-        part
+        part,
       );
       setActiveIndex(currentIndex);
     },
-    [formateSelectedTime]
+    [formateSelectedTime],
   );
 
   const currentTime = React.useMemo(() => {
@@ -357,18 +358,18 @@ const TimePicker = () => {
   }, []);
 
   return (
-    <div className="space-y-2 pr-3 py-3 relative ">
-      <h3 className="text-sm font-medium ">Time</h3>
+    <div className="relative space-y-2 py-3 pr-3">
+      <h3 className="text-sm font-medium">Time</h3>
       <ScrollArea
-        onKeyDown={handleKeydown}
-        className="h-[90%] w-full focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 py-0.5"
+        className="h-[90%] w-full py-0.5 focus-visible:border-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-0"
         style={{
           height,
         }}
+        onKeyDown={handleKeydown}
       >
         <ul
           className={cn(
-            'flex items-center flex-col gap-1 h-full max-h-56 w-28 px-1 py-0.5'
+            'flex h-full max-h-56 w-28 flex-col items-center gap-1 px-1 py-0.5',
           )}
         >
           {Array.from({ length: 24 }).map((_, i) => {
@@ -387,7 +388,7 @@ const TimePicker = () => {
                 i,
                 part === 0 ? 0 : timestamp * part,
                 0,
-                0
+                0,
               );
               // Use the matcher if provided to decide if this candidate should be disabled.
               let candidateDisabled =
@@ -430,8 +431,6 @@ const TimePicker = () => {
 
               return (
                 <li
-                  tabIndex={isSelected ? 0 : -1}
-                  id={`time-${trueIndex}`}
                   key={`time-${trueIndex}`}
                   aria-label="currentTime"
                   className={cn(
@@ -442,8 +441,10 @@ const TimePicker = () => {
                           ? 'default'
                           : 'outline',
                     }),
-                    'h-8 px-3 w-full text-sm focus-visible:outline-0 outline-0 focus-visible:border-0 cursor-default ring-0'
+                    'h-8 w-full cursor-default px-3 text-sm ring-0 outline-0 focus-visible:border-0 focus-visible:outline-0',
                   )}
+                  id={`time-${trueIndex}`}
+                  tabIndex={isSelected ? 0 : -1}
                   onClick={() => handleClick(i, part, PM_AM, trueIndex)}
                   onFocus={() => isSuggested && setActiveIndex(trueIndex)}
                 >
@@ -512,7 +513,7 @@ const NaturalLanguageInput = React.forwardRef<
         onTimeChange(`${hour}:${parsedDateTime.getMinutes()} ${PM_AM}`);
       }
     },
-    [value]
+    [value],
   );
 
   const handleKeydown = React.useCallback(
@@ -548,19 +549,19 @@ const NaturalLanguageInput = React.forwardRef<
         }
       }
     },
-    [value]
+    [value],
   );
 
   return (
     <Input
       ref={ref}
-      type="text"
+      className={cn('mr-0.5 h-8 flex-1 rounded border-none px-2', inputBase)}
       placeholder={_placeholder}
+      type="text"
       value={inputValue}
+      onBlur={handleParse}
       onChange={(e) => setInputValue(e.currentTarget.value)}
       onKeyDown={handleKeydown}
-      onBlur={handleParse}
-      className={cn('px-2 mr-0.5 flex-1 border-none h-8 rounded', inputBase)}
       {...props}
     />
   );
@@ -584,7 +585,7 @@ const DateTimeLocalInput = ({
       date: Date | undefined,
       selectedDate: Date,
       m: ActiveModifiers,
-      e: React.MouseEvent
+      e: React.MouseEvent,
     ) => {
       // if fully disabled, do nothing
       if (typeof disabled === 'boolean' && disabled) return;
@@ -596,26 +597,26 @@ const DateTimeLocalInput = ({
       if (parsedDateTime) {
         parsedDateTime.setHours(
           Number.parseInt(Time.split(':')[0]),
-          Number.parseInt(Time.split(':')[1])
+          Number.parseInt(Time.split(':')[1]),
         );
         onValueChange(parsedDateTime);
       }
     },
-    [value, Time]
+    [value, Time],
   );
 
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          disabled={typeof disabled === 'boolean' ? disabled : false}
-          variant={'outline'}
-          size={'sm'}
           icon
           className={cn(
-            'size-9 flex items-center justify-center font-normal',
-            !value && 'text-muted-foreground'
+            'flex size-9 items-center justify-center font-normal',
+            !value && 'text-muted-foreground',
           )}
+          disabled={typeof disabled === 'boolean' ? disabled : false}
+          size={'sm'}
+          variant={'outline'}
         >
           <CalendarIcon className="size-4" />
           <span className="sr-only">calender</span>
@@ -626,12 +627,12 @@ const DateTimeLocalInput = ({
           <Calendar
             disabled={disabled}
             {...props}
-            id={'calendar'}
+            initialFocus
             className={cn('peer flex justify-end', inputBase, className)}
+            id={'calendar'}
             mode="single"
             selected={value}
             onSelect={formateSelectedDate}
-            initialFocus
           />
           <TimePicker />
         </div>
