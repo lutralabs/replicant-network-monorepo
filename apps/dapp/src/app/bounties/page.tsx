@@ -11,7 +11,7 @@ const BOUNTIES = [
       'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
     bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
     id: '1',
-    status: 'active',
+    status: 'active' as 'completed' | 'failed' | 'active' | 'crowdfunding',
     reward: 1000,
     submissions: 3,
     crowdfunders: 15,
@@ -23,7 +23,11 @@ const BOUNTIES = [
       'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
     bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
     id: '2',
-    status: 'crowdfunding',
+    status: 'crowdfunding' as
+      | 'completed'
+      | 'failed'
+      | 'active'
+      | 'crowdfunding',
     reward: 1500,
     submissions: 0,
     crowdfunders: 15,
@@ -35,7 +39,7 @@ const BOUNTIES = [
       'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
     bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
     id: '3',
-    status: 'completed',
+    status: 'completed' as 'completed' | 'failed' | 'active' | 'crowdfunding',
     reward: 1500,
     submissions: 4,
     crowdfunders: 15,
@@ -47,7 +51,7 @@ const BOUNTIES = [
       'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
     bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
     id: '4',
-    status: 'failed',
+    status: 'failed' as 'completed' | 'failed' | 'active' | 'crowdfunding',
     reward: 120,
     submissions: 0,
     crowdfunders: 3,
