@@ -2,9 +2,13 @@ import os
 import hashlib
 import time
 import threading
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
+import torch
+from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
+
+from src.core.device import device
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -36,6 +40,15 @@ class ModelRegistry:
         self.file_extensions = [".ckpt", ".pt", ".pth", ".bin", ".safetensors"]
         self._stop_event = threading.Event()
         self._watcher_thread = None
+
+        # Model cache to store loaded models
+        self.model_cache: Dict[str, Any] = {}
+
+        # Default inference parameters
+        self.default_inference_steps = int(
+            os.environ.get("DEFAULT_INFERENCE_STEPS", "30"))
+        self.default_guidance_scale = float(
+            os.environ.get("DEFAULT_GUIDANCE_SCALE", "7.5"))
 
         logger.info(
             f"Model registry initialized with directories: {self.model_dirs}")
@@ -131,6 +144,12 @@ class ModelRegistry:
         # Remove models that no longer exist
         for model_path in removed_models:
             model_hash = self.path_to_hash[model_path]
+
+            # Remove from cache if loaded
+            if model_hash in self.model_cache:
+                logger.info(f"Removing model from cache: {model_hash}")
+                del self.model_cache[model_hash]
+
             del self.models[model_hash]
             del self.path_to_hash[model_path]
             logger.info(f"Removed model: {model_path} (hash: {model_hash})")
@@ -148,6 +167,74 @@ class ModelRegistry:
             Model info or None if not found
         """
         return self.models.get(model_hash)
+
+    def load_model(self, model_hash: str) -> Any:
+        """
+        Load a model from the registry into memory.
+
+        Args:
+            model_hash: Hash of the model to load
+
+        Returns:
+            Loaded model or None if not found
+
+        Raises:
+            ValueError: If the model is not found or cannot be loaded
+        """
+        # Check if model is already loaded
+        if model_hash in self.model_cache:
+            logger.info(f"Using cached model: {model_hash}")
+            return self.model_cache[model_hash]
+
+        # Get model info
+        model_info = self.get_model_by_hash(model_hash)
+        if not model_info:
+            raise ValueError(f"Model with hash {model_hash} not found")
+
+        model_path = model_info["path"]
+        logger.info(f"Loading model from {model_path}")
+
+        try:
+            # Load the model based on file extension
+            if model_info["extension"] in [".ckpt", ".safetensors"]:
+                # Load Stable Diffusion model
+                pipe = StableDiffusionPipeline.from_single_file(
+                    model_path,
+                    torch_dtype=torch.float16 if device.type == "cuda" else torch.float32,
+                    use_safetensors=model_info["extension"] == ".safetensors"
+                )
+
+                # Use DPM-Solver++ scheduler for faster inference
+                pipe.scheduler = DPMSolverMultistepScheduler.from_config(
+                    pipe.scheduler.config,
+                    algorithm_type="dpmsolver++",
+                    use_karras_sigmas=True
+                )
+
+                # Move to device
+                pipe = pipe.to(device)
+
+                # Enable memory efficient attention if using CUDA
+                if device.type == "cuda":
+                    pipe.enable_attention_slicing()
+                    # Enable xformers if available
+                    try:
+                        pipe.enable_xformers_memory_efficient_attention()
+                        logger.info(
+                            "Enabled xformers memory efficient attention")
+                    except Exception as e:
+                        logger.warning(f"Could not enable xformers: {e}")
+
+                # Cache the model
+                self.model_cache[model_hash] = pipe
+                logger.info(f"Successfully loaded model: {model_info['name']}")
+                return pipe
+            else:
+                raise ValueError(
+                    f"Unsupported model format: {model_info['extension']}")
+        except Exception as e:
+            logger.error(f"Error loading model {model_path}: {e}")
+            raise ValueError(f"Failed to load model: {str(e)}")
 
     def start_watcher(self):
         """

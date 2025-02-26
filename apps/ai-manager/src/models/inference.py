@@ -1,5 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
+from base64 import b64encode
+from io import BytesIO
 
 
 class InferenceRequest(BaseModel):
@@ -10,14 +12,38 @@ class InferenceRequest(BaseModel):
     model_id: str = Field(...,
                           description="Model ID (hash) to use for inference")
     prompt: str = Field(...,
-                        description="Text prompt for inference", max_length=200)
+                        description="Text prompt for inference", max_length=1000)
+    negative_prompt: Optional[str] = Field(
+        None, description="Negative prompt to guide what not to generate")
+    num_inference_steps: Optional[int] = Field(
+        None, description="Number of inference steps", ge=1, le=150)
+    guidance_scale: Optional[float] = Field(
+        None, description="Guidance scale for classifier-free guidance", ge=1.0, le=20.0)
+    width: Optional[int] = Field(
+        512, description="Width of the generated image", ge=256, le=1024)
+    height: Optional[int] = Field(
+        512, description="Height of the generated image", ge=256, le=1024)
+    seed: Optional[int] = Field(
+        None, description="Random seed for reproducibility")
+    num_images: Optional[int] = Field(
+        1, description="Number of images to generate", ge=1, le=4)
 
     @field_validator('prompt')
     @classmethod
     def prompt_length(cls, v):
-        if len(v) > 200:
-            raise ValueError('Prompt must not be longer than 200 characters')
+        if len(v) > 1000:
+            raise ValueError('Prompt must not be longer than 1000 characters')
         return v
+
+
+class ImageResult(BaseModel):
+    """
+    Model for an image result.
+    """
+    base64: str = Field(..., description="Base64-encoded image data")
+    seed: int = Field(..., description="Seed used for generation")
+    width: int = Field(..., description="Width of the image")
+    height: int = Field(..., description="Height of the image")
 
 
 class InferenceResponse(BaseModel):
@@ -26,8 +52,12 @@ class InferenceResponse(BaseModel):
     """
     id: str
     model_id: str
-    result: Any
+    images: List[ImageResult]
     processing_time: float
+    prompt: str
+    negative_prompt: Optional[str] = None
+    num_inference_steps: int
+    guidance_scale: float
 
 
 class ModelInfo(BaseModel):
@@ -47,3 +77,18 @@ class ModelsListResponse(BaseModel):
     """
     models: List[ModelInfo] = Field(default_factory=list)
     count: int
+
+
+def encode_image_to_base64(image) -> str:
+    """
+    Encode a PIL image to base64.
+
+    Args:
+        image: PIL Image
+
+    Returns:
+        Base64-encoded image string
+    """
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return b64encode(buffered.getvalue()).decode("utf-8")
