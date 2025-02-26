@@ -1,8 +1,8 @@
 'use client';
 
 import * as TogglePrimitive from '@radix-ui/react-toggle';
-import * as React from 'react';
-import { tv, VariantProps } from 'tailwind-variants';
+import type * as React from 'react';
+import { type VariantProps, tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
 

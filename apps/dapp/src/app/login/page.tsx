@@ -8,7 +8,10 @@ export default function LoginPage() {
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="bg-muted relative hidden lg:block">
         <div className="absolute top-10 left-10 z-10 flex justify-center gap-2 md:justify-start">
-          <a className="flex items-center gap-2 font-medium" href="#">
+          <a
+            className="flex items-center gap-2 font-medium"
+            href="#placeholder"
+          >
             <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
               <GalleryVerticalEnd className="size-4" />
             </div>
@@ -16,7 +19,7 @@ export default function LoginPage() {
           </a>
         </div>
         <img
-          alt="Image"
+          alt="Placeholder"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
           src="https://images.unsplash.com/photo-1588345921523-c2dcdb7f1dcd?w=800&dpr=2&q=80"
         />

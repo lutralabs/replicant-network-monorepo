@@ -3,7 +3,7 @@
 import { Slot } from '@radix-ui/react-slot';
 import { PanelLeftIcon } from 'lucide-react';
 import * as React from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+import { type VariantProps, tv } from 'tailwind-variants';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

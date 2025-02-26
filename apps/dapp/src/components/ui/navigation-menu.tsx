@@ -2,7 +2,7 @@
 
 import * as NavigationMenuPrimitive from '@radix-ui/react-navigation-menu';
 import { ChevronDownIcon } from 'lucide-react';
-import * as React from 'react';
+import type * as React from 'react';
 import { tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';

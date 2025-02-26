@@ -1,6 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
 import type * as React from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+import { type VariantProps, tv } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
 

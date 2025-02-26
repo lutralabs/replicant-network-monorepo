@@ -2,7 +2,7 @@
 
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
 import * as React from 'react';
-import { VariantProps } from 'tailwind-variants';
+import type { VariantProps } from 'tailwind-variants';
 
 import { toggleVariants } from '@/components/ui/toggle';
 import { cn } from '@/lib/utils';

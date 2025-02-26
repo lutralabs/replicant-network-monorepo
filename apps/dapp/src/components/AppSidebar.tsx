@@ -1,6 +1,6 @@
 'use client';
 
-import { Frame, Map, PieChart } from 'lucide-react';
+import { Frame, Map as MapIcon, PieChart } from 'lucide-react';
 import type * as React from 'react';
 
 import { NavProjects } from '@/components/NavProjects';
@@ -27,7 +27,7 @@ const ITEMS = {
     {
       name: 'Travel',
       url: '#',
-      icon: Map,
+      icon: MapIcon,
     },
   ],
 };

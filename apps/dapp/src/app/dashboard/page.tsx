@@ -1,4 +1,4 @@
-import { columns, type Payment } from '@/app/components/payments/columns';
+import { type Payment, columns } from '@/app/components/payments/columns';
 import { DataTable } from '@/app/components/payments/data-table';
 import { AppSidebar } from '@/components/AppSidebar';
 import {
@@ -60,9 +60,9 @@ export default async function Page() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl p-4"></div>
-            <div className="bg-muted/50 aspect-video rounded-xl p-4"></div>
-            <div className="bg-muted/50 aspect-video rounded-xl p-4"></div>
+            <div className="bg-muted/50 aspect-video rounded-xl p-4" />
+            <div className="bg-muted/50 aspect-video rounded-xl p-4" />
+            <div className="bg-muted/50 aspect-video rounded-xl p-4" />
           </div>
           <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl p-4 md:min-h-min">
             <DataTable columns={columns} data={data} />

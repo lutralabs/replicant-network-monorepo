@@ -1,4 +1,4 @@
-import { ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 
 export interface CustomIconProps extends ComponentPropsWithoutRef<'svg'> {
   size?: number | string; // width and height will both be set as the same value
