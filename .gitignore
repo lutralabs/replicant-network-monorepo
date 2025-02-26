@@ -12,6 +12,8 @@ __pycache__/
 
 **/ignition/deployments/*
 
+ai-models/
+
 # dependencies
 node_modules
 

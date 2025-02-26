@@ -1,5 +1,5 @@
 import pytest
-from src.main import verify_api_key
+from src.core.auth import verify_api_key
 from jose import jwt
 import os
 

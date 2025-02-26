@@ -1,7 +1,7 @@
 import pytest
 import torch
 from unittest.mock import patch
-from src.main import setup_device
+from src.core.device import setup_device
 
 
 def test_setup_device_cpu():
@@ -42,9 +42,9 @@ def test_setup_device_mps():
         assert device.type == "mps"
 
 
-@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
 @pytest.mark.skipif(not (hasattr(torch.backends, 'mps') and torch.backends.mps.is_available()),
                     reason="MPS not available")
+@pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA not available")
 def test_setup_device_cuda_priority():
     """Test that CUDA has priority over MPS when both are available"""
     # Mock torch.cuda.is_available to return True

@@ -10,6 +10,8 @@ A secure API service for AI model inference that adapts to available hardware ac
 * JWT token support
 * Request validation
 * Health check endpoint
+* API versioning (v1)
+* CORS support
 
 ## Project Structure
 
@@ -23,7 +25,20 @@ apps/ai-manager/
 ├── pytest.ini          # Pytest configuration
 ├── src/                # Source code directory
 │   ├── __init__.py     # Package initialization
-│   ├── main.py         # Main application code
+│   ├── main.py         # Main application setup
+│   ├── core/           # Core functionality
+│   │   ├── __init__.py
+│   │   ├── auth.py     # Authentication logic
+│   │   └── device.py   # Device detection logic
+│   ├── models/         # Data models
+│   │   ├── __init__.py
+│   │   └── inference.py # Inference request/response models
+│   ├── routes/         # API routes
+│   │   ├── __init__.py
+│   │   └── v1/         # Version 1 API routes
+│   │       ├── __init__.py
+│   │       ├── health.py    # Health-related endpoints
+│   │       └── inference.py # Inference endpoints
 │   └── test_api.py     # API testing utilities
 └── tests/              # Test directory
     ├── __init__.py     # Package initialization
@@ -48,39 +63,23 @@ apps/ai-manager/
 
 1. Clone the repository
 2. Install dependencies:
-   
 
 ```
-   pip install -e .
-   ```
-
-3. For development, install test dependencies:
-   
-
+uv sync
 ```
-   pip install -e ".[test]"
-   ```
 
 4. Set environment variables (optional):
-   
 
 ```
-   export SECRET_KEY="your-secure-secret-key"
-   export API_KEYS="key1,key2,key3"
-   ```
+export SECRET_KEY="your-secure-secret-key"
+export API_KEYS="key1,key2,key3"
+export CORS_ORIGINS="http://localhost:3000,https://yourdomain.com"
+```
 
 ## Running the API
 
-### Development
-
 ```bash
-python app.py
-```
-
-### Production
-
-```bash
-uvicorn src.main:app --host 0.0.0.0 --port 8000
+uv run app.py
 ```
 
 ## Testing
@@ -88,101 +87,144 @@ uvicorn src.main:app --host 0.0.0.0 --port 8000
 Run the tests with:
 
 ```bash
-python test.py
-```
-
-Or directly with pytest:
-
-```bash
-pytest
-```
-
-### Test Coverage
-
-To see test coverage:
-
-```bash
-pytest --cov=src --cov-report=term-missing
-```
-
-### Running Specific Tests
-
-Run only unit tests:
-
-```bash
-pytest tests/unit
-```
-
-Run only integration tests:
-
-```bash
-pytest tests/integration
-```
-
-Run a specific test file:
-
-```bash
-pytest tests/unit/test_auth.py
+uv run test.py
 ```
 
 ## API Endpoints
 
-### GET /
+All API endpoints accept and return JSON data. Requests should include the `Content-Type: application/json` header.
 
-Returns basic information about the API and the device being used.
+### Root Endpoints
 
-### POST /infer
+#### GET /
+
+Returns basic information about the API and links to the latest version.
+
+**Response Format**: JSON
+
+#### GET /v1
+
+Returns basic information about the v1 API.
+
+**Response Format**: JSON
+
+### Health Endpoints
+
+#### GET /health or GET /v1/health
+
+Health check endpoint that returns the current status of the API.
+
+**Response Format**: JSON
+
+### Model Endpoints
+
+#### GET /v1/models
+
+Lists all available models.
+
+**Authentication**: Bearer token (API key or JWT)
+
+**Response Format**: JSON
+
+**Response Example**:
+
+```json
+{
+  "models": [
+    {
+      "id": "model-hash-1",
+      "name": "model1.ckpt",
+      "size": 1234567,
+      "path": "ai-models/model1.ckpt",
+      "extension": ".ckpt"
+    },
+    {
+      "id": "model-hash-2",
+      "name": "model2.ckpt",
+      "size": 7654321,
+      "path": "ai-models/model2.ckpt",
+      "extension": ".ckpt"
+    }
+  ],
+  "count": 2
+}
+```
+
+#### GET /v1/models/{model_id}
+
+Gets information about a specific model.
+
+**Authentication**: Bearer token (API key or JWT)
+
+**Response Format**: JSON
+
+**Response Example**:
+
+```json
+{
+  "id": "model-hash-1",
+  "name": "model1.ckpt",
+  "size": 1234567,
+  "path": "ai-models/model1.ckpt",
+  "extension": ".ckpt"
+}
+```
+
+### Inference Endpoints
+
+#### POST /infer or POST /v1/infer
 
 Performs inference using the AI model.
 
 **Authentication**: Bearer token (API key or JWT)
 
-**Request Body**:
+**Request Format**: JSON with Content-Type: application/json
+
+**Request Example**:
 
 ```json
 {
   "id": "unique-request-id",
+  "model_id": "model-hash-1",
   "prompt": "Your prompt text here (max 200 chars)"
 }
 ```
 
-**Response**:
+**Response Format**: JSON
+
+**Response Example**:
 
 ```json
 {
   "id": "unique-request-id",
+  "model_id": "model-hash-1",
   "result": [...],
   "processing_time": 0.123
 }
 ```
-
-### GET /health
-
-Health check endpoint that returns the current status of the API.
 
 ## Authentication
 
 The API supports two authentication methods:
 
 1. **API Keys**: Simple API keys passed in the Authorization header
-   
 
 ```
-   Authorization: Bearer your-api-key
-   ```
+Authorization: Bearer your-api-key
+```
 
 2. **JWT Tokens**: For more advanced authentication scenarios
-   
 
 ```
-   Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-   ```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
 
 ## Environment Variables
 
 * `SECRET_KEY`: Secret key for JWT token generation/validation
 * `API_KEYS`: Comma-separated list of valid API keys
 * `PORT`: Port to run the server on (default: 8000)
+* `CORS_ORIGINS`: Comma-separated list of allowed origins for CORS (default: "*")
 
 ## Deployment
 
@@ -194,3 +236,26 @@ This service is designed to be deployed on servers with CUDA support, but will a
 * Rotate API keys regularly
 * Consider using a reverse proxy (like Nginx) with HTTPS
 * Implement rate limiting for production use
+
+## Model Management
+
+The API automatically scans the `ai-models/` directory for model files ( `.ckpt` , `.pt` , `.pth` , `.bin` , `.safetensors` ) and makes them available for inference. The scanning happens at startup and periodically while the API is running.
+
+Each model is identified by its SHA-256 hash, which is used as the `model_id` in API requests.
+
+### Adding New Models
+
+To add a new model:
+
+1. Place the model file in the `ai-models/` directory
+2. The API will automatically detect the new model within 10 seconds
+3. Use the `/v1/models` endpoint to get the model's hash (ID)
+4. Use the model ID in inference requests
+
+### Environment Variables
+
+* `SECRET_KEY`: Secret key for JWT token generation/validation
+* `API_KEYS`: Comma-separated list of valid API keys
+* `PORT`: Port to run the server on (default: 8000)
+* `CORS_ORIGINS`: Comma-separated list of allowed origins for CORS (default: "*")
+* `MODEL_DIRS` : Comma-separated list of directories to scan for models (default: "ai-models/")
