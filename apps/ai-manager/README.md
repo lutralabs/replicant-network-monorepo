@@ -275,7 +275,6 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 * `API_KEYS`: Comma-separated list of valid API keys
 * `PORT`: Port to run the server on (default: 8000)
 * `CORS_ORIGINS`: Comma-separated list of allowed origins for CORS (default: "*")
-* `MODEL_DIRS`: Comma-separated list of directories to scan for models (default: "ai-models/")
 * `MODEL_SCAN_INTERVAL`: Interval in seconds to scan for new models (default: 10)
 * `DEFAULT_INFERENCE_STEPS`: Default number of inference steps for Stable Diffusion (default: 30)
 * `DEFAULT_GUIDANCE_SCALE`: Default guidance scale for Stable Diffusion (default: 7.5)
@@ -312,4 +311,3 @@ To add a new model:
 * `API_KEYS`: Comma-separated list of valid API keys
 * `PORT`: Port to run the server on (default: 8000)
 * `CORS_ORIGINS`: Comma-separated list of allowed origins for CORS (default: "*")
-* `MODEL_DIRS` : Comma-separated list of directories to scan for models (default: "ai-models/")

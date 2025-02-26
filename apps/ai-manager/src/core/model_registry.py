@@ -2,6 +2,8 @@ import os
 import hashlib
 import time
 import threading
+import fcntl
+import errno
 from typing import Dict, List, Optional, Any
 from pathlib import Path
 import logging
@@ -11,7 +13,8 @@ from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
 from src.core.device import device
 
 # Set up logging
-logging.basicConfig(level=logging.INFO)
+log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(level=getattr(logging, log_level))
 logger = logging.getLogger(__name__)
 
 
@@ -21,18 +24,14 @@ class ModelRegistry:
     hashes them, and tracks changes.
     """
 
-    def __init__(self, model_dirs: List[str] = None):
+    def __init__(self):
         """
         Initialize the model registry.
-
-        Args:
-            model_dirs: List of directories to scan for model files
         """
         # Get model directories from environment variable or use default
-        env_model_dirs = os.environ.get("MODEL_DIRS", "ai-models/")
-        default_model_dirs = env_model_dirs.split(",")
+        model_dirs_env = os.environ.get("MODEL_DIRS", "ai-models/")
+        self.model_dirs = [dir.strip() for dir in model_dirs_env.split(",")]
 
-        self.model_dirs = model_dirs or default_model_dirs
         self.models: Dict[str, Dict] = {}  # Hash -> model info
         self.path_to_hash: Dict[str, str] = {}  # Path -> hash
         self.scan_interval = int(os.environ.get(
@@ -40,6 +39,7 @@ class ModelRegistry:
         self.file_extensions = [".ckpt", ".pt", ".pth", ".bin", ".safetensors"]
         self._stop_event = threading.Event()
         self._watcher_thread = None
+        self._processing_files = set()  # Track files being processed
 
         # Model cache to store loaded models
         self.model_cache: Dict[str, Any] = {}
@@ -54,6 +54,51 @@ class ModelRegistry:
             f"Model registry initialized with directories: {self.model_dirs}")
         logger.info(f"Scan interval: {self.scan_interval} seconds")
         logger.info(f"Supported file extensions: {self.file_extensions}")
+
+    def is_file_ready(self, file_path: str) -> bool:
+        """
+        Check if a file is ready to be processed (not being written to).
+
+        Args:
+            file_path: Path to the file
+
+        Returns:
+            True if the file is ready, False otherwise
+        """
+        if file_path in self._processing_files:
+            logger.warning(f"File {file_path} is already being processed")
+            return False
+
+        try:
+            # Try to get an exclusive lock on the file
+            with open(file_path, 'rb') as f:
+                try:
+                    # Non-blocking exclusive lock
+                    fcntl.flock(f.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    # If we got here, the file is not locked by another process
+                    fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+                    # Check if the file size is stable (not being written to)
+                    size1 = os.path.getsize(file_path)
+                    time.sleep(1)  # Wait a bit
+                    size2 = os.path.getsize(file_path)
+
+                    if size1 != size2:
+                        logger.warning(
+                            f"File {file_path} is still being written to (size changed), waiting")
+                        return False
+
+                    return True
+                except IOError as e:
+                    # File is locked by another process
+                    if e.errno == errno.EAGAIN:
+                        logger.error(
+                            f"File {file_path} is locked by another process")
+                        return False
+                    raise
+        except Exception as e:
+            logger.warning(f"Error checking if file {file_path} is ready: {e}")
+            return False
 
     def compute_file_hash(self, file_path: str) -> str:
         """
@@ -96,12 +141,20 @@ class ModelRegistry:
 
             # Find all model files
             for ext in self.file_extensions:
-                for model_file in model_path.glob(f"**/*{ext}"):
+                files_found = list(model_path.glob(f"**/*{ext}"))
+
+                for model_file in files_found:
                     model_file_str = str(model_file)
 
                     # Remove from removed_models if it exists
                     if model_file_str in removed_models:
                         removed_models.remove(model_file_str)
+
+                    # Check if the file is ready to be processed
+                    if not self.is_file_ready(model_file_str):
+                        logger.info(
+                            f"Skipping file {model_file_str} as it's not ready yet")
+                        continue
 
                     # Check if the file has been modified
                     file_mtime = os.path.getmtime(model_file)
@@ -116,6 +169,9 @@ class ModelRegistry:
 
                     # Compute the hash of the file
                     try:
+                        # Mark file as being processed
+                        self._processing_files.add(model_file_str)
+
                         file_hash = self.compute_file_hash(model_file_str)
 
                         # Add to the registry
@@ -140,6 +196,9 @@ class ModelRegistry:
                     except Exception as e:
                         logger.error(
                             f"Error processing model file {model_file}: {e}")
+                    finally:
+                        # Remove file from processing list
+                        self._processing_files.discard(model_file_str)
 
         # Remove models that no longer exist
         for model_path in removed_models:

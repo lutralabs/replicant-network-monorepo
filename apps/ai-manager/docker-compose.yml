@@ -1,0 +1,44 @@
+# NVIDIA GPU configuration (Linux only)
+x-nvidia-config: &nvidia-config
+  deploy:
+    resources:
+      reservations:
+        devices:
+          - driver: nvidia
+            count: ${GPU_COUNT:-1}
+            capabilities: [gpu]
+
+services:
+  # Base service definition (CPU only - works on macOS)
+  ai-manager:
+    container_name: ai-manager
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - ./ai-models:/ai-models:rw
+    environment:
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      - MODEL_SCAN_INTERVAL=${MODEL_SCAN_INTERVAL:-10}
+      - DEFAULT_INFERENCE_STEPS=${DEFAULT_INFERENCE_STEPS:-30}
+      - DEFAULT_GUIDANCE_SCALE=${DEFAULT_GUIDANCE_SCALE:-7.5}
+      - PYTHONUNBUFFERED=${PYTHONUNBUFFERED:-1}
+      # Authentication settings
+      - API_KEYS=${API_KEYS:-test-key-1,test-key-2}
+      # Set log level to debug for more detailed logs
+      - LOG_LEVEL=DEBUG
+    restart: ${RESTART_POLICY:-unless-stopped}
+    profiles:
+      - default
+      - cpu
+
+  # NVIDIA GPU-enabled service
+  ai-manager-nvidia:
+    container_name: ai-manager-nvidia
+    extends:
+      service: ai-manager
+    <<: *nvidia-config
+    profiles:
+      - nvidia 
