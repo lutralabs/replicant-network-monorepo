@@ -44,6 +44,8 @@ class ImageResult(BaseModel):
     seed: int = Field(..., description="Seed used for generation")
     width: int = Field(..., description="Width of the image")
     height: int = Field(..., description="Height of the image")
+    url: Optional[str] = Field(
+        None, description="URL where the image is stored")
 
 
 class InferenceResponse(BaseModel):
@@ -58,6 +60,9 @@ class InferenceResponse(BaseModel):
     negative_prompt: Optional[str] = None
     num_inference_steps: int
     guidance_scale: float
+    # New fields for async processing
+    task_ids: Optional[List[str]] = None
+    status: Optional[str] = "completed"
 
 
 class ModelInfo(BaseModel):
@@ -77,6 +82,18 @@ class ModelsListResponse(BaseModel):
     """
     models: List[ModelInfo] = Field(default_factory=list)
     count: int
+
+
+class TaskStatusResponse(BaseModel):
+    """
+    Response model for the task status endpoint.
+    """
+    request_id: str
+    status: str
+    task_ids: Optional[List[str]] = None
+    message: Optional[str] = None
+    images: Optional[List[ImageResult]] = None
+    error: Optional[str] = None
 
 
 def encode_image_to_base64(image) -> str:
