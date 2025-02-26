@@ -17,6 +17,7 @@
       "**/components/ui/**",
       "**/components/demo/**",
       "**/libs/**",
+      "**/.venv/**",
       "**/contracts/lib/**",
       "**/contracts/cache/**",
       "**/node_modules/**",

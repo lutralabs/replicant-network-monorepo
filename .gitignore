@@ -4,8 +4,10 @@
 dist
 tmp
 /out-tsc
-
+.venv/
 .nx/
+__pycache__/
+.coverage
 
 **/ignition/deployments/*
 

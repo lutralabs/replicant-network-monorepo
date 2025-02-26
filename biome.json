@@ -17,6 +17,7 @@
       "**/components/ui/**",
       "**/components/demo/**",
       "**/dist/**",
+      "**/.venv/**",
       "**/contracts/lib/**",
       "**/contracts/cache/**",
       "**/build/**",
