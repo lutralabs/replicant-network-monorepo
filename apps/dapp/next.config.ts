@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   env: {
-    PRIVY_APPID: process.env.PRIVY_APPID,
+    PRIVY_APPID: 'cm7j352q103r4wwk6v2liowrm',
   },
   images: {
     remotePatterns: [
