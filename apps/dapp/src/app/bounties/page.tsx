@@ -87,7 +87,7 @@ export default function Page() {
             {BOUNTIES.filter((bounty) => bounty.status === 'active').map(
               (bounty) => (
                 <BountyCard key={bounty.id} {...bounty} />
-              ),
+              )
             )}
           </div>
         </TabsContent>
@@ -96,7 +96,7 @@ export default function Page() {
             {BOUNTIES.filter((bounty) => bounty.status === 'crowdfunding').map(
               (bounty) => (
                 <BountyCard key={bounty.id} {...bounty} />
-              ),
+              )
             )}
           </div>
         </TabsContent>
@@ -104,7 +104,7 @@ export default function Page() {
           <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
             {BOUNTIES.filter(
               (bounty) =>
-                bounty.status === 'completed' || bounty.status === 'failed',
+                bounty.status === 'completed' || bounty.status === 'failed'
             ).map((bounty) => (
               <BountyCard key={bounty.id} {...bounty} />
             ))}

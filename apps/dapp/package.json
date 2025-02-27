@@ -9,10 +9,7 @@
     "start": "next start",
     "next:lint": "next lint --fix",
     "lint": "biome check .",
-    "lint:fix": "biome check --write .",
-    "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,scss}'",
-    "check-types": "tsc",
-    "validate": "pnpm run prettier & pnpm run lint & pnpm run check-types && pnpm run build"
+    "lint:fix": "biome check --write ."
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
@@ -95,7 +92,6 @@
     "typescript": "^5.7.3"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["pnpm run lint"],
-    "*.{js,jsx,ts,tsx,scss}": ["pnpm run prettier"]
+    "*.{js,jsx,ts,tsx}": ["pnpm run lint"]
   }
 }
