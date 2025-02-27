@@ -293,12 +293,16 @@ def generate_image(
 
     except Exception as e:
         logger.error(f"Error during inference: {e}")
-        # Update task status
-        self.update_state(
-            state="FAILURE",
-            meta={
-                "request_id": request_id,
-                "error": str(e),
-                "status": "failed"
-            }
-        )
+        # Update task status with properly formatted error information
+        error_info = {
+            "request_id": request_id,
+            "error": str(e),
+            "status": "failed",
+            "exc_type": type(e).__name__,  # Include exception type explicitly
+            "exc_message": str(e)
+        }
+        self.update_state(state="FAILURE", meta=error_info)
+
+        # Properly raise the exception for Celery to handle
+        # This ensures the exception is properly serialized
+        raise

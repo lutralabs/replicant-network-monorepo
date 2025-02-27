@@ -76,7 +76,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./ai-models:/app/ai-models:rw
+      - ./ai-models:/ai-models:rw
     environment:
       <<: *common-env
     command: ["uv", "run", "celery_worker.py"]
