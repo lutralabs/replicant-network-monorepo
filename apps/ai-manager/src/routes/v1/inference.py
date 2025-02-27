@@ -61,8 +61,7 @@ async def infer(request: InferenceRequest,
         task_ids = []
 
         # Get bucket name from environment variable or use default
-        bucket_name = os.environ.get(
-            "SUPABASE_BUCKET_NAME", "generated-images")
+        bucket_name = "generated-images"
 
         for i in range(request.num_images):
             # Generate a unique ID for this specific image

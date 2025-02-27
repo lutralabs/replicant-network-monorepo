@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 # Use the bucket name from environment or default
-bucket_name = os.environ.get("SUPABASE_BUCKET_NAME", "generated-images")
+bucket_name = "generated-images"
 
 # Dictionary to store loaded models in the worker process
 # This will be populated during worker initialization

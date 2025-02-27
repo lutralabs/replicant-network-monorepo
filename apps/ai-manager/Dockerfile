@@ -21,6 +21,7 @@ RUN uv sync
 # Copy application code
 COPY src/ ./src/
 COPY app.py .
+COPY celery_worker.py .
 
 # Create directory for models
 RUN mkdir -p ai-models
@@ -28,5 +29,9 @@ RUN mkdir -p ai-models
 # Expose the port
 EXPOSE 8000
 
-# Run the application
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV PYTORCH_ENABLE_MPS_FALLBACK=1
+
+# Default command (can be overridden in docker-compose)
 CMD ["uv", "run", "app.py"] 

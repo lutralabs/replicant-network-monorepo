@@ -1,5 +1,5 @@
 [project]
-name = "ai-manager"
+name = "repnet-manager"
 version = "0.1.0"
 description = "AI manager server used on Hyperbolic for AI inference"
 readme = "README.md"
