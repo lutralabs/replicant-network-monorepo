@@ -10,8 +10,8 @@ from typing import Dict, Optional
 from src.core.celery_app import celery_app
 from src.core.device import device
 from src.core.model_registry import model_registry
+from src.core.supabase import supabase
 from celery.signals import worker_shutdown, worker_ready, worker_process_init
-from supabase import create_client
 from dotenv import load_dotenv
 
 # Set up logging
@@ -21,11 +21,8 @@ logger = logging.getLogger(__name__)
 # Load environment variables from .env file
 load_dotenv()
 
-# Initialize Supabase client
-supabase_url = os.environ.get("SUPABASE_URL")
-supabase_key = os.environ.get("SUPABASE_KEY")
-supabase = create_client(supabase_url, supabase_key)
-bucket_name = "generated-images"
+# Use the bucket name from environment or default
+bucket_name = os.environ.get("SUPABASE_BUCKET_NAME", "generated-images")
 
 # Dictionary to store loaded models in the worker process
 # This will be populated during worker initialization

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Optional
 import torch
 import os
 import logging
@@ -14,6 +14,7 @@ from src.core.device import device
 from src.core.auth import get_current_user
 from src.models.inference import InferenceRequest, InferenceResponse, ImageResult, encode_image_to_base64
 from src.core.model_registry import model_registry
+from src.core.supabase import supabase
 from src.tasks.inference_tasks import generate_image
 
 # Set up logging
@@ -59,11 +60,9 @@ async def infer(request: InferenceRequest,
         image_results = []
         task_ids = []
 
-        # Base URL for Supabase storage (you'll need to configure this)
-        # Replace with your actual Supabase URL and bucket name
-        base_url = os.environ.get(
-            "SUPABASE_PUBLIC_URL", "https://your-project.supabase.co/storage/v1/object/public")
-        bucket_name = os.environ.get("SUPABASE_BUCKET_NAME", "ai-images")
+        # Get bucket name from environment variable or use default
+        bucket_name = os.environ.get(
+            "SUPABASE_BUCKET_NAME", "generated-images")
 
         for i in range(request.num_images):
             # Generate a unique ID for this specific image
@@ -76,9 +75,11 @@ async def infer(request: InferenceRequest,
                 current_seed = request.seed + i
 
             # Generate the URL where the image will be stored
-            image_filename = f"{image_id}_{current_seed}.png"
-            image_path = f"{request.id}/{image_filename}"
-            image_url = f"{base_url}/{bucket_name}/{image_path}"
+            image_path = f"{request.id}"
+
+            # Get the public URL using the Supabase singleton
+            image_url = supabase.storage.from_(
+                bucket_name).get_public_url(image_path)
 
             # Submit the task to Celery
             task = generate_image.delay(
@@ -99,11 +100,10 @@ async def infer(request: InferenceRequest,
             # Add placeholder result with the URL where the image will be available
             image_results.append(
                 ImageResult(
-                    base64="",  # Empty base64 since the image is not yet generated
+                    url=image_url,
                     seed=current_seed,
                     width=request.width,
                     height=request.height,
-                    # Add URL field to ImageResult model if needed
                 )
             )
 

@@ -40,12 +40,10 @@ class ImageResult(BaseModel):
     """
     Model for an image result.
     """
-    base64: str = Field(..., description="Base64-encoded image data")
     seed: int = Field(..., description="Seed used for generation")
     width: int = Field(..., description="Width of the image")
     height: int = Field(..., description="Height of the image")
-    url: Optional[str] = Field(
-        None, description="URL where the image is stored")
+    url: str = Field(..., description="URL where the image is stored")
 
 
 class InferenceResponse(BaseModel):
