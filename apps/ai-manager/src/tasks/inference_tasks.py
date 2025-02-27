@@ -1,9 +1,7 @@
 import logging
 import torch
 import random
-import uuid
 from datetime import datetime
-from PIL import Image
 from io import BytesIO
 import os
 import gc
@@ -12,12 +10,22 @@ from typing import Dict, Optional
 from src.core.celery_app import celery_app
 from src.core.device import device
 from src.core.model_registry import model_registry
-from src.models.inference import encode_image_to_base64
 from celery.signals import worker_shutdown, worker_ready, worker_process_init
+from supabase import create_client
+from dotenv import load_dotenv
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Initialize Supabase client
+supabase_url = os.environ.get("SUPABASE_URL")
+supabase_key = os.environ.get("SUPABASE_KEY")
+supabase = create_client(supabase_url, supabase_key)
+bucket_name = "generated-images"
 
 # Dictionary to store loaded models in the worker process
 # This will be populated during worker initialization
@@ -151,13 +159,6 @@ def get_model(model_id: str):
         logger.error(f"Error loading model {model_info['path']}: {e}")
         raise ValueError(f"Failed to load model: {str(e)}")
 
-# Placeholder for Supabase integration - you'll need to add your Supabase client here
-# from supabase import create_client
-# supabase_url = os.environ.get("SUPABASE_URL")
-# supabase_key = os.environ.get("SUPABASE_KEY")
-# supabase = create_client(supabase_url, supabase_key)
-# bucket_name = os.environ.get("SUPABASE_BUCKET_NAME", "ai-images")
-
 
 @celery_app.task(bind=True, name="generate_image")
 def generate_image(
@@ -247,35 +248,39 @@ def generate_image(
         image.save(img_bytes, format="PNG")
         img_bytes.seek(0)
 
-        # TODO: Upload to Supabase
-        # Uncomment and modify this code when you have Supabase set up
-        # supabase_path = f"{request_id}/{image_filename}"
-        # supabase.storage.from_(bucket_name).upload(
-        #     supabase_path,
-        #     img_bytes.getvalue(),
-        #     {"content-type": "image/png"}
-        # )
-        #
-        # # Get the public URL
-        # image_url = supabase.storage.from_(bucket_name).get_public_url(supabase_path)
+        # Upload to Supabase
+        try:
+            logger.info(f"Uploading image to Supabase bucket: {bucket_name}")
+            supabase_path = f"{request_id}"
 
-        # For now, we'll just return the base64 image data
-        base64_image = encode_image_to_base64(image)
+            # Upload the image to the existing bucket
+            supabase.storage.from_(bucket_name).upload(
+                supabase_path,
+                img_bytes.getvalue(),
+                {"content-type": "image/png"}
+            )
+
+            # Get the public URL
+            image_url = supabase.storage.from_(
+                bucket_name).get_public_url(supabase_path)
+            logger.info(f"Image uploaded successfully. URL: {image_url}")
+        except Exception as e:
+            logger.error(f"Error uploading to Supabase: {e}")
+            raise ValueError(f"Failed to upload image to Supabase: {str(e)}")
 
         # Calculate processing time
         processing_time = (datetime.now() - start_time).total_seconds()
 
         logger.info(f"Generated image in {processing_time:.2f} seconds")
 
-        # Return image information
+        # Return image information (without base64)
         return {
             "request_id": request_id,
             "model_id": model_id,
             "seed": current_seed,
             "width": width,
             "height": height,
-            "base64": base64_image,  # This would be removed in production and replaced with URL
-            # "url": image_url,  # Uncomment when Supabase is set up
+            "url": image_url,
             "processing_time": processing_time,
             "status": "completed",
             "image_index": image_index
