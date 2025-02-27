@@ -39,7 +39,7 @@ export default function Page() {
             </div>
           </div>
           <Link href={'/bounties/bounty-form'}>
-            <Button variant="cta-solid">Bounty Details ></Button>
+            <Button variant="cta-solid">Bounty Details &gt;</Button>
           </Link>
         </div>
         <div className="w-full h-[1px] mt-6  bg-gray-300" />

@@ -6,10 +6,7 @@
     "component": "pnpm dlx shadcn@canary",
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
-    "next:lint": "next lint --fix",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write ."
+    "start": "next start"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
