@@ -11,7 +11,12 @@ const BOUNTIES = [
       'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
     bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
     id: '1',
-    status: 'active' as 'completed' | 'failed' | 'active' | 'crowdfunding',
+    status: 'active' as
+      | 'completed'
+      | 'failed'
+      | 'active'
+      | 'crowdfunding'
+      | 'voting',
     reward: 1000,
     submissions: 3,
     crowdfunders: 15,
@@ -27,7 +32,8 @@ const BOUNTIES = [
       | 'completed'
       | 'failed'
       | 'active'
-      | 'crowdfunding',
+      | 'crowdfunding'
+      | 'voting',
     reward: 1500,
     submissions: 0,
     crowdfunders: 15,
@@ -39,7 +45,12 @@ const BOUNTIES = [
       'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
     bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
     id: '3',
-    status: 'completed' as 'completed' | 'failed' | 'active' | 'crowdfunding',
+    status: 'completed' as
+      | 'completed'
+      | 'failed'
+      | 'active'
+      | 'crowdfunding'
+      | 'voting',
     reward: 1500,
     submissions: 4,
     crowdfunders: 15,
@@ -51,11 +62,33 @@ const BOUNTIES = [
       'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
     bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
     id: '4',
-    status: 'failed' as 'completed' | 'failed' | 'active' | 'crowdfunding',
+    status: 'failed' as
+      | 'completed'
+      | 'failed'
+      | 'active'
+      | 'crowdfunding'
+      | 'voting',
     reward: 120,
     submissions: 0,
     crowdfunders: 3,
     timeline: '5 days ago',
+  },
+  {
+    title: 'Crypto Logo Generator Crypto Logo Generator',
+    description:
+      'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
+    bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
+    id: '4',
+    status: 'voting' as
+      | 'completed'
+      | 'failed'
+      | 'active'
+      | 'crowdfunding'
+      | 'voting',
+    reward: 120,
+    submissions: 3,
+    crowdfunders: 3,
+    timeline: '5 days left',
   },
 ];
 
@@ -84,11 +117,12 @@ export default function Page() {
         </TabsList>
         <TabsContent value="active">
           <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
-            {BOUNTIES.filter((bounty) => bounty.status === 'active').map(
-              (bounty) => (
-                <BountyCard key={bounty.id} {...bounty} />
-              )
-            )}
+            {BOUNTIES.filter(
+              (bounty) =>
+                bounty.status === 'active' || bounty.status === 'voting'
+            ).map((bounty) => (
+              <BountyCard key={bounty.id} {...bounty} />
+            ))}
           </div>
         </TabsContent>
         <TabsContent value="crowdfunding">

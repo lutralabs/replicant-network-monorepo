@@ -28,7 +28,7 @@ export const CoreLayout = ({ children }) => {
               </div>
             </div>
           </header>
-          <div className="mt-12 px-16">{children}</div>
+          <div className="mt-12 px-16 h-full">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </div>

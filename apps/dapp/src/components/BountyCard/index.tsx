@@ -17,6 +17,11 @@ type ActiveBountyProps = BaseBountyCardProps & {
   submissions: number;
 };
 
+type VotingBountyProps = BaseBountyCardProps & {
+  status: 'voting';
+  submissions: number;
+};
+
 type FinishedBountyProps = BaseBountyCardProps & {
   status: 'completed' | 'failed';
   submissions: number;
@@ -28,6 +33,7 @@ type CrowdfundingBountyProps = BaseBountyCardProps & {
 
 export type BountyCardProps =
   | ActiveBountyProps
+  | VotingBountyProps
   | FinishedBountyProps
   | CrowdfundingBountyProps;
 
@@ -40,6 +46,38 @@ const ActiveBountyCard: React.FC<ActiveBountyProps> = (props) => {
           <Badge>{`${props.bountyOwnerAddress.slice(0, 6)}...${props.bountyOwnerAddress.slice(-4)}`}</Badge>
         </div>
         <Badge variant="secondary">Active</Badge>
+      </div>
+      <div className="flex items-end justify-between text-sm">
+        <div className="flex items-center gap-x-1 text-sm text-gray-600">
+          <span className="text-md font-medium text-black">
+            {props.submissions ?? 0}
+          </span>
+          Submissions
+        </div>
+
+        <div className="flex flex-col items-end text-sm text-gray-600">
+          <div className="text-md font-medium text-black">{props.timeline}</div>
+          <div>
+            Bounty:{' '}
+            <span className="text-md font-semibold text-black">
+              {props.reward} MON
+            </span>
+          </div>
+        </div>
+      </div>
+    </BaseBountyCard>
+  );
+};
+
+const VotingBountyProps: React.FC<VotingBountyProps> = (props) => {
+  return (
+    <BaseBountyCard {...props}>
+      <div className="flex grow items-start justify-between gap-x-2 pt-4">
+        <div className="flex items-center gap-x-2 text-sm text-gray-600">
+          By
+          <Badge>{`${props.bountyOwnerAddress.slice(0, 6)}...${props.bountyOwnerAddress.slice(-4)}`}</Badge>
+        </div>
+        <Badge variant="default">Voting</Badge>
       </div>
       <div className="flex items-end justify-between text-sm">
         <div className="flex items-center gap-x-1 text-sm text-gray-600">
@@ -153,6 +191,8 @@ export const BountyCard: React.FC<BountyCardProps> = (props) => {
   switch (props.status) {
     case 'active':
       return <ActiveBountyCard {...props} />;
+    case 'voting':
+      return <VotingBountyProps {...props} />;
     case 'completed':
     case 'failed':
       return <CompletedBountyCard {...props} />;
