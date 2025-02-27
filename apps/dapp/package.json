@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "next:lint": "next lint --fix",
-    "lint": "pnpm run next:lint && eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx,scss}'",
     "check-types": "tsc",
     "validate": "pnpm run prettier & pnpm run lint & pnpm run check-types && pnpm run build"
