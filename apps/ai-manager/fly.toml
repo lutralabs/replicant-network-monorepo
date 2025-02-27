@@ -6,6 +6,9 @@
 app = 'repnet-ai-manager'
 primary_region = 'fra'
 
+[processes]
+manager = "uv run app.py"
+worker = "uv run celery_worker.py"
 [build]
 
 [http_service]
@@ -14,7 +17,7 @@ force_https = true
 auto_stop_machines = 'stop'
 auto_start_machines = true
 min_machines_running = 1
-processes = ['app']
+processes = ['manager']
 
 [mounts]
 source = "ai_models"
