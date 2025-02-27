@@ -38,4 +38,28 @@ celery_app.conf.update(
     # This is critical for preventing SIGSEGV errors
     worker_pool='solo',
     worker_pool_restarts=True,
+
+    # Enhanced error handling and resilience settings
+    broker_connection_retry=True,  # Retry connecting to broker if connection is lost
+    broker_connection_max_retries=None,  # Retry indefinitely
+    broker_connection_timeout=10,  # Connection timeout in seconds
+
+    # Task retry settings (default values, can be overridden per task)
+    task_default_retry_delay=5,  # 5 seconds delay before retrying
+    task_max_retries=3,  # Maximum number of retries
+    task_retry_backoff=True,  # Use exponential backoff
+    task_retry_backoff_max=600,  # Maximum backoff time (10 minutes)
+
+    # Redis connection pool settings
+    broker_pool_limit=10,  # Maximum number of connections in the pool
+    redis_max_connections=20,  # Maximum number of connections to Redis
+
+    # Task result settings
+    task_ignore_result=False,  # We need results for task status tracking
+    result_expires=86400,  # Results expire after 24 hours
+
+    # Worker crash recovery
+    # Cancel tasks if connection is lost
+    worker_cancel_long_running_tasks_on_connection_loss=True,
+    worker_deduplicate_successful_tasks=True,  # Prevent duplicate task execution
 )

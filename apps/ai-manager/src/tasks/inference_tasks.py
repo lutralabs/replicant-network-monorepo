@@ -157,7 +157,14 @@ def get_model(model_id: str):
         raise ValueError(f"Failed to load model: {str(e)}")
 
 
-@celery_app.task(bind=True, name="generate_image")
+@celery_app.task(bind=True, name="generate_image",
+                 max_retries=3,
+                 retry_backoff=True,
+                 retry_backoff_max=600,
+                 soft_time_limit=1800,
+                 time_limit=3600,
+                 autoretry_for=(Exception,),
+                 retry_kwargs={'max_retries': 3})
 def generate_image(
     self,
     request_id: str,
@@ -190,6 +197,8 @@ def generate_image(
         Dictionary with image information
     """
     start_time = datetime.now()
+    image_url = None
+    current_seed = None
 
     try:
         # Get the model info from the registry
@@ -270,7 +279,6 @@ def generate_image(
 
         logger.info(f"Generated image in {processing_time:.2f} seconds")
 
-        # Return image information (without base64)
         return {
             "request_id": request_id,
             "model_id": model_id,
@@ -279,7 +287,7 @@ def generate_image(
             "height": height,
             "url": image_url,
             "processing_time": processing_time,
-            "status": "completed",
+            "status": "completed" if image_url and not image_url.startswith("error://") else "partial",
             "image_index": image_index
         }
 
@@ -294,4 +302,3 @@ def generate_image(
                 "status": "failed"
             }
         )
-        raise
