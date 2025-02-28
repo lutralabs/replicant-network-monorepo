@@ -4,7 +4,7 @@
 #
 
 app = 'repnet-ai-manager'
-primary_region = 'fra'
+primary_region = 'ord'
 
 [processes]
 manager = "uv run app.py"
@@ -41,4 +41,5 @@ size = "shared-cpu-4x"
 [[vm]]
 size = "shared-cpu-2x"
 memory = '4gb'
+gpu_kind = "l40s"
 processes = ["worker"]
