@@ -27,6 +27,7 @@ const buttonVariants = tv({
       default: 'h-9 px-4 py-2 has-[>svg]:px-3',
       sm: 'h-8 px-3 has-[>svg]:px-2.5',
       lg: 'h-10 px-6 has-[>svg]:px-4',
+      xs: 'h-6 px-2.5 has-[>svg]:px-2.5 text-xs',
     },
     icon: {
       true: 'size-9 border border-input text-foreground bg-background rounded-md hover:bg-secondary',

@@ -1,9 +1,9 @@
 'use client';
 
-import { Crowdfunders } from '@/app/models/[...slug]/Crowdfunders';
-import { Details } from '@/app/models/[...slug]/Details';
-import { Overview } from '@/app/models/[...slug]/Overview';
-import { Submissions } from '@/app/models/[...slug]/Submissions';
+import { Crowdfunders } from '@/app/bounties/[...slug]/Crowdfunders';
+import { Details } from '@/app/bounties/[...slug]/Details';
+import { Overview } from '@/app/bounties/[...slug]/Overview';
+import { Submissions } from '@/app/bounties/[...slug]/Submissions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,6 +11,7 @@ import { BOUNTIES } from '@/constants/bounties';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
+import { FundBountyDialog } from './FundBountyDialog';
 
 export default function Page() {
   const paths = usePathname();
@@ -56,11 +57,14 @@ export default function Page() {
             <div className="text-lg font-semibold">{bounty.title}</div>
             <div className="text-md mt-2 text-gray-600">{bounty.subtitle}</div>
           </div>
-          {ctaText && (
-            <Link href={'/bounties/bounty-form'}>
-              <Button variant="cta-solid">{ctaText} &gt;</Button>
-            </Link>
-          )}
+          {ctaText &&
+            (ctaText === 'Fund the Bounty' ? (
+              <FundBountyDialog bounty={bounty} />
+            ) : (
+              <Link href={'/bounties/bounty-form'}>
+                <Button variant="cta-solid">{ctaText} &gt;</Button>
+              </Link>
+            ))}
         </div>
         <div className="mt-6 w-full">
           <div className="flex justify-start gap-x-12 items-center text-gray-600">
