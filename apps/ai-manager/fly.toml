@@ -9,6 +9,7 @@ primary_region = 'fra'
 [processes]
 manager = "uv run app.py"
 worker = "uv run celery_worker.py"
+
 [build]
 
 [http_service]
@@ -35,6 +36,6 @@ type = "http"
 
 
 [[vm]]
-memory = '2gb'
+memory = '1gb'
 cpu_kind = 'shared'
 cpus = 1
