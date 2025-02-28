@@ -238,7 +238,13 @@ export const BOUNTIES: Bounty[] = [
     createdTimestamp: '1740739374',
     submittedModels: [
       {
-        hash: '0x123Where',
+        hash: '5dcdae3c21a45bc4e15b7feb4d9dc602a01975f036495d565ef3e6fb36d015b0',
+        author: 'REDACTED',
+        votes: 3,
+        date: '1740739374',
+      },
+      {
+        hash: 'f886220c83f69e67456d45bc36875f065cf93f54aad60b9e60c6700409f64f3a',
         author: 'REDACTED',
         votes: 3,
         date: '1740739374',

@@ -1,9 +1,9 @@
 'use client';
 
-import { Crowdfunders } from '@/app/bounties/[...slug]/Crowdfunders';
-import { Details } from '@/app/bounties/[...slug]/Details';
-import { Overview } from '@/app/bounties/[...slug]/Overview';
-import { Submissions } from '@/app/bounties/[...slug]/Submissions';
+import { Crowdfunders } from '@/app/bounties/[bounty]/Crowdfunders';
+import { Details } from '@/app/bounties/[bounty]/Details';
+import { Overview } from '@/app/bounties/[bounty]/Overview';
+import { Submissions } from '@/app/bounties/[bounty]/Submissions';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
