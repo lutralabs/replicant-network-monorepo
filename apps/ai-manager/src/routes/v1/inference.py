@@ -44,16 +44,8 @@ async def infer(request: InferenceRequest,
     # Set response content type to JSON
     response.headers["Content-Type"] = "application/json"
 
-    # Get the model info from the registry
-    model_info = model_registry.get_model_by_hash(request.model_id)
-    if not model_info:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Model with ID {request.model_id} not found"
-        )
-
     logger.info(
-        f"Submitting inference job with model: {model_info['name']} (hash: {request.model_id})")
+        f"Submitting inference job with model: {request.model_id}")
 
     try:
         # Generate image URLs that will be used once the images are generated

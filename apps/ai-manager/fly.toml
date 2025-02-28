@@ -23,6 +23,7 @@ processes = ['manager']
 [mounts]
 source = "ai_models"
 destination = "/ai-models"
+processes = ["worker"]
 
 [checks]
 [checks.global_check]

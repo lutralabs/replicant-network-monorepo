@@ -5,7 +5,6 @@ from contextlib import asynccontextmanager
 
 # Import versioned routes
 from src.routes.v1 import router as v1_router
-from src.core.model_registry import model_registry
 
 
 @asynccontextmanager
@@ -14,14 +13,12 @@ async def lifespan(app: FastAPI):
     Lifespan context manager for FastAPI application.
     Handles startup and shutdown events.
     """
-    # Startup: Initialize the model registry and start the watcher thread
-    model_registry.scan_models()
-    model_registry.start_watcher()
+    # No need to initialize model registry or start watcher thread
+    # The API will fetch model information from the worker
 
     yield
 
-    # Shutdown: Stop the model registry watcher thread
-    model_registry.stop_watcher()
+    # No need to stop the model registry watcher thread
 
 
 # Initialize FastAPI app

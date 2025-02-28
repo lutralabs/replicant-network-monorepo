@@ -63,25 +63,6 @@ class InferenceResponse(BaseModel):
     status: Optional[str] = "completed"
 
 
-class ModelInfo(BaseModel):
-    """
-    Model information.
-    """
-    id: str = Field(..., description="Model ID (hash)")
-    name: str = Field(..., description="Model name")
-    size: int = Field(..., description="Model size in bytes")
-    path: str = Field(..., description="Model file path")
-    extension: str = Field(..., description="Model file extension")
-
-
-class ModelsListResponse(BaseModel):
-    """
-    Response model for the models list endpoint.
-    """
-    models: List[ModelInfo] = Field(default_factory=list)
-    count: int
-
-
 class TaskStatusResponse(BaseModel):
     """
     Response model for the task status endpoint.
