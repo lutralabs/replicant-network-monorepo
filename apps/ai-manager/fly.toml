@@ -27,7 +27,7 @@ processes = ["worker"]
 
 [checks]
 [checks.global_check]
-grace_period = "60s"
+grace_period = "3600s"
 interval = "15s"
 method = "get"
 path = "/v1/health"
