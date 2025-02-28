@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for repnet-ai-manager on 2025-02-27T17:59:38+01:00
+# fly.toml app configuration file generated for repnet-ai-manager on 2025-02-28T14:59:28+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -6,11 +6,16 @@
 app = 'repnet-ai-manager'
 primary_region = 'ord'
 
-[processes]
-manager = "uv run app.py"
-worker = "uv run celery_worker.py"
-
 [build]
+
+[processes]
+manager = 'uv run app.py'
+worker = 'uv run celery_worker.py'
+
+[[mounts]]
+source = 'ai_models'
+destination = '/ai-models'
+processes = ['worker']
 
 [http_service]
 internal_port = 8000
@@ -20,26 +25,21 @@ auto_start_machines = true
 min_machines_running = 1
 processes = ['manager']
 
-[mounts]
-source = "ai_models"
-destination = "/ai-models"
-processes = ["worker"]
-
 [checks]
 [checks.global_check]
-grace_period = "3600s"
-interval = "15s"
-method = "get"
-path = "/v1/health"
 port = 8000
-timeout = "10s"
-type = "http"
+type = 'http'
+interval = '15s'
+timeout = '10s'
+grace_period = '1h0m0s'
+method = 'get'
+path = '/v1/health'
 
 [[vm]]
-size = "shared-cpu-4x"
+size = 'shared-cpu-4x'
 
 [[vm]]
-size = "shared-cpu-2x"
+size = 'shared-cpu-2x'
 memory = '4gb'
-gpu_kind = "l40s"
-processes = ["worker"]
+gpu_kind = 'l40s'
+processes = ['worker']
