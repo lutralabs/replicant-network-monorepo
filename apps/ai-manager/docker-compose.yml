@@ -51,8 +51,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${PORT:-8000}:8000"
-    volumes:
-      - ./ai-models:/ai-models:rw
     environment:
       <<: *common-env
     depends_on:
