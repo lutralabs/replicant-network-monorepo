@@ -39,7 +39,6 @@ path = '/v1/health'
 size = 'shared-cpu-4x'
 
 [[vm]]
-size = 'shared-cpu-2x'
-memory = '4gb'
+memory = '16gb'
 gpu_kind = 'l40s'
 processes = ['worker']
