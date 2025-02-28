@@ -5,9 +5,13 @@
   "main": "index.js",
   "scripts": {
     "build": "forge build",
+    "test": "forge test",
     "lint": "forge fmt"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.2.0"
+  }
 }
