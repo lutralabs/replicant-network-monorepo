@@ -1,7 +1,6 @@
 // /components/NextBreadcrumb.tsx
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { type ReactNode } from 'react';
 

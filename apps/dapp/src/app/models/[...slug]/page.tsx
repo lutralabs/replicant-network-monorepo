@@ -31,11 +31,9 @@ export default function Page() {
       <div>
         <div className="flex w-full items-center justify-between">
           <div className="max-w-[500px]">
-            <div className="text-lg font-semibold">Model Bounties</div>
+            <div className="text-lg font-semibold">Crypto Logo Generator</div>
             <div className="text-md mt-2 text-gray-600">
-              A list of existing bounties for custom AI models. Users are
-              welcome to join existing bounties by either contributing MON to
-              the bounty or by submitting a Model OR create a new bounty.
+              Aj will generate a hella nice crypto logo for u mate.
             </div>
           </div>
           <Link href={'/bounties/bounty-form'}>
@@ -59,14 +57,14 @@ export default function Page() {
           )
         )}
       </div>
-      <div className="flex justify-between rounded-full bg-white border-2 border-sidebar-border pr-4 pl-2">
+      <div className="flex items-center justify-between rounded-full bg-white border-2 border-sidebar-border pr-2 pl-2">
         <input
-          className="grow outline-none border-0 field-sizing-fixed h-[55px]"
+          className="grow outline-none border-0 field-sizing-fixed h-[50px]"
           placeholder="What can I generate for you?"
         />
         <Button
           size="sm"
-          className="rounded-full bg-gray-200 border-0 hover:bg-gray-100 my-2"
+          className="rounded-full bg-gray-200 border-0 hover:bg-gray-100"
           icon
           onClick={callAPI}
         >

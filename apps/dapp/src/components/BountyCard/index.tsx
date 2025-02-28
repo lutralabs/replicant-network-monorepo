@@ -173,7 +173,7 @@ const BaseBountyCard: React.FC<
   BaseBountyCardProps & { children?: React.ReactNode }
 > = ({ title, description, id, children }) => {
   return (
-    <Link href={`/bounty/${id}`}>
+    <Link href={`/bounties/${id}`}>
       <div className="border-sidebar-border flex h-[240px] w-[380px] flex-col rounded-md border-2 bg-white px-8 py-4 hover:cursor-pointer hover:opacity-90">
         <div>
           <div className="truncate text-lg font-semibold">{title}</div>

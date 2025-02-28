@@ -17,7 +17,7 @@ export const ModelCard = ({
   id,
 }: ModelCardProps) => {
   return (
-    <Link href={'/'}>
+    <Link href={`/models/${id}`}>
       <div className="border-sidebar-border flex h-[200px] w-[380px] flex-col justify-between rounded-md border-2 bg-white px-8 py-4 hover:cursor-pointer hover:opacity-90">
         <div>
           <div className="truncate text-lg font-semibold">{title}</div>
