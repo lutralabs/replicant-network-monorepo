@@ -97,7 +97,7 @@ def get_model(model_id: str):
         raise ValueError(f"Failed to load model: {str(e)}")
 
 
-async def generate_image_task(
+def generate_image_task(
     request_id: str,
     model_id: str,
     prompt: str,
@@ -127,6 +127,17 @@ async def generate_image_task(
     Returns:
         Dictionary with image information
     """
+    job_id = f"{request_id}_{image_index}"
+    logger.info(
+        f"🚀 STARTING JOB {job_id}: Generating image {image_index+1} for request {request_id}")
+    logger.info(f"  ├─ Model: {model_id}")
+    logger.info(f"  ├─ Prompt: {prompt[:50]}..." if len(
+        prompt) > 50 else f"  ├─ Prompt: {prompt}")
+    logger.info(f"  ├─ Size: {width}x{height}")
+    if negative_prompt:
+        logger.info(f"  ├─ Negative prompt: {negative_prompt[:50]}..." if len(
+            negative_prompt) > 50 else f"  ├─ Negative prompt: {negative_prompt}")
+
     start_time = datetime.now()
     image_url = None
     current_seed = None
@@ -137,8 +148,7 @@ async def generate_image_task(
         if not model_info:
             raise ValueError(f"Model with ID {model_id} not found")
 
-        logger.info(
-            f"Running inference with model: {model_info['name']} (hash: {model_id})")
+        logger.info(f"  ├─ Using model: {model_info['name']}")
 
         # Load the model from our cache or load it if not cached
         pipe = get_model(model_id)
@@ -157,9 +167,13 @@ async def generate_image_task(
         current_generator = torch.Generator(
             device=device).manual_seed(current_seed)
 
-        logger.info(f"Generating image with seed {current_seed}")
+        logger.info(f"  ├─ Inference steps: {num_inference_steps}")
+        logger.info(f"  ├─ Guidance scale: {guidance_scale}")
+        logger.info(f"  ├─ Seed: {current_seed}")
+        logger.info(f"  └─ Device: {device}")
 
         # Run the model with memory-efficient settings
+        logger.info(f"⚙️ PROCESSING JOB {job_id}: Running inference...")
         result = pipe(
             prompt=prompt,
             negative_prompt=negative_prompt,
@@ -186,6 +200,7 @@ async def generate_image_task(
         image_bytes.seek(0)
 
         # Upload the image to Supabase Storage
+        logger.info(f"📤 UPLOADING JOB {job_id}: Uploading image to storage...")
         try:
             # Upload the image to the bucket
             supabase.storage.from_(bucket_name).upload(
@@ -198,14 +213,18 @@ async def generate_image_task(
             image_url = supabase.storage.from_(
                 bucket_name).get_public_url(image_filename)
 
-            logger.info(f"Uploaded image to {image_url}")
+            logger.info(f"  └─ Uploaded to: {image_url}")
         except Exception as e:
-            logger.error(f"Error uploading image to Supabase: {e}")
+            logger.error(f"  └─ Error uploading image to Supabase: {e}")
             # Continue with the process even if upload fails
             # In a production environment, you might want to handle this differently
 
         # Calculate processing time
         processing_time = (datetime.now() - start_time).total_seconds()
+
+        # Log completion
+        logger.info(
+            f"✅ COMPLETED JOB {job_id}: Generated image in {processing_time:.2f} seconds")
 
         # Return the result
         return {
@@ -216,7 +235,11 @@ async def generate_image_task(
             "processing_time": processing_time,
         }
     except Exception as e:
-        logger.error(f"Error generating image: {e}")
+        # Calculate processing time even for failed jobs
+        processing_time = (datetime.now() - start_time).total_seconds()
+
+        logger.error(
+            f"❌ FAILED JOB {job_id}: Error after {processing_time:.2f} seconds: {str(e)}")
         # In a real implementation, you might want to update a status in a database
         # or send a notification about the failure
         return {

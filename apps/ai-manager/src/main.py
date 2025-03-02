@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):
     model_registry.stop_watcher()
 
 
-# Initialize FastAPI app
+# Initialize FastAPI app with proper concurrency settings
 app = FastAPI(
     title="AI Inference API",
     description="API for AI model inference",
