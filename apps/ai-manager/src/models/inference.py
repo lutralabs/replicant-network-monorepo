@@ -4,6 +4,20 @@ from base64 import b64encode
 from io import BytesIO
 
 
+class ModelInfo(BaseModel):
+    """
+    Model for AI model information.
+    """
+    id: str = Field(..., description="Unique identifier (hash) for the model")
+    name: str = Field(..., description="Name of the model")
+    path: str = Field(..., description="Path to the model file")
+    extension: str = Field(..., description="File extension of the model")
+    size: Optional[int] = Field(
+        0, description="Size of the model file in bytes")
+    loaded: bool = Field(
+        False, description="Whether the model is currently loaded")
+
+
 class InferenceRequest(BaseModel):
     """
     Request model for the inference endpoint.

@@ -11,6 +11,7 @@ import torch
 from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler
 
 from src.core.device import device
+from src.core.models import loaded_models
 
 # Set up logging
 log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
@@ -41,8 +42,8 @@ class ModelRegistry:
         self._watcher_thread = None
         self._processing_files = set()  # Track files being processed
 
-        # Model cache to store loaded models
-        self.model_cache: Dict[str, Any] = {}
+        # Reference to the global loaded_models dictionary
+        self.loaded_models = loaded_models
 
         # Default inference parameters
         self.default_inference_steps = int(
@@ -181,6 +182,7 @@ class ModelRegistry:
                             "size": file_size,
                             "mtime": file_mtime,
                             "extension": ext,
+                            "hash": file_hash,
                             "last_scanned": time.time()
                         }
 
@@ -205,15 +207,24 @@ class ModelRegistry:
             model_hash = self.path_to_hash[model_path]
 
             # Remove from cache if loaded
-            if model_hash in self.model_cache:
+            if model_hash in self.loaded_models:
                 logger.info(f"Removing model from cache: {model_hash}")
-                del self.model_cache[model_hash]
+                del self.loaded_models[model_hash]
 
             del self.models[model_hash]
             del self.path_to_hash[model_path]
             logger.info(f"Removed model: {model_path} (hash: {model_hash})")
 
         return self.models
+
+    def get_models(self) -> List[Dict]:
+        """
+        Get all models in the registry.
+
+        Returns:
+            List of model info dictionaries
+        """
+        return list(self.models.values())
 
     def get_model_by_hash(self, model_hash: str) -> Optional[Dict]:
         """
@@ -241,26 +252,34 @@ class ModelRegistry:
             ValueError: If the model is not found or cannot be loaded
         """
         # Check if model is already loaded
-        if model_hash in self.model_cache:
+        if model_hash in self.loaded_models:
             logger.info(f"Using cached model: {model_hash}")
-            return self.model_cache[model_hash]
+            return self.loaded_models[model_hash]
 
         # Get model info
         model_info = self.get_model_by_hash(model_hash)
         if not model_info:
             raise ValueError(f"Model with hash {model_hash} not found")
 
+        # Load the model based on file extension
         model_path = model_info["path"]
-        logger.info(f"Loading model from {model_path}")
+        extension = model_info["extension"]
 
         try:
-            # Load the model based on file extension
-            if model_info["extension"] in [".ckpt", ".safetensors"]:
+            if extension in [".ckpt", ".safetensors"]:
                 # Load Stable Diffusion model
+                logger.info(f"Loading Stable Diffusion model: {model_path}")
+
+                # Set lower precision to reduce memory usage
+                dtype = torch.float16 if device.type == "cuda" else torch.float32
+
+                # Load with memory-efficient settings
                 pipe = StableDiffusionPipeline.from_single_file(
                     model_path,
-                    torch_dtype=torch.float16 if device.type == "cuda" else torch.float32,
-                    use_safetensors=model_info["extension"] == ".safetensors"
+                    torch_dtype=dtype,
+                    use_safetensors=extension == ".safetensors",
+                    low_cpu_mem_usage=True,
+                    variant="fp16" if dtype == torch.float16 else None
                 )
 
                 # Use DPM-Solver++ scheduler for faster inference
@@ -273,10 +292,11 @@ class ModelRegistry:
                 # Move to device
                 pipe = pipe.to(device)
 
-                # Enable memory efficient attention if using CUDA
+                # Enable memory efficient attention
+                pipe.enable_attention_slicing(1)
+
+                # Enable xformers if available and on CUDA
                 if device.type == "cuda":
-                    pipe.enable_attention_slicing()
-                    # Enable xformers if available
                     try:
                         pipe.enable_xformers_memory_efficient_attention()
                         logger.info(
@@ -285,12 +305,11 @@ class ModelRegistry:
                         logger.warning(f"Could not enable xformers: {e}")
 
                 # Cache the model
-                self.model_cache[model_hash] = pipe
+                self.loaded_models[model_hash] = pipe
                 logger.info(f"Successfully loaded model: {model_info['name']}")
                 return pipe
             else:
-                raise ValueError(
-                    f"Unsupported model format: {model_info['extension']}")
+                raise ValueError(f"Unsupported model format: {extension}")
         except Exception as e:
             logger.error(f"Error loading model {model_path}: {e}")
             raise ValueError(f"Failed to load model: {str(e)}")
@@ -299,43 +318,33 @@ class ModelRegistry:
         """
         Start the model watcher thread.
         """
-        if self._watcher_thread is not None and self._watcher_thread.is_alive():
-            logger.warning("Model watcher thread is already running")
-            return
-
-        self._stop_event.clear()
-        self._watcher_thread = threading.Thread(
-            target=self._watch_models, daemon=True)
-        self._watcher_thread.start()
-        logger.info("Started model watcher thread")
+        if self._watcher_thread is None or not self._watcher_thread.is_alive():
+            self._stop_event.clear()
+            self._watcher_thread = threading.Thread(
+                target=self._watch_models, daemon=True)
+            self._watcher_thread.start()
+            logger.info("Started model watcher thread")
 
     def stop_watcher(self):
         """
         Stop the model watcher thread.
         """
-        if self._watcher_thread is None or not self._watcher_thread.is_alive():
-            logger.warning("Model watcher thread is not running")
-            return
-
-        self._stop_event.set()
-        self._watcher_thread.join(timeout=5)
-        logger.info("Stopped model watcher thread")
+        if self._watcher_thread is not None and self._watcher_thread.is_alive():
+            self._stop_event.set()
+            self._watcher_thread.join(timeout=5)
+            logger.info("Stopped model watcher thread")
 
     def _watch_models(self):
         """
         Watch for changes in the model directories.
         """
-        # Initial scan
-        self.scan_models()
-
-        # Watch for changes
         while not self._stop_event.is_set():
             try:
                 self.scan_models()
             except Exception as e:
                 logger.error(f"Error scanning models: {e}")
 
-            # Sleep for the scan interval
+            # Wait for the next scan
             self._stop_event.wait(self.scan_interval)
 
 

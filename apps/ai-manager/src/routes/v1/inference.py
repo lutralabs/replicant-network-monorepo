@@ -12,10 +12,11 @@ import uuid
 
 from src.core.device import device
 from src.core.auth import get_current_user
-from src.models.inference import InferenceRequest, InferenceResponse, ImageResult, encode_image_to_base64
+from src.models.inference import InferenceRequest, InferenceResponse, ImageResult, encode_image_to_base64, ModelInfo
 from src.core.model_registry import model_registry
 from src.core.supabase import supabase
 from src.tasks.inference_tasks import generate_image_task
+from src.core.models import loaded_models
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +24,38 @@ logger = logging.getLogger(__name__)
 
 # Create a router for inference-related endpoints
 router = APIRouter(tags=["inference"])
+
+
+@router.get("/models", response_model=List[ModelInfo])
+async def get_models():
+    """
+    Get all available models.
+
+    Returns:
+        List[ModelInfo]: List of available models with their details
+    """
+    logger.info("Received request to get all available models")
+
+    # Get all models from the registry
+    models = model_registry.get_models()
+
+    # Convert to ModelInfo objects
+    model_info_list = []
+    for model in models:
+        model_hash = model["hash"]
+        model_info_list.append(
+            ModelInfo(
+                id=model_hash,
+                name=model["name"],
+                path=model["path"],
+                extension=model["extension"],
+                size=model["size"],
+                loaded=model_hash in loaded_models
+            )
+        )
+
+    logger.info(f"Returning {len(model_info_list)} models")
+    return model_info_list
 
 
 @router.post("/infer", response_model=InferenceResponse,
@@ -46,7 +79,18 @@ async def infer(request: InferenceRequest,
     response.headers["Content-Type"] = "application/json"
 
     logger.info(
-        f"Submitting inference job with model: {request.model_id}")
+        f"📋 RECEIVED REQUEST: ID={request.id}, Model={request.model_id}, Images={request.num_images}")
+    logger.info(f"  ├─ Prompt: {request.prompt[:50]}..." if len(
+        request.prompt) > 50 else f"  ├─ Prompt: {request.prompt}")
+    if request.negative_prompt:
+        logger.info(f"  ├─ Negative prompt: {request.negative_prompt[:50]}..." if len(
+            request.negative_prompt) > 50 else f"  ├─ Negative prompt: {request.negative_prompt}")
+    logger.info(f"  ├─ Size: {request.width}x{request.height}")
+    logger.info(
+        f"  ├─ Steps: {request.num_inference_steps or model_registry.default_inference_steps}")
+    logger.info(
+        f"  ├─ Guidance scale: {request.guidance_scale or model_registry.default_guidance_scale}")
+    logger.info(f"  └─ Seed: {request.seed or 'random'}")
 
     try:
         # Generate image URLs that will be used once the images are generated
@@ -54,6 +98,9 @@ async def infer(request: InferenceRequest,
 
         # Get bucket name from environment variable or use default
         bucket_name = "generated-images"
+
+        logger.info(
+            f"🔄 SCHEDULING TASKS: Adding {request.num_images} background tasks")
 
         for i in range(request.num_images):
             # Generate a unique ID for this specific image
@@ -98,13 +145,13 @@ async def infer(request: InferenceRequest,
             )
 
             logger.info(
-                f"Added background task for image {i+1}/{request.num_images}")
+                f"  ├─ Task {i+1}/{request.num_images}: Image with seed {current_seed}")
 
         # Calculate processing time for task submission
         processing_time = (datetime.now() - start_time).total_seconds()
 
         logger.info(
-            f"Submitted {len(image_results)} image generation tasks in {processing_time:.2f} seconds")
+            f"✅ TASKS SCHEDULED: {len(image_results)} tasks in {processing_time:.2f} seconds")
 
         # Return response with URLs where images will be available
         return InferenceResponse(
@@ -119,13 +166,13 @@ async def infer(request: InferenceRequest,
             status="processing"
         )
     except ValueError as e:
-        logger.error(f"Value error during inference: {e}")
+        logger.error(f"❌ VALUE ERROR: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
     except Exception as e:
-        logger.error(f"Error during inference: {e}")
+        logger.error(f"❌ SERVER ERROR: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error during inference: {str(e)}"
@@ -144,6 +191,7 @@ async def get_inference_status(request_id: str,
     Returns:
         Status information about the inference request
     """
+    logger.info(f"📊 STATUS CHECK: Request ID={request_id}")
     # In a real implementation, you would check the status of the images in Supabase
     # For now, we'll just return a placeholder response
     return {
