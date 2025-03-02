@@ -7,11 +7,10 @@ import os
 import gc
 from typing import Dict, Optional
 
-from src.core.celery_app import celery_app
-from src.core.device import device
 from src.core.model_registry import model_registry
 from src.core.supabase import supabase
-from celery.signals import worker_shutdown, worker_ready, worker_process_init
+from src.core.device import device
+from src.core.models import loaded_models
 from dotenv import load_dotenv
 
 # Set up logging
@@ -24,74 +23,15 @@ load_dotenv()
 # Use the bucket name from environment or default
 bucket_name = "generated-images"
 
-# Dictionary to store loaded models in the worker process
-# This will be populated during worker initialization
-loaded_models = {}
-
-# Initialize model registry when this module is imported
-# This ensures models are scanned and the watcher is started for Celery workers
-model_registry.scan_models()
-model_registry.start_watcher()
-
-# Register a worker process initialization handler to preload models
-
-
-@worker_process_init.connect
-def init_worker_process(**kwargs):
-    logger.info("Initializing worker process")
-    # Scan models to ensure they're discovered
-    models = model_registry.scan_models()
-
-    # Preload models into the worker process
-    global loaded_models
-    loaded_models = {}
-
-    # Log the number of models found
-    logger.info(f"Found {len(models)} models in the registry")
-
-    # Force garbage collection to clean up memory
-    gc.collect()
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-
-# Register a worker startup signal handler to ensure the model registry is initialized
-
-
-@worker_ready.connect
-def startup_worker_handler(**kwargs):
-    logger.info("Celery worker started, ensuring model registry is initialized")
-    # Scan models again to ensure they're loaded
-    model_registry.scan_models()
-    # Make sure the watcher is running
-    if not hasattr(model_registry, '_watcher_thread') or not model_registry._watcher_thread or not model_registry._watcher_thread.is_alive():
-        model_registry.start_watcher()
-
-# Register a worker shutdown signal handler to stop the model registry watcher
-
-
-@worker_shutdown.connect
-def shutdown_worker_handler(**kwargs):
-    logger.info("Celery worker shutting down, stopping model registry watcher")
-    model_registry.stop_watcher()
-
-    # Clear loaded models
-    global loaded_models
-    loaded_models.clear()
-
-    # Force garbage collection
-    gc.collect()
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-
 # Helper function to get a model, either from the local cache or by loading it
 
 
 def get_model(model_id: str):
     global loaded_models
 
-    # Check if the model is already loaded in this worker process
+    # Check if the model is already loaded
     if model_id in loaded_models:
-        logger.info(f"Using locally cached model: {model_id}")
+        logger.info(f"Using cached model: {model_id}")
         return loaded_models[model_id]
 
     # Get model info from the registry
@@ -145,7 +85,7 @@ def get_model(model_id: str):
                 except Exception as e:
                     logger.warning(f"Could not enable xformers: {e}")
 
-            # Cache the model in this worker process
+            # Cache the model
             loaded_models[model_id] = pipe
             logger.info(f"Successfully loaded model: {model_info['name']}")
             return pipe
@@ -157,16 +97,7 @@ def get_model(model_id: str):
         raise ValueError(f"Failed to load model: {str(e)}")
 
 
-@celery_app.task(bind=True, name="generate_image",
-                 max_retries=3,
-                 retry_backoff=True,
-                 retry_backoff_max=600,
-                 soft_time_limit=1800,
-                 time_limit=3600,
-                 autoretry_for=(Exception,),
-                 retry_kwargs={'max_retries': 3})
-def generate_image(
-    self,
+async def generate_image_task(
     request_id: str,
     model_id: str,
     prompt: str,
@@ -179,7 +110,7 @@ def generate_image(
     image_index: int = 0,
 ) -> Dict:
     """
-    Celery task to generate an image using the AI model and upload it to Supabase.
+    Background task to generate an image using the AI model and upload it to Supabase.
 
     Args:
         request_id: Unique identifier for the request
@@ -209,7 +140,7 @@ def generate_image(
         logger.info(
             f"Running inference with model: {model_info['name']} (hash: {model_id})")
 
-        # Load the model from our local worker cache or load it if not cached
+        # Load the model from our cache or load it if not cached
         pipe = get_model(model_id)
 
         # Set inference parameters
@@ -249,60 +180,48 @@ def generate_image(
         # Generate a unique filename for the image
         image_filename = f"{request_id}_{image_index}_{current_seed}.png"
 
-        # Convert image to bytes for storage
-        img_bytes = BytesIO()
-        image.save(img_bytes, format="PNG")
-        img_bytes.seek(0)
+        # Convert the image to bytes
+        image_bytes = BytesIO()
+        image.save(image_bytes, format="PNG")
+        image_bytes.seek(0)
 
-        # Upload to Supabase
+        # Upload the image to Supabase Storage
         try:
-            logger.info(f"Uploading image to Supabase bucket: {bucket_name}")
-            supabase_path = f"{request_id}"
-
-            # Upload the image to the existing bucket
+            # Upload the image to the bucket
             supabase.storage.from_(bucket_name).upload(
-                supabase_path,
-                img_bytes.getvalue(),
-                {"content-type": "image/png"}
+                path=image_filename,
+                file=image_bytes.getvalue(),
+                file_options={"content-type": "image/png"}
             )
 
             # Get the public URL
             image_url = supabase.storage.from_(
-                bucket_name).get_public_url(supabase_path)
-            logger.info(f"Image uploaded successfully. URL: {image_url}")
+                bucket_name).get_public_url(image_filename)
+
+            logger.info(f"Uploaded image to {image_url}")
         except Exception as e:
-            logger.error(f"Error uploading to Supabase: {e}")
-            raise ValueError(f"Failed to upload image to Supabase: {str(e)}")
+            logger.error(f"Error uploading image to Supabase: {e}")
+            # Continue with the process even if upload fails
+            # In a production environment, you might want to handle this differently
 
         # Calculate processing time
         processing_time = (datetime.now() - start_time).total_seconds()
 
-        logger.info(f"Generated image in {processing_time:.2f} seconds")
-
+        # Return the result
         return {
-            "request_id": request_id,
-            "model_id": model_id,
+            "url": image_url,
             "seed": current_seed,
             "width": width,
             "height": height,
-            "url": image_url,
             "processing_time": processing_time,
-            "status": "completed" if image_url and not image_url.startswith("error://") else "partial",
-            "image_index": image_index
         }
-
     except Exception as e:
-        logger.error(f"Error during inference: {e}")
-        # Update task status with properly formatted error information
-        error_info = {
-            "request_id": request_id,
+        logger.error(f"Error generating image: {e}")
+        # In a real implementation, you might want to update a status in a database
+        # or send a notification about the failure
+        return {
             "error": str(e),
-            "status": "failed",
-            "exc_type": type(e).__name__,  # Include exception type explicitly
-            "exc_message": str(e)
+            "seed": current_seed,
+            "width": width,
+            "height": height,
         }
-        self.update_state(state="FAILURE", meta=error_info)
-
-        # Properly raise the exception for Celery to handle
-        # This ensures the exception is properly serialized
-        raise

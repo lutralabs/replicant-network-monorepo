@@ -58,9 +58,7 @@ class InferenceResponse(BaseModel):
     negative_prompt: Optional[str] = None
     num_inference_steps: int
     guidance_scale: float
-    # New fields for async processing
-    task_ids: Optional[List[str]] = None
-    status: Optional[str] = "completed"
+    status: Optional[str] = "processing"
 
 
 class TaskStatusResponse(BaseModel):
@@ -69,7 +67,6 @@ class TaskStatusResponse(BaseModel):
     """
     request_id: str
     status: str
-    task_ids: Optional[List[str]] = None
     message: Optional[str] = None
     images: Optional[List[ImageResult]] = None
     error: Optional[str] = None

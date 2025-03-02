@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, status, Response, BackgroundTasks
 from datetime import datetime
 from typing import Dict, List, Optional
 import torch
@@ -15,7 +15,7 @@ from src.core.auth import get_current_user
 from src.models.inference import InferenceRequest, InferenceResponse, ImageResult, encode_image_to_base64
 from src.core.model_registry import model_registry
 from src.core.supabase import supabase
-from src.tasks.inference_tasks import generate_image
+from src.tasks.inference_tasks import generate_image_task
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +30,7 @@ router = APIRouter(tags=["inference"])
              status_code=status.HTTP_200_OK)
 async def infer(request: InferenceRequest,
                 response: Response,
+                background_tasks: BackgroundTasks,
                 user: Dict = Depends(get_current_user)):
     """
     Perform inference using the AI model.
@@ -50,7 +51,6 @@ async def infer(request: InferenceRequest,
     try:
         # Generate image URLs that will be used once the images are generated
         image_results = []
-        task_ids = []
 
         # Get bucket name from environment variable or use default
         bucket_name = "generated-images"
@@ -65,15 +65,16 @@ async def infer(request: InferenceRequest,
             if i > 0 and request.seed is not None:
                 current_seed = request.seed + i
 
-            # Generate the URL where the image will be stored
-            image_path = f"{request.id}"
+            # Generate the image filename
+            image_filename = f"{request.id}_{i}_{current_seed}.png"
 
             # Get the public URL using the Supabase singleton
             image_url = supabase.storage.from_(
-                bucket_name).get_public_url(image_path)
+                bucket_name).get_public_url(image_filename)
 
-            # Submit the task to Celery
-            task = generate_image.delay(
+            # Add the background task for image generation
+            background_tasks.add_task(
+                generate_image_task,
                 request_id=request.id,
                 model_id=request.model_id,
                 prompt=request.prompt,
@@ -86,8 +87,6 @@ async def infer(request: InferenceRequest,
                 image_index=i
             )
 
-            task_ids.append(task.id)
-
             # Add placeholder result with the URL where the image will be available
             image_results.append(
                 ImageResult(
@@ -99,7 +98,7 @@ async def infer(request: InferenceRequest,
             )
 
             logger.info(
-                f"Submitted task {task.id} for image {i+1}/{request.num_images}")
+                f"Added background task for image {i+1}/{request.num_images}")
 
         # Calculate processing time for task submission
         processing_time = (datetime.now() - start_time).total_seconds()
@@ -107,7 +106,7 @@ async def infer(request: InferenceRequest,
         logger.info(
             f"Submitted {len(image_results)} image generation tasks in {processing_time:.2f} seconds")
 
-        # Return response with task IDs and URLs where images will be available
+        # Return response with URLs where images will be available
         return InferenceResponse(
             id=request.id,
             model_id=request.model_id,
@@ -117,8 +116,6 @@ async def infer(request: InferenceRequest,
             negative_prompt=request.negative_prompt,
             num_inference_steps=request.num_inference_steps or model_registry.default_inference_steps,
             guidance_scale=request.guidance_scale or model_registry.default_guidance_scale,
-            # Add additional fields for async processing
-            task_ids=task_ids,
             status="processing"
         )
     except ValueError as e:
@@ -147,12 +144,10 @@ async def get_inference_status(request_id: str,
     Returns:
         Status information about the inference request
     """
-    # In a real implementation, you would check the status of the Celery tasks
-    # associated with this request_id
-
+    # In a real implementation, you would check the status of the images in Supabase
     # For now, we'll just return a placeholder response
     return {
         "request_id": request_id,
         "status": "processing",
-        "message": "This endpoint is a placeholder. Implement task status checking."
+        "message": "This endpoint is a placeholder. Implement status checking by checking if images exist in Supabase."
     }

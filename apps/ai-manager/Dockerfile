@@ -21,7 +21,6 @@ RUN uv sync
 # Copy application code
 COPY src/ ./src/
 COPY app.py .
-COPY celery_worker.py .
 
 # Create directory for models
 RUN mkdir -p ai-models

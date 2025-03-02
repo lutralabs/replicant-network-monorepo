@@ -5,4 +5,4 @@ requires-python = ">=3.13"
 dependencies = []
 
 [tool.uv.workspace]
-members = ["apps/ai-manager"]
+members = ["apps/ai-manager", "apps/test"]

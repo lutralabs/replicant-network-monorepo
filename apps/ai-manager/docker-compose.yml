@@ -18,31 +18,11 @@ x-common-env: &common-env
   LOG_LEVEL: ${LOG_LEVEL:-INFO}
   # Authentication settings
   API_KEYS: ${API_KEYS:-test-key-1,test-key-2}
-  # Redis connection
-  REDIS_URL: redis://repnet-redis:6379/0
   # Supabase settings (if used)
   SUPABASE_URL: ${SUPABASE_URL:-}
   SUPABASE_KEY: ${SUPABASE_KEY:-}
 
 services:
-  repnet-redis:
-    container_name: repnet-redis
-    image: redis:7-alpine
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    volumes:
-      - redis-data:/data
-    restart: ${RESTART_POLICY:-unless-stopped}
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    profiles:
-      - default
-      - cpu
-      - nvidia
-
   # Base service definition (CPU only - works on macOS)
   repnet-manager:
     container_name: repnet-manager
@@ -51,11 +31,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "${PORT:-8000}:8000"
+    volumes:
+      - ./ai-models:/ai-models:rw
     environment:
       <<: *common-env
-    depends_on:
-      repnet-redis:
-        condition: service_healthy
     restart: ${RESTART_POLICY:-unless-stopped}
     profiles:
       - default
@@ -67,31 +46,6 @@ services:
       retries: 3
       start_period: 40s
 
-  # Celery worker (CPU version)
-  repnet-celery-worker:
-    container_name: repnet-celery-worker
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./ai-models:/ai-models:rw
-    environment:
-      <<: *common-env
-    command: ["uv", "run", "celery_worker.py"]
-    depends_on:
-      repnet-redis:
-        condition: service_healthy
-    restart: ${RESTART_POLICY:-unless-stopped}
-    profiles:
-      - default
-      - cpu
-    healthcheck:
-      test: ["CMD", "celery", "-A", "src.core.celery_app", "inspect", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
   # NVIDIA GPU-enabled service
   repnet-manager-nvidia:
     container_name: repnet-manager-nvidia
@@ -99,17 +53,4 @@ services:
       service: repnet-manager
     <<: *nvidia-config
     profiles:
-      - nvidia
-
-  # NVIDIA GPU-enabled Celery worker
-  celery-worker-nvidia:
-    container_name: repnet-celery-worker-nvidia
-    extends:
-      service: repnet-celery-worker
-    <<: *nvidia-config
-    profiles:
-      - nvidia
-
-volumes:
-  redis-data:
-    driver: local 
+      - nvidia 

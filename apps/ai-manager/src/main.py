@@ -1,10 +1,18 @@
+from src.routes.v1 import router as v1_router
 import os
-from fastapi import FastAPI, APIRouter, Response, status
+import logging
+import threading
+from fastapi import FastAPI, APIRouter, Response, status, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-# Import versioned routes
-from src.routes.v1 import router as v1_router
+# Import core modules
+from src.core.model_registry import model_registry
+
+# Set up logging
+log_level = os.environ.get("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(level=getattr(logging, log_level))
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -13,12 +21,16 @@ async def lifespan(app: FastAPI):
     Lifespan context manager for FastAPI application.
     Handles startup and shutdown events.
     """
-    # No need to initialize model registry or start watcher thread
-    # The API will fetch model information from the worker
+    # Initialize model registry and start watcher thread
+    logger.info("Initializing model registry")
+    model_registry.scan_models()
+    model_registry.start_watcher()
 
     yield
 
-    # No need to stop the model registry watcher thread
+    # Stop the model registry watcher thread on shutdown
+    logger.info("Stopping model registry watcher")
+    model_registry.stop_watcher()
 
 
 # Initialize FastAPI app
@@ -57,6 +69,8 @@ async def root_redirect(response: Response):
         "documentation": "/docs",
         "latest_version": "/v1"
     }
+
+# Import versioned routes after app is defined to avoid circular imports
 
 # Include the versioned routers
 app.include_router(root_router)
