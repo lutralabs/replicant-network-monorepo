@@ -3,6 +3,10 @@ src = "src"
 out = "out"
 libs = ["lib"]
 
+# Monad Testnet Configuration
+eth-rpc-url = "https://testnet-rpc.monad.xyz"
+chain_id = 10143
+
 [fmt]
 single_line_statement_blocks = "multi"
 sort_imports = true
