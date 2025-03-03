@@ -1,6 +1,7 @@
 'use client';
 
 import { Frame, Map as MapIcon, PieChart } from 'lucide-react';
+import { SiDiscord, SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import Image from 'next/image';
 import type * as React from 'react';
 
@@ -9,9 +10,11 @@ import { NavProjects } from '@/components/NavProjects';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar';
+import { NavSocial } from './NavSocial';
 
 // This is sample data.
 const ITEMS = {
@@ -29,6 +32,26 @@ const ITEMS = {
   ],
 };
 
+const SOCIAL = {
+  pages: [
+    {
+      name: 'Discord',
+      url: 'https://discord.gg/yuWNuzxPbS',
+      icon: SiDiscord,
+    },
+    {
+      name: 'GitHub',
+      url: 'https://github.com/lutralabs',
+      icon: SiGithub,
+    },
+    // {
+    //   name: 'X',
+    //   url: '',
+    //   icon: SiX,
+    // },
+  ],
+};
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -39,6 +62,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={ITEMS.pages} />
       </SidebarContent>
       <SidebarRail />
+      <SidebarFooter>
+        <NavSocial socials={SOCIAL.pages} />
+      </SidebarFooter>
     </Sidebar>
   );
 }
