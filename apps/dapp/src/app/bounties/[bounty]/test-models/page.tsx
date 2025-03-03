@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { usePathname } from 'next/navigation';
 import { BOUNTIES } from '@/constants/bounties';
+import { BountyInfo } from '@/components/BountyInfo';
 
 export default function Page() {
   const [images, setImages] = useState([]);
@@ -65,20 +66,7 @@ export default function Page() {
 
   return (
     <div className="w-full h-full pb-12 flex flex-col justify-between">
-      <div>
-        <div className="flex w-full items-center justify-between">
-          <div className="max-w-[500px]">
-            <div className="text-lg font-semibold">Crypto Logo Generator</div>
-            <div className="text-md mt-2 text-gray-600">
-              Aj will generate a hella nice crypto logo for u mate.
-            </div>
-          </div>
-          <Link href={'/bounties/bounty-form'}>
-            <Button variant="cta-solid">Bounty Details &gt;</Button>
-          </Link>
-        </div>
-        <div className="w-full h-[1px] mt-6  bg-gray-300" />
-      </div>
+      <BountyInfo bounty={bounty} />
 
       <div className="mt-12 flex justify-center flex-wrap gap-x-12 gap-y-12">
         {loading ? (

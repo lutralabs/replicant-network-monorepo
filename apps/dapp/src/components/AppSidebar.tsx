@@ -24,11 +24,6 @@ const ITEMS = {
       url: '/bounties',
       icon: PieChart,
     },
-    {
-      name: 'Travel',
-      url: '#',
-      icon: MapIcon,
-    },
   ],
 };
 

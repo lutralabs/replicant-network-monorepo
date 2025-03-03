@@ -8,6 +8,7 @@ import {
   TableBody,
 } from '@/components/ui/table';
 import type { Bounty } from '@/constants/bounties';
+import Link from 'next/link';
 import React from 'react';
 
 export const Submissions = ({ bounty }: { bounty: Bounty }) => {
@@ -47,12 +48,16 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
       {bounty.status === 'voting' && (
         <div className="w-full flex justify-end mt-12">
           <div className="flex gap-x-2">
-            <Button variant="cta-solid" size="sm">
-              Try Models
-            </Button>
-            <Button variant="cta-solid" size="sm">
-              Vote
-            </Button>
+            <Link href={`/bounties/${bounty.id}/test-models`}>
+              <Button variant="cta-solid" size="sm">
+                Try Models
+              </Button>
+            </Link>
+            <Link href={`/bounties/${bounty.id}/vote`}>
+              <Button variant="cta-solid" size="sm">
+                Vote
+              </Button>
+            </Link>
           </div>
         </div>
       )}

@@ -52,19 +52,19 @@ export async function POST(request: NextRequest) {
       model_id: model.hash,
       prompt,
       negative_prompt: 'blurry, low quality',
-      num_inference_steps: 5,
+      num_inference_steps: 30,
       guidance_scale: 7.5,
-      width: 256,
-      height: 256,
+      width: 512,
+      height: 512,
       num_images: 1,
     };
 
     // 7. Fetch
-    const response = await fetch('https://repnet-ai-manager.fly.dev/v1/infer', {
+    const response = await fetch(`${process.env.API_ENDPOINT}/v1/infer`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.AI_KEY}`,
+        Authorization: `Bearer ${process.env.API_KEY}`,
       },
       body: JSON.stringify(body),
     });
