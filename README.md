@@ -15,7 +15,7 @@ Replicant Network was initially bootstrapped during the Monad Hackathon, where t
 The Replicant Network monorepo contains all the components needed to run the platform:
 
 * **Smart Contracts**: Solidity contracts for crowdfunding, model submission, and token management
-* **DApp**: Next.js frontend application for interacting with the platform
+* **Dapp**: Next.js frontend application for interacting with the platform
 * **AI Manager**: FastAPI-based service for managing and running AI inference tasks
 
 ## Repository Structure
@@ -48,7 +48,7 @@ The contracts module contains Solidity smart contracts that power the Replicant 
 * **ModelToken**: ERC20 token implementation for model-specific tokens
 * **ERC20Factory**: Factory contract for creating new model tokens
 
-### DApp (Frontend)
+### Dapp (Frontend)
 
 A Next.js application that provides the user interface for:
 
@@ -99,7 +99,7 @@ pnpm install
 pnpm build
 ```
 
-### Running the DApp
+### Running the Dapp
 
 ```
 cd apps/dapp
