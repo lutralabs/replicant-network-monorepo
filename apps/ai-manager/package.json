@@ -1,0 +1,16 @@
+{
+  "name": "ai-manager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "benchmark": "pnpm exec dotenv -e .env k6 run benchmarking/k6.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/k6": "^0.57.1",
+    "dotenv-cli": "^8.0.0"
+  }
+}
