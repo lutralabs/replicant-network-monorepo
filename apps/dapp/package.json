@@ -6,7 +6,8 @@
     "component": "pnpm dlx shadcn@canary",
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typegen": "wagmi generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.0",
@@ -41,6 +42,7 @@
     "@rainbow-me/rainbowkit": "^2.2.4",
     "@tanstack/react-query": "^5.66.9",
     "@tanstack/react-table": "^8.21.2",
+    "@wagmi/cli": "^2.2.0",
     "@wagmi/core": "^2.16.5",
     "chrono-node": "^2.7.8",
     "class-variance-authority": "^0.7.1",

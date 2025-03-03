@@ -14,12 +14,16 @@ contract ModelTokenERC20 is ERC20, Ownable {
     }
 
     function _validateTokenInput(string memory name, string memory symbol) internal pure {
-        if (bytes(name).length > 32) {
+        if (bytes(name).length == 0 || bytes(name).length > 32) {
             revert NameTooLong();
         }
-        if (bytes(symbol).length > 10) {
+        if (bytes(symbol).length == 0 || bytes(symbol).length > 10) {
             revert SymbolTooLong();
         }
+    }
+
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
     }
 
 }
