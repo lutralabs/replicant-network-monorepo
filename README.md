@@ -1,6 +1,12 @@
-# Replicant Network
+<p align="center">
+  <img src="assets/rn-logo.png" alt="Replicant Network Logo" width="128"/>
+</p>
 
-Replicant Network is a decentralized platform for AI model crowdfunding, development, and deployment. It combines blockchain technology with AI infrastructure to create a transparent and efficient ecosystem for AI model creation and utilization.
+<h1 align="center">Replicant Network</h1>
+
+<p align="center">
+  A decentralized platform for AI model crowdfunding, development, and deployment. It combines blockchain technology with AI infrastructure to create a transparent and efficient ecosystem for AI model creation and utilization.
+</p>
 
 ## Project Overview
 
