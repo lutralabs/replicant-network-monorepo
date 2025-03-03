@@ -14,6 +14,8 @@ struct Crowdfunding {
     address token;
     bool accepted;
     uint256 amountRaised;
+    uint256 numSubmissions;
+    uint256 numFunders;
     uint256 fundingPhaseEnd; // timestamp
     uint256 submissionPhaseEnd; // timestamp
     uint256 votingPhaseEnd; // timestamp
@@ -54,7 +56,7 @@ struct Submission {
 
 event Funded(uint256 crowdfundingId, address indexed sender, uint256 amount);
 
-event CrowdfundingCreated(uint256 crowdfundingId, address indexed creator, address tokenAddress);
+event CrowdfundingCreated(uint256 indexed crowdfundingId, address indexed creator, address indexed tokenAddress);
 
 error InitialFundingRequired();
 error InitialFundingExceedsCap();

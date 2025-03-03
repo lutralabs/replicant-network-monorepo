@@ -56,6 +56,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
     function fund(
         uint256 _crowdfundingId
     ) public payable crowdfundingExists(_crowdfundingId) nonReentrant {
+        // TODO: increment +1 for number of users who funded
         if (_getCurrentPhase(_crowdfundingId) != CrowdfundingPhase.Funding) {
             revert FundingPhaseEnded();
         }
@@ -77,6 +78,12 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         return _getTotalRaised(_crowdfundingId);
     }
 
+    function getTotalFunders(
+        uint256 _crowdfundingId
+    ) public view crowdfundingExists(_crowdfundingId) returns (uint256) {
+        return _getTotalFunders(_crowdfundingId);
+    }
+
     function getCrowdfunding(
         uint256 _crowdfundingId
     ) public view crowdfundingExists(_crowdfundingId) returns (CrowdfundingShort memory) {
@@ -94,6 +101,8 @@ contract RepNetManager is Ownable, ReentrancyGuard {
             developerFeePercentage: cf.developerFeePercentage
         });
     }
+
+    // TODO: submission function, dont forget to increment +1 for number of submissions
 
     function getCrowdfundingPhase(
         uint256 _crowdfundingId
@@ -119,6 +128,8 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         cf.fundingPhaseEnd = _params.fundingPhaseEnd;
         cf.accepted = false;
         cf.amountRaised = msg.value;
+        cf.numFunders = 1;
+        cf.numSubmissions = 0;
         cf.deposits[msg.sender] = msg.value;
         cf.submissionPhaseEnd = _params.submissionPhaseEnd;
         cf.votingPhaseEnd = _params.votingPhaseEnd;
@@ -137,6 +148,9 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         uint256 _crowdfundingId
     ) internal {
         Crowdfunding storage cf = crowdfundings[_crowdfundingId];
+        if (cf.deposits[msg.sender] == 0) {
+            cf.numFunders++;
+        }
         cf.deposits[msg.sender] += msg.value;
         cf.amountRaised += msg.value;
         emit Funded(_crowdfundingId, msg.sender, msg.value);
@@ -144,6 +158,12 @@ contract RepNetManager is Ownable, ReentrancyGuard {
 
     function _deployERC20(string memory name, string memory symbol) internal returns (address) {
         return erc20Factory.deployERC20(name, symbol);
+    }
+
+    function _getTotalFunders(
+        uint256 _crowdfundingId
+    ) internal view returns (uint256) {
+        return crowdfundings[_crowdfundingId].numFunders;
     }
 
     function _getTotalRaised(
