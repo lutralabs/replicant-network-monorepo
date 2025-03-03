@@ -24,10 +24,18 @@ The Replicant Network monorepo contains all the components needed to run the pla
 replicant-network-monorepo/
 ├── apps/
 │   ├── dapp/             # Next.js frontend application
-│   └── ai-manager/       # AI inference service (FastAPI + Celery)
-├── contracts/            # Solidity smart contracts
-├── configs/              # Configuration files
-└── ...
+│   │   ├── public/       # Static assets
+│   │   └── src/          # Source code
+│   └── ai-manager/       # AI inference service
+│       ├── src/          # Source code
+│       ├── ai-models/    # AI model storage
+│       └── benchmarking/ # Performance testing
+├── assets/               # Shared assets (logos, images)
+└── contracts/            # Solidity smart contracts
+     ├── src/              # Contract source code
+     ├── test/             # Contract tests
+     ├── script/           # Contract related scripts
+     └── lib/              # Dependencies
 ```
 
 ## Key Components
@@ -73,23 +81,23 @@ A Python-based service that handles:
    
 
 ```
-   git clone https://github.com/your-org/replicant-network-monorepo.git
-   cd replicant-network-monorepo
-   ```
+git clone https://github.com/your-org/replicant-network-monorepo.git
+cd replicant-network-monorepo
+```
 
 2. Install dependencies:
    
 
 ```
-   pnpm install
-   ```
+pnpm install
+```
 
 3. Build all packages:
    
 
 ```
-   pnpm build
-   ```
+pnpm build
+```
 
 ### Running the DApp
 
@@ -113,7 +121,7 @@ The API will be available at http://localhost:8000.
 
 ```
 cd contracts
-forge script script/Deploy.s.sol:DeployScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+forge create src/RepNetManager.sol:RepNetManager --private-key monad-deployer --broadcast
 ```
 
 ## Development
