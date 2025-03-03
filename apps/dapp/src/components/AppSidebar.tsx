@@ -36,7 +36,7 @@ const SOCIAL = {
   pages: [
     {
       name: 'Discord',
-      url: 'https://discord.gg/yuWNuzxPbS',
+      url: 'https://discord.gg/jj9K9UJwa7',
       icon: SiDiscord,
     },
     {
