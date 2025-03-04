@@ -3,6 +3,7 @@ import { useReadContract } from 'wagmi';
 import { readContract } from '@wagmi/core';
 import { useState, useEffect } from 'react';
 
+// Extended bounty type including Supabase data
 export type Bounty = {
   id: bigint;
   creator: string;
@@ -14,11 +15,19 @@ export type Bounty = {
   votingPhaseEnd: bigint;
   raiseCap: bigint;
   developerFeePercentage: bigint;
-  // Additional data
+  // Additional blockchain data
   isActive: boolean;
   totalRaised: bigint;
   totalFunders: bigint;
   phase: number;
+  // Supabase metadata
+  title?: string;
+  description?: string;
+  type?: string;
+  prompters?: string[];
+  discord?: string | null;
+  email?: string | null;
+  telegram?: string | null;
 };
 
 export function useReadBounties() {
@@ -45,7 +54,7 @@ export function useReadBounties() {
           for (let i = 0; i < count; i++) {
             const bountyId = BigInt(i);
 
-            // Fetch base bounty data
+            // Fetch base bounty data from blockchain
             const bountyData = await readContract(config, {
               abi: wagmiContractConfig.abi,
               functionName: 'getCrowdfunding',
@@ -53,7 +62,7 @@ export function useReadBounties() {
               address: process.env.CONTRACT_ADDRESS as `0x${string}`,
             });
 
-            // Fetch additional data for the bounty
+            // Fetch additional blockchain data
             const isActive = await readContract(config, {
               abi: wagmiContractConfig.abi,
               functionName: 'isCrowdfundingActive',
@@ -82,20 +91,42 @@ export function useReadBounties() {
               address: process.env.CONTRACT_ADDRESS as `0x${string}`,
             });
 
+            // Fetch metadata from API instead of directly from Supabase
+            let supabaseData = null;
+            try {
+              const response = await fetch(`/api/bounty?id=${i}`);
+              if (response.ok) {
+                const result = await response.json();
+                supabaseData = result.data;
+              }
+            } catch (error) {
+              console.error(`Error fetching metadata for bounty ${i}:`, error);
+            }
+
             // Combine all data
-            const enrichedBounty = {
+            const enrichedBounty: Bounty = {
               ...bountyData,
               isActive,
               totalRaised,
               totalFunders,
               phase,
+              // Add Supabase data if available
+              ...(supabaseData && {
+                title: supabaseData.title,
+                description: supabaseData.description,
+                type: supabaseData.type,
+                prompters: supabaseData.prompters,
+                discord: supabaseData.discord,
+                email: supabaseData.email,
+                telegram: supabaseData.telegram,
+              }),
             };
 
             bountiesData.push(enrichedBounty);
           }
 
           setBounties(bountiesData);
-          console.log('Enriched Bounties:', bountiesData);
+          console.log('Enriched Bounties with API data:', bountiesData);
         } catch (error) {
           console.error('Error fetching bounties:', error);
         } finally {

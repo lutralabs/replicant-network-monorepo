@@ -10,7 +10,7 @@ export const supabaseServiceRoleClient = () => {
   if (!client) {
     client = createSupbaseClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SECRET_KEY!
+      process.env.SUPABASE_API_KEY!
     );
   }
 

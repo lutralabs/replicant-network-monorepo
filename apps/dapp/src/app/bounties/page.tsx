@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { BountyCard } from '@/components/BountyCard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BOUNTIES } from '@/constants/bounties';
 import { useReadBounties } from '@/hooks/useReadBounties';
+import { bountyStatus } from '@/lib/utils';
 
 export default function Page() {
   const bounties = useReadBounties();
@@ -38,18 +38,32 @@ export default function Page() {
             <TabsContent value="active">
               <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
                 {bounties.bounties
-                  .filter((bounty) => bounty.phase === 0 || bounty.phase === 4)
+                  .filter(
+                    (bounty) =>
+                      bountyStatus(bounty) === 'active' ||
+                      bountyStatus(bounty) === 'voting'
+                  )
                   .map((bounty) => (
-                    <BountyCard key={bounty.id} title={bounty} />
+                    <BountyCard
+                      key={bounty.id}
+                      status={bountyStatus(bounty)}
+                      bounty={bounty}
+                      submissions={0}
+                    />
                   ))}
               </div>
             </TabsContent>
             <TabsContent value="crowdfunding">
               <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
                 {bounties.bounties
-                  .filter((bounty) => bounty.phase === 1)
+                  .filter((bounty) => bountyStatus(bounty) === 'crowdfunding')
                   .map((bounty) => (
-                    <BountyCard key={bounty.id} {...bounty} />
+                    <BountyCard
+                      key={bounty.id}
+                      status={bountyStatus(bounty)}
+                      bounty={bounty}
+                      submissions={0}
+                    />
                   ))}
               </div>
             </TabsContent>
@@ -58,11 +72,16 @@ export default function Page() {
                 {bounties.bounties
                   .filter(
                     (bounty) =>
-                      bounty.status === 'completed' ||
-                      bounty.status === 'failed'
+                      bountyStatus(bounty) === 'completed' ||
+                      bountyStatus(bounty) === 'failed'
                   )
                   .map((bounty) => (
-                    <BountyCard key={bounty.id} {...bounty} />
+                    <BountyCard
+                      key={bounty.id}
+                      status={bountyStatus(bounty)}
+                      bounty={bounty}
+                      submissions={0}
+                    />
                   ))}
               </div>
             </TabsContent>
