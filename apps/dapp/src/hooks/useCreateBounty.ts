@@ -64,19 +64,13 @@ export const useCreateBounty = () => {
         value: parseEther(amount.toString()),
         account: wallet.address,
       });
-      const hash = await writeContract(config, result.request as any);
-
-      // Store metadata in Supabase
-      const bountyId = await readContract(config, {
-        abi: repNetManagerAbi,
-        functionName: 'crowdfundingId',
-        address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-      });
+      //console.log(result.result);
+      const writeRes = await writeContract(config, result.request as any);
 
       fetch('/api/bounty', {
         method: 'POST',
         body: JSON.stringify({
-          id: Number(bountyId) - 1,
+          id: Number(result.result),
           title,
           description,
           discord,
@@ -85,7 +79,7 @@ export const useCreateBounty = () => {
         }),
       });
 
-      return hash;
+      return writeRes;
     },
     onSuccess: (data) => {
       if (data) {

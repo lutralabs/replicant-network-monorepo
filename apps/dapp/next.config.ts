@@ -33,7 +33,7 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   env: {
     PRIVY_APPID: 'cm7j352q103r4wwk6v2liowrm',
-    CONTRACT_ADDRESS: '0x1a194A757f1E1F9390c7C17DBDAdd02A05E90969',
+    CONTRACT_ADDRESS: '0x895efF218628B820903c5De71018f7B92C68d0A5',
   },
   images: {
     remotePatterns: [
