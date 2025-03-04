@@ -66,7 +66,7 @@ export default function Page() {
 
   return (
     <div className="w-full h-full pb-12 flex flex-col justify-between">
-      <BountyInfo bounty={bounty} />
+      {/* <BountyInfo bounty={bounty} /> */}
 
       <div className="mt-12 flex justify-center flex-wrap gap-x-12 gap-y-12">
         {loading ? (
