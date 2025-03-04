@@ -28,11 +28,20 @@ import { SmartDatetimeInput } from '@/components/ui/smart-datetime-input';
 import { Textarea } from '@/components/ui/textarea';
 import { formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
+import { useCreateBounty } from '@/hooks/useCreateBounty';
 
 const formSchema = z.object({
   title: z.string().min(2, {
     message: 'Title must be at least 2 characters.',
   }),
+  symbol: z
+    .string()
+    .min(2, {
+      message: 'Title must be at least 2 characters.',
+    })
+    .max(3, {
+      message: 'Title must be at most 3 characters.',
+    }),
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.',
   }),
@@ -101,6 +110,8 @@ export const BountyForm = () => {
     config,
   });
 
+  const { mutate: createBounty } = useCreateBounty();
+
   const formattedBalance = useMemo(() => {
     if (!balance || !balance.data) return 0;
     return formatBalance(balance.data.value);
@@ -110,6 +121,7 @@ export const BountyForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      symbol: '',
       description: '',
       email: undefined,
       discord: undefined,
@@ -124,7 +136,7 @@ export const BountyForm = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
@@ -135,6 +147,19 @@ export const BountyForm = () => {
     ) {
       console.log('Invalid dates');
     }
+
+    const res = createBounty({
+      amount: values.contribution,
+      title: values.title,
+      symbol: values.symbol,
+      fundingPhaseEnd: values.endOfFunding.getTime(),
+      submissionPhaseEnd: values.endOfSubmissions.getTime(),
+      votingPhaseEnd: values.endOfVoting.getTime(),
+      developerFeePercentage: values.devFees,
+      raiseCap: values.maxAmount,
+    });
+
+    console.log(res);
   }
 
   return (
@@ -151,6 +176,23 @@ export const BountyForm = () => {
               </FormLabel>
               <FormControl>
                 <Input required placeholder="Title of the Model" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="symbol"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                <span className="text-red-500">*</span>
+                Symbol
+              </FormLabel>
+              <FormControl>
+                <Input required placeholder="Symbol of the Model" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
