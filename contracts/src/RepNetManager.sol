@@ -72,14 +72,18 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         _fund(_crowdfundingId);
     }
 
-    function submit(uint256 _crowdfundingId, bytes32 _hash) public crowdfundingExists(_crowdfundingId) onlyOwner {
+    function submit(
+        uint256 _crowdfundingId,
+        bytes32 _hash,
+        address _creator
+    ) public crowdfundingExists(_crowdfundingId) onlyOwner {
         if (_getCurrentPhase(_crowdfundingId) != CrowdfundingPhase.Submission) {
             revert NotInSubmissionPhase();
         }
         if (crowdfundings[_crowdfundingId].submissions[_hash].creator != address(0)) {
             revert SolutionAlreadySubmitted(_hash);
         }
-        _submit(_crowdfundingId, _hash);
+        _submit(_crowdfundingId, _hash, _creator);
     }
 
     function vote(
@@ -228,12 +232,12 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         emit CrowdfundingFunded(_crowdfundingId, msg.sender, msg.value);
     }
 
-    function _submit(uint256 _crowdfundingId, bytes32 _hash) internal {
+    function _submit(uint256 _crowdfundingId, bytes32 _hash, address creator) internal {
         crowdfundings[_crowdfundingId].submissionIds.push(_hash);
         crowdfundings[_crowdfundingId].submissions[_hash] =
-            Submission({creator: msg.sender, timestamp: block.timestamp, id: _hash});
+            Submission({creator: creator, timestamp: block.timestamp, id: _hash});
         crowdfundings[_crowdfundingId].numSubmissions++;
-        emit SolutionSubmitted(_crowdfundingId, _hash, msg.sender);
+        emit SolutionSubmitted(_crowdfundingId, _hash, creator);
     }
 
     function _vote(uint256 _crowdfundingId, bytes32 _submissionId) internal {
