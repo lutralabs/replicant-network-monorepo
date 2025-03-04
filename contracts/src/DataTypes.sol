@@ -56,6 +56,7 @@ struct CrowdfundingShort {
     uint256 numSubmissions;
     uint256 numFunders;
     CrowdfundingPhase phase;
+    bytes32[] submissionIds;
 }
 
 struct CrowdfundingCreationParams {

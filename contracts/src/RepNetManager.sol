@@ -164,7 +164,8 @@ contract RepNetManager is Ownable, ReentrancyGuard {
             developerFeePercentage: cf.developerFeePercentage,
             numSubmissions: cf.numSubmissions,
             numFunders: cf.numFunders,
-            phase: _getCurrentPhase(_crowdfundingId)
+            phase: _getCurrentPhase(_crowdfundingId),
+            submissionIds: cf.submissionIds
         });
     }
 
