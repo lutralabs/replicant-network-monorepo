@@ -12,10 +12,10 @@ import {
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 
-export function NavProjects({
-  projects,
+export function NavSocial({
+  socials,
 }: {
-  projects: {
+  socials: {
     name: string;
     url: string;
     icon: LucideIcon;
@@ -24,13 +24,13 @@ export function NavProjects({
   const { isMobile } = useSidebar();
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+    <SidebarGroup className="p-0">
+      <SidebarGroupLabel>Social</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
+        {socials.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <Link href={item.url}>
+              <Link href={item.url} target="_blank" rel="noopener noreferrer">
                 <item.icon />
                 <span>{item.name}</span>
               </Link>
