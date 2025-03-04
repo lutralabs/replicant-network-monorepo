@@ -273,9 +273,12 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         }
         address winner = cf.submissions[winnerSubmission].creator;
         // mint such amount of new tokens to the winner that at the end he will have the developerFee % of the total supply
-        uint256 amountToMint = (totalSupply * cf.developerFeePercentage) / (10000 - cf.developerFeePercentage);
-        IModelTokenERC20(cf.token).mint(winner, amountToMint);
+        if (cf.developerFeePercentage > 0) {
+            uint256 amountToMint = (totalSupply * cf.developerFeePercentage) / (10000 - cf.developerFeePercentage);
+            IModelTokenERC20(cf.token).mint(winner, amountToMint);
+        }
         cf.winner = cf.submissions[winnerSubmission].creator;
+        payable(cf.winner).transfer(cf.amountRaised);
         cf.finalized = true;
         emit CrowdfundingFinalized(_crowdfundingId, cf.winner);
     }

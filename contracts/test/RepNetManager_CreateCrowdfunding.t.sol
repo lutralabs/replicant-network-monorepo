@@ -4,6 +4,8 @@ pragma solidity ^0.8.13;
 import "../src/DataTypes.sol";
 import "./helpers/TestHelpers.sol";
 
+import {IModelTokenERC20} from "../src/interfaces/IModelTokenERC20.sol";
+
 contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
 
     function setUp() public {
@@ -35,6 +37,9 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         assertEq(cf.raiseCap, params.raiseCap, "Raise cap should match");
         assertEq(cf.developerFeePercentage, params.developerFeePercentage, "Developer fee percentage should match");
         assertEq(cf.finalized, false, "Crowdfunding should not be accepted initially");
+
+        // verify the token balance of the creator user
+        assertEq(IModelTokenERC20(cf.token).balanceOf(user1), 1_000_000 ether, "Creator should have 1M tokens");
 
         // Verify the crowdfunding phase
         CrowdfundingPhase phase = repNetManager.getCrowdfundingPhase(0);

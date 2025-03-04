@@ -80,11 +80,13 @@ event CrowdfundingFinalizedWithoutWinner(uint256 indexed crowdfundingId);
 
 event Withdrawal(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
 
+event WithdrawalRewards(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
+
 error CrowdfundingNotFound();
 error CrowdfundingNotActive();
 error CrowdfundingStillActive();
 error CrowdfundingAlreadyFinalized();
-
+error NotWinner();
 error InitialFundingRequired();
 error InitialFundingExceedsCap(uint256 requested, uint256 cap);
 error FundingCapReached(uint256 requested, uint256 cap);
