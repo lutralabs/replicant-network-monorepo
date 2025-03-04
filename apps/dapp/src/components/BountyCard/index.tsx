@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { Badge } from '../ui/badge';
-import type { Bounty } from '@/hooks/useReadBounties';
+import type { Bounty } from '@/hooks/useGetBounties';
 import { formatEther } from 'viem';
 import { getTimeRemaining } from '@/lib/utils';
 
@@ -11,17 +11,14 @@ type BaseBountyCardProps = {
 
 type ActiveBountyProps = BaseBountyCardProps & {
   status: 'active';
-  submissions: number;
 };
 
 type VotingBountyProps = BaseBountyCardProps & {
   status: 'voting';
-  submissions: number;
 };
 
 type FinishedBountyProps = BaseBountyCardProps & {
   status: 'completed' | 'failed';
-  submissions: number;
 };
 
 type CrowdfundingBountyProps = BaseBountyCardProps & {
@@ -47,7 +44,7 @@ const ActiveBountyCard: React.FC<ActiveBountyProps> = (props) => {
       <div className="flex items-end justify-between text-sm">
         <div className="flex items-center gap-x-1 text-sm text-gray-600">
           <span className="text-md font-medium text-black">
-            {props.submissions ?? 0}
+            {props.bounty.numSubmissions ?? 0}
           </span>
           Submissions
         </div>
@@ -59,7 +56,7 @@ const ActiveBountyCard: React.FC<ActiveBountyProps> = (props) => {
           <div>
             Bounty:{' '}
             <span className="text-md font-semibold text-black">
-              {formatEther(props.bounty.totalRaised)} MON
+              {formatEther(props.bounty.amountRaised)} MON
             </span>
           </div>
         </div>
@@ -81,7 +78,7 @@ const VotingBountyProps: React.FC<VotingBountyProps> = (props) => {
       <div className="flex items-end justify-between text-sm">
         <div className="flex items-center gap-x-1 text-sm text-gray-600">
           <span className="text-md font-medium text-black">
-            {props.submissions ?? 0}
+            {props.bounty.numSubmissions ?? 0}
           </span>
           Submissions
         </div>
@@ -93,7 +90,7 @@ const VotingBountyProps: React.FC<VotingBountyProps> = (props) => {
           <div>
             Bounty:{' '}
             <span className="text-md font-semibold text-black">
-              {formatEther(props.bounty.totalRaised)} MON
+              {formatEther(props.bounty.amountRaised)} MON
             </span>
           </div>
         </div>
@@ -119,7 +116,7 @@ const CompletedBountyCard: React.FC<FinishedBountyProps> = (props) => {
       <div className="flex items-end justify-between text-sm">
         <div className="flex items-center gap-x-1 text-sm text-gray-600">
           <span className="text-md font-medium text-black">
-            {props.submissions ?? 0}
+            {props.bounty.numSubmissions ?? 0}
           </span>
           Submissions
         </div>
@@ -131,7 +128,7 @@ const CompletedBountyCard: React.FC<FinishedBountyProps> = (props) => {
           <div>
             Bounty:{' '}
             <span className="text-md font-semibold text-black">
-              {formatEther(props.bounty.totalRaised)} MON
+              {formatEther(props.bounty.amountRaised)} MON
             </span>
           </div>
         </div>
@@ -153,7 +150,7 @@ const CrowdfundingBountyCard: React.FC<CrowdfundingBountyProps> = (props) => {
       <div className="flex items-end justify-between text-sm">
         <div className="flex items-center gap-x-1 text-sm text-gray-600">
           <span className="text-md font-medium text-black">
-            {props.bounty.totalFunders ?? 0}
+            {props.bounty.numFunders ?? 0}
           </span>
           Crowdfunders
         </div>
@@ -165,7 +162,7 @@ const CrowdfundingBountyCard: React.FC<CrowdfundingBountyProps> = (props) => {
           <div>
             Bounty:{' '}
             <span className="text-md font-semibold text-black">
-              {formatEther(props.bounty.totalRaised)} MON
+              {formatEther(props.bounty.amountRaised)} MON
             </span>
           </div>
         </div>

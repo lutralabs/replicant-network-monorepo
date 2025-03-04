@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const requestBody = await request.json();
 
     // Validate required fields
-    const requiredFields = ['title', 'description', 'target_amount'];
+    const requiredFields = ['id', 'title', 'description'];
     for (const field of requiredFields) {
       if (!requestBody[field]) {
         return Response.json(
@@ -50,21 +50,16 @@ export async function POST(request: NextRequest) {
 
     // Prepare data object with all potential fields
     const bountyData = {
+      id: requestBody.id,
       title: requestBody.title,
       description: requestBody.description,
-      target_amount: requestBody.target_amount,
-      current_amount: requestBody.current_amount || 0,
-      deadline: requestBody.deadline,
-      creator_address: requestBody.creator_address,
-      status: requestBody.status || 'active',
-      category: requestBody.category,
-      image_url: requestBody.image_url,
-      metadata: requestBody.metadata,
-      // Required fields according to schema
-      prompters: requestBody.prompters || [],
-      type: requestBody.type || 'crowdfund',
-      // Any additional fields should be added here
+      type: null,
+      discord: requestBody.discord || null,
+      email: requestBody.email || null,
+      telegram: requestBody.telegram || null,
     };
+
+    console.log('storing in DB', bountyData);
 
     // Insert new bounty into the database
     const { data, error } = await supabase

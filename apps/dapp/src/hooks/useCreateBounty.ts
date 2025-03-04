@@ -2,7 +2,8 @@ import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
 import { useWallets } from '@privy-io/react-auth';
 import { useMutation } from '@tanstack/react-query';
-import { simulateContract, writeContract } from '@wagmi/core';
+import { readContract, simulateContract, writeContract } from '@wagmi/core';
+import { de } from 'chrono-node';
 import { RailSymbol } from 'lucide-react';
 import { parseEther } from 'viem';
 
@@ -21,6 +22,10 @@ export const useCreateBounty = () => {
       votingPhaseEnd: number;
       developerFeePercentage: number;
       raiseCap?: number;
+      description: string;
+      discord: string | null;
+      email: string | null;
+      telegram: string | null;
     }) => {
       const {
         amount,
@@ -31,6 +36,10 @@ export const useCreateBounty = () => {
         votingPhaseEnd,
         developerFeePercentage,
         raiseCap,
+        description,
+        email,
+        discord,
+        telegram,
       } = variables;
 
       if (!wallet || !wallet.address) return null;
@@ -56,11 +65,31 @@ export const useCreateBounty = () => {
         account: wallet.address,
       });
       const hash = await writeContract(config, result.request as any);
+
+      // Store metadata in Supabase
+      const bountyId = await readContract(config, {
+        abi: repNetManagerAbi,
+        functionName: 'crowdfundingId',
+        address: process.env.CONTRACT_ADDRESS as `0x${string}`,
+      });
+
+      fetch('/api/bounty', {
+        method: 'POST',
+        body: JSON.stringify({
+          id: Number(bountyId) - 1,
+          title,
+          description,
+          discord,
+          email,
+          telegram,
+        }),
+      });
+
       return hash;
     },
     onSuccess: (data) => {
       if (data) {
-        console.log('success');
+        console.log('Success. Storing Metadata...');
       }
     },
     onError: (error) => {

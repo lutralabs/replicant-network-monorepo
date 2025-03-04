@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { BountyCard } from '@/components/BountyCard';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useReadBounties } from '@/hooks/useReadBounties';
+import { useGetBounties } from '@/hooks/useGetBounties';
 import { bountyStatus } from '@/lib/utils';
 
 export default function Page() {
-  const bounties = useReadBounties();
+  const bounties = useGetBounties();
 
   return (
     <div className="w-full">
@@ -33,7 +33,7 @@ export default function Page() {
           <TabsTrigger value="past">Past Bounties</TabsTrigger>
         </TabsList>
         {bounties.isLoading && <div>Loading...</div>}
-        {bounties.bounties && (
+        {bounties.bounties && bounties.bounties.length > 0 ? (
           <>
             <TabsContent value="active">
               <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
@@ -48,7 +48,6 @@ export default function Page() {
                       key={bounty.id}
                       status={bountyStatus(bounty)}
                       bounty={bounty}
-                      submissions={0}
                     />
                   ))}
               </div>
@@ -62,7 +61,6 @@ export default function Page() {
                       key={bounty.id}
                       status={bountyStatus(bounty)}
                       bounty={bounty}
-                      submissions={0}
                     />
                   ))}
               </div>
@@ -80,12 +78,13 @@ export default function Page() {
                       key={bounty.id}
                       status={bountyStatus(bounty)}
                       bounty={bounty}
-                      submissions={0}
                     />
                   ))}
               </div>
             </TabsContent>
           </>
+        ) : (
+          <div>No Bounties yet!</div>
         )}
       </Tabs>
     </div>

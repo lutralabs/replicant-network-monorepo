@@ -5,9 +5,10 @@ import { Details } from '@/app/bounties/[bounty]/Details';
 import { Overview } from '@/app/bounties/[bounty]/Overview';
 import { Submissions } from '@/app/bounties/[bounty]/Submissions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BOUNTIES } from '@/constants/bounties';
 import { usePathname } from 'next/navigation';
 import { BountyInfo } from '@/components/BountyInfo';
+import { useGetBounty } from '@/hooks/useGetBounty';
+import { bountyStatus } from '@/lib/utils';
 
 export default function Page() {
   const paths = usePathname();
@@ -15,34 +16,38 @@ export default function Page() {
   const slug = pathNames[pathNames.length - 1];
   console.log(slug);
 
-  const bounty = BOUNTIES.find((bounty) => bounty.id === slug);
+  const bounty = useGetBounty(Number(slug));
+
+  if (bounty.isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="w-full h-full pb-12">
-      <BountyInfo bounty={bounty} />
+      <BountyInfo bounty={bounty.bounty} />
       <Tabs className="mt-8" defaultValue="overview">
         <TabsList className="grid w-[500px] grid-cols-4 bg-white">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
           <TabsTrigger value="crowdfunders">Crowdfunders</TabsTrigger>
           <TabsTrigger
-            disabled={bounty.status === 'crowdfunding' && true}
+            disabled={bountyStatus(bounty.bounty) === 'crowdfunding' && true}
             value="submissions"
           >
             Submissions
           </TabsTrigger>
         </TabsList>
         <TabsContent value="overview">
-          <Overview bounty={bounty} />
+          <Overview bounty={bounty.bounty} />
         </TabsContent>
         <TabsContent value="details">
-          <Details bounty={bounty} />
+          <Details bounty={bounty.bounty} />
         </TabsContent>
         <TabsContent value="crowdfunders">
-          <Crowdfunders bounty={bounty} />
+          <Crowdfunders bounty={bounty.bounty} />
         </TabsContent>
         <TabsContent value="submissions">
-          <Submissions bounty={bounty} />
+          <Submissions bounty={bounty.bounty} />
         </TabsContent>
       </Tabs>
     </div>

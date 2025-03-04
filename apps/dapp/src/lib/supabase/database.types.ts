@@ -40,30 +40,27 @@ export type Database = {
           discord: string | null;
           email: string | null;
           id: number;
-          prompters: string[];
           telegram: string | null;
           title: string;
-          type: string;
+          type: string | null;
         };
         Insert: {
           description?: string;
           discord?: string | null;
           email?: string | null;
           id?: number;
-          prompters: string[];
           telegram?: string | null;
           title?: string;
-          type: string;
+          type?: string | null;
         };
         Update: {
           description?: string;
           discord?: string | null;
           email?: string | null;
           id?: number;
-          prompters?: string[];
           telegram?: string | null;
           title?: string;
-          type?: string;
+          type?: string | null;
         };
         Relationships: [];
       };

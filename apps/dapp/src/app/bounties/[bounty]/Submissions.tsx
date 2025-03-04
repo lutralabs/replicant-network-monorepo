@@ -7,7 +7,8 @@ import {
   TableCell,
   TableBody,
 } from '@/components/ui/table';
-import type { Bounty } from '@/constants/bounties';
+import type { Bounty } from '@/hooks/useGetBounties';
+import { bountyStatus } from '@/lib/utils';
 import Link from 'next/link';
 import React from 'react';
 
@@ -26,7 +27,7 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {bounty.submittedModels.map((model) => (
+          {/* {bounty.submittedModels.map((model) => (
             <TableRow key={model.hash}>
               <TableCell className="p-4 font-medium text-md">
                 {model.hash}
@@ -41,11 +42,12 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
                 {model.votes}
               </TableCell>
             </TableRow>
-          ))}
+          ))} */}
+          TBD
         </TableBody>
       </Table>
 
-      {bounty.status === 'voting' && (
+      {bountyStatus(bounty) === 'voting' && (
         <div className="w-full flex justify-end mt-12">
           <div className="flex gap-x-2">
             <Link href={`/bounties/${bounty.id}/test-models`}>

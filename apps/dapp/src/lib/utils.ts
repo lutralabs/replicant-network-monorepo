@@ -1,4 +1,4 @@
-import type { Bounty } from '@/hooks/useReadBounties';
+import type { Bounty } from '@/hooks/useGetBounties';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -32,15 +32,15 @@ export const getTimeRemaining = (bounty: Bounty) => {
   let time;
   switch (bountyStatus(bounty)) {
     case 'crowdfunding':
-      time = bounty.fundingPhaseEnd;
+      time = Number(bounty.fundingPhaseEnd) / 1000;
       break;
     case 'active':
-      time = bounty.submissionPhaseEnd;
+      time = Number(bounty.submissionPhaseEnd) / 1000;
       break;
     case 'voting':
     case 'completed':
     case 'failed':
-      time = bounty.votingPhaseEnd;
+      time = Number(bounty.votingPhaseEnd) / 1000;
       break;
   }
   const now = new Date();

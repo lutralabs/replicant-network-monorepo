@@ -10,11 +10,12 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { Bounty } from '@/constants/bounties';
+import type { Bounty } from '@/hooks/useGetBounties';
 import { formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
 import { useWallets } from '@privy-io/react-auth';
 import { useMemo, useState } from 'react';
+import { formatEther } from 'viem';
 import { useBalance } from 'wagmi';
 
 export const FundBountyDialog = ({ bounty }: { bounty: Bounty }) => {
@@ -55,19 +56,19 @@ export const FundBountyDialog = ({ bounty }: { bounty: Bounty }) => {
           <div>
             Crowdfunders:{' '}
             <span className="font-semibold text-black">
-              {bounty.crowdfunders}
+              {bounty.numFunders}
             </span>
           </div>
           <div>
             Max:{' '}
             <span className="font-semibold text-black">
-              {bounty.max ?? 'Unlimited'}
+              {formatEther(bounty.raiseCap) ?? 'Unlimited'}
             </span>
           </div>
           <div>
             Raised:{' '}
             <span className="font-semibold text-black">
-              {bounty.reward} MON
+              {formatEther(bounty.amountRaised)} MON
             </span>
           </div>
         </div>

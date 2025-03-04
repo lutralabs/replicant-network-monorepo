@@ -2,24 +2,27 @@ import { config, wagmiContractConfig } from '@/wagmi';
 import { useReadContract } from 'wagmi';
 import { readContract } from '@wagmi/core';
 import { useState, useEffect } from 'react';
+import { repNetManagerAbi } from '@/generated/RepNetManager';
 
 // Extended bounty type including Supabase data
 export type Bounty = {
   id: bigint;
   creator: string;
   token: string;
-  accepted: boolean;
+  finalized: boolean;
+  winner: string;
   amountRaised: bigint;
   fundingPhaseEnd: bigint;
   submissionPhaseEnd: bigint;
   votingPhaseEnd: bigint;
   raiseCap: bigint;
   developerFeePercentage: bigint;
+  submissionIds: `0x${string}`[];
+  numSubmissions: bigint;
+  numFunders: bigint;
+  phase: number;
   // Additional blockchain data
   isActive: boolean;
-  totalRaised: bigint;
-  totalFunders: bigint;
-  phase: number;
   // Supabase metadata
   title?: string;
   description?: string;
@@ -30,7 +33,7 @@ export type Bounty = {
   telegram?: string | null;
 };
 
-export function useReadBounties() {
+export function useGetBounties() {
   const { data: numberOfBounties, isLoading: isLoadingCount } = useReadContract(
     {
       ...wagmiContractConfig,
@@ -56,7 +59,7 @@ export function useReadBounties() {
 
             // Fetch base bounty data from blockchain
             const bountyData = await readContract(config, {
-              abi: wagmiContractConfig.abi,
+              abi: repNetManagerAbi,
               functionName: 'getCrowdfunding',
               args: [bountyId],
               address: process.env.CONTRACT_ADDRESS as `0x${string}`,
@@ -64,29 +67,8 @@ export function useReadBounties() {
 
             // Fetch additional blockchain data
             const isActive = await readContract(config, {
-              abi: wagmiContractConfig.abi,
+              abi: repNetManagerAbi,
               functionName: 'isCrowdfundingActive',
-              args: [bountyId],
-              address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-            });
-
-            const totalRaised = await readContract(config, {
-              abi: wagmiContractConfig.abi,
-              functionName: 'getTotalRaised',
-              args: [bountyId],
-              address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-            });
-
-            const totalFunders = await readContract(config, {
-              abi: wagmiContractConfig.abi,
-              functionName: 'getTotalFunders',
-              args: [bountyId],
-              address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-            });
-
-            const phase = await readContract(config, {
-              abi: wagmiContractConfig.abi,
-              functionName: 'getCrowdfundingPhase',
               args: [bountyId],
               address: process.env.CONTRACT_ADDRESS as `0x${string}`,
             });
@@ -106,10 +88,8 @@ export function useReadBounties() {
             // Combine all data
             const enrichedBounty: Bounty = {
               ...bountyData,
+              submissionIds: [...bountyData.submissionIds], // Convert readonly array to mutable array
               isActive,
-              totalRaised,
-              totalFunders,
-              phase,
               // Add Supabase data if available
               ...(supabaseData && {
                 title: supabaseData.title,

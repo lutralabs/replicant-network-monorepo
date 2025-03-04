@@ -157,8 +157,11 @@ export const BountyForm = () => {
       votingPhaseEnd: values.endOfVoting.getTime(),
       developerFeePercentage: values.devFees,
       raiseCap: values.maxAmount,
+      description: values.description,
+      discord: values.discord,
+      email: values.email,
+      telegram: values.telegram,
     });
-
     console.log(res);
   }
 
