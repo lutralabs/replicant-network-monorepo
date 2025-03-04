@@ -201,9 +201,9 @@ contract RepNetManagerRealLifeTest is TestHelpers {
         vm.warp(_currentTime); // Set the current time
         vm.deal(_creator, _initialFunding);
         vm.prank(_creator);
-        repNetManager.createCrowdfunding{value: _initialFunding}(params);
+        uint256 crowdfundingId = repNetManager.createCrowdfunding{value: _initialFunding}(params);
 
-        return repNetManager.crowdfundingId() - 1;
+        return crowdfundingId;
     }
 
     function fundCrowdfundingWithMultipleUsers(
@@ -354,8 +354,7 @@ contract RepNetManagerRealLifeTest is TestHelpers {
         CrowdfundingCreationParams memory params = createDefaultCrowdfundingParams();
         vm.deal(users[0], ONE_ETH);
         vm.prank(users[0]);
-        repNetManager.createCrowdfunding{value: ONE_ETH}(params);
-        uint256 newCrowdfundingId = repNetManager.crowdfundingId() - 1;
+        uint256 newCrowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
 
         // Fund with multiple users in funding phase
         for (uint256 i = 1; i < 10; i++) {

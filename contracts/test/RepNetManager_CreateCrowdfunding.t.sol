@@ -24,9 +24,12 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         vm.expectEmit(true, true, false, false);
         emit CrowdfundingCreated(0, user1, address(0));
 
-        repNetManager.createCrowdfunding{value: ONE_ETH}(params);
+        uint256 crowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
 
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(0);
+        // Verify the returned ID is correct
+        assertEq(crowdfundingId, 0, "Returned crowdfunding ID should be 0");
+
+        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
 
         assertEq(cf.id, 0, "Crowdfunding ID should be 0");
         assertEq(cf.creator, user1, "Creator should be user1");
@@ -42,15 +45,15 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         assertEq(IModelTokenERC20(cf.token).balanceOf(user1), 1_000_000 ether, "Creator should have 1M tokens");
 
         // Verify the crowdfunding phase
-        CrowdfundingPhase phase = repNetManager.getCrowdfundingPhase(0);
+        CrowdfundingPhase phase = repNetManager.getCrowdfundingPhase(crowdfundingId);
         assertEq(uint256(phase), uint256(CrowdfundingPhase.Funding), "Initial phase should be Funding");
 
         // Verify the total raised
-        uint256 totalRaised = repNetManager.getTotalRaised(0);
+        uint256 totalRaised = repNetManager.getTotalRaised(crowdfundingId);
         assertEq(totalRaised, ONE_ETH, "Total raised should be 1 ETH");
 
         // Verify the total funders
-        uint256 totalFunders = repNetManager.getTotalFunders(0);
+        uint256 totalFunders = repNetManager.getTotalFunders(crowdfundingId);
         assertEq(totalFunders, 1, "Total funders should be 1");
     }
 
@@ -172,10 +175,10 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         // Execute the function with a large initial funding
         vm.deal(user1, TWO_ETH);
         vm.prank(user1);
-        repNetManager.createCrowdfunding{value: TWO_ETH}(params);
+        uint256 crowdfundingId = repNetManager.createCrowdfunding{value: TWO_ETH}(params);
 
         // Verify the crowdfunding was created correctly
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(0);
+        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
 
         assertEq(cf.amountRaised, TWO_ETH, "Initial amount raised should be 2 ETH");
         assertEq(cf.raiseCap, 0, "Raise cap should be 0 (no cap)");
@@ -192,7 +195,8 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         vm.expectEmit(true, true, false, false);
         emit CrowdfundingCreated(0, user1, address(0));
 
-        repNetManager.createCrowdfunding{value: ONE_ETH}(params);
+        uint256 crowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
+        assertEq(crowdfundingId, 0, "Returned crowdfunding ID should be 0");
     }
 
     function test_CreateCrowdfunding_Success_MultipleCrowdfundings() public {
@@ -206,11 +210,12 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         vm.expectEmit(true, true, false, false);
         emit CrowdfundingCreated(0, user1, address(0));
 
-        repNetManager.createCrowdfunding{value: ONE_ETH}(params);
+        uint256 firstCrowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
 
         // Verify the crowdfunding was created correctly
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(0);
+        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(firstCrowdfundingId);
         assertEq(cf.id, 0, "Crowdfunding ID should be 0");
+        assertEq(firstCrowdfundingId, 0, "Returned crowdfunding ID should be 0");
 
         // Execute the function again with a different crowdfunding ID
         vm.deal(user2, ONE_ETH);
@@ -219,11 +224,12 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         vm.expectEmit(true, true, false, false);
         emit CrowdfundingCreated(1, user2, address(0));
 
-        repNetManager.createCrowdfunding{value: ONE_ETH}(params);
+        uint256 secondCrowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
 
         // Verify the crowdfunding was created correctly
-        CrowdfundingShort memory cf2 = repNetManager.getCrowdfunding(1);
+        CrowdfundingShort memory cf2 = repNetManager.getCrowdfunding(secondCrowdfundingId);
         assertEq(cf2.id, 1, "Crowdfunding ID should be 1");
+        assertEq(secondCrowdfundingId, 1, "Returned crowdfunding ID should be 1");
     }
 
 }
