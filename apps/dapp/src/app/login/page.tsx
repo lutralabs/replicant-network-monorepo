@@ -2,13 +2,14 @@ import { GalleryVerticalEnd } from 'lucide-react';
 
 import { ModeToggle } from '@/components/demo/toggle-mode';
 import { LoginForm } from '@/components/LoginForm';
+import Link from 'next/link';
 
 export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="bg-muted relative hidden lg:block">
         <div className="absolute top-10 left-10 z-10 flex justify-center gap-2 md:justify-start">
-          <a
+          <Link
             className="flex items-center gap-2 font-medium"
             href="#placeholder"
           >
@@ -16,7 +17,7 @@ export default function LoginPage() {
               <GalleryVerticalEnd className="size-4" />
             </div>
             Acme Inc.
-          </a>
+          </Link>
         </div>
         <img
           alt="Placeholder"
