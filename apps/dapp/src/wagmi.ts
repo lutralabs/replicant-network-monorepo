@@ -1,5 +1,6 @@
 import { createConfig } from '@privy-io/wagmi';
 import { http, defineChain } from 'viem';
+import { repNetManagerAbi } from './generated/RepNetManager';
 
 export const monad = defineChain({
   id: 10143,
@@ -25,3 +26,8 @@ export const config = createConfig({
     [monad.id]: http(),
   },
 });
+
+export const wagmiContractConfig = {
+  address: process.env.CONTRACT_ADDRESS,
+  abi: repNetManagerAbi,
+};
