@@ -49,6 +49,16 @@ export const repNetManagerAbi = [
   {
     type: 'function',
     inputs: [
+      { name: '_crowdfundingId', internalType: 'uint256', type: 'uint256' },
+      { name: '_phase', internalType: 'enum CrowdfundingPhase', type: 'uint8' },
+    ],
+    name: '_changePhase',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
       {
         name: '_params',
         internalType: 'struct CrowdfundingCreationParams',
@@ -147,6 +157,11 @@ export const repNetManagerAbi = [
             name: 'phase',
             internalType: 'enum CrowdfundingPhase',
             type: 'uint8',
+          },
+          {
+            name: 'submissionIds',
+            internalType: 'bytes32[]',
+            type: 'bytes32[]',
           },
         ],
       },
@@ -337,7 +352,7 @@ export const repNetManagerAbi = [
         name: 'crowdfundingId',
         internalType: 'uint256',
         type: 'uint256',
-        indexed: false,
+        indexed: true,
       },
       {
         name: 'sender',
@@ -387,7 +402,7 @@ export const repNetManagerAbi = [
         name: 'submissionId',
         internalType: 'bytes32',
         type: 'bytes32',
-        indexed: false,
+        indexed: true,
       },
       {
         name: 'creator',

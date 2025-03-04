@@ -69,11 +69,11 @@ struct CrowdfundingCreationParams {
     uint256 developerFeePercentage;
 }
 
-event CrowdfundingFunded(uint256 crowdfundingId, address indexed sender, uint256 amount);
+event CrowdfundingFunded(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
 
 event CrowdfundingCreated(uint256 indexed crowdfundingId, address indexed creator, address indexed tokenAddress);
 
-event SolutionSubmitted(uint256 indexed crowdfundingId, bytes32 submissionId, address indexed creator);
+event SolutionSubmitted(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address indexed creator);
 
 event CrowdfundingFinalized(uint256 indexed crowdfundingId, address indexed winner);
 

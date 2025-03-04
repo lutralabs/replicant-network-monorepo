@@ -371,4 +371,27 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         return crowdfundings[_crowdfundingId].creator != address(0);
     }
 
+    // debug methods
+    // onlyowner can call to change the phase of a crowdfunding by adjusting the timestamps
+    function _changePhase(uint256 _crowdfundingId, CrowdfundingPhase _phase) public onlyOwner {
+        Crowdfunding storage cf = crowdfundings[_crowdfundingId];
+        if (_phase == CrowdfundingPhase.Funding) {
+            cf.fundingPhaseEnd = block.timestamp + 1 days;
+            cf.submissionPhaseEnd = block.timestamp + 2 days;
+            cf.votingPhaseEnd = block.timestamp + 3 days;
+        } else if (_phase == CrowdfundingPhase.Submission) {
+            cf.fundingPhaseEnd = block.timestamp - 1 days;
+            cf.submissionPhaseEnd = block.timestamp + 1 days;
+            cf.votingPhaseEnd = block.timestamp + 2 days;
+        } else if (_phase == CrowdfundingPhase.Voting) {
+            cf.fundingPhaseEnd = block.timestamp - 2 days;
+            cf.submissionPhaseEnd = block.timestamp - 1 days;
+            cf.votingPhaseEnd = block.timestamp + 1 days;
+        } else if (_phase == CrowdfundingPhase.Ended) {
+            cf.fundingPhaseEnd = block.timestamp - 3 days;
+            cf.submissionPhaseEnd = block.timestamp - 2 days;
+            cf.votingPhaseEnd = block.timestamp - 1 days;
+        }
+    }
+
 }

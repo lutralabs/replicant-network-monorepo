@@ -1,19 +1,236 @@
-## Foundry
+// SPDX-License-Identifier: UNLICENSED
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+# Replicant Network Smart Contracts
 
-Foundry consists of:
+This directory contains the smart contracts for the Replicant Network, a decentralized platform for crowdfunding AI model development.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## Overview
 
-## Documentation
+The Replicant Network enables users to:
+1. Create crowdfunding campaigns for AI model development
+2. Fund campaigns with ETH
+3. Submit solutions to funded campaigns
+4. Vote on submitted solutions
+5. Finalize campaigns and distribute rewards
 
-https://book.getfoundry.sh/
+## Contract Structure
 
-## Usage
+### Core Contracts
+
+* **RepNetManager.sol**: The main contract that manages the crowdfunding lifecycle, including creation, funding, submission, voting, and finalization.
+* **ModelTokenERC20.sol**: An ERC20 token contract that represents ownership in a crowdfunded model. Only the RepNetManager can mint these tokens.
+* **ERC20Factory.sol**: A factory contract that deploys new ModelTokenERC20 tokens for each crowdfunding campaign.
+
+### Data Types
+
+* **DataTypes.sol**: Contains all the data structures and enums used throughout the system, including:
+  + `CrowdfundingPhase`: Enum for the different phases (Funding, Submission, Voting, Ended)
+  + `Crowdfunding`: Main data structure for crowdfunding campaigns
+  + `Submission`: Data structure for submitted solutions
+  + `Votes`: Data structure for tracking votes
+
+### Interfaces
+
+* **IModelTokenERC20.sol**: Interface for the ModelTokenERC20 contract
+* **IERC20Factory.sol**: Interface for the ERC20Factory contract
+
+## Key Constants
+
+* `MAX_DEVELOPER_FEE_PERCENTAGE`: 5000 (50%)
+* `MIN_FUNDING_PHASE_DURATION`: 1 day
+* `MIN_SUBMISSION_PHASE_DURATION`: 1 day
+* `MIN_VOTING_PHASE_DURATION`: 1 day
+* `MIN_VOTES_POWER_PERCENTAGE`: 2000 (20%)
+* `CONVERSION_RATE`: 1, 000, 000 (1 ETH = 1, 000, 000 tokens)
+
+## Interacting with the Contracts
+
+### From a Web3 Wallet or dApp
+
+#### Creating a Crowdfunding Campaign
+
+```javascript
+import {
+    createPublicClient,
+    createWalletClient,
+    http,
+    parseEther
+} from 'viem';
+import {
+    mainnet
+} from 'viem/chains';
+import {
+    privateKeyToAccount
+} from 'viem/accounts';
+
+// Setup clients
+const publicClient = createPublicClient({
+    chain: mainnet,
+    transport: http()
+});
+
+const account = privateKeyToAccount('0x...');
+const walletClient = createWalletClient({
+    account,
+    chain: mainnet,
+    transport: http()
+});
+
+// Parameters for creating a crowdfunding
+const params = {
+    name: "MyAIModel",
+    symbol: "MAI",
+    fundingPhaseEnd: BigInt(Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)), // 7 days from now
+    submissionPhaseEnd: BigInt(Math.floor(Date.now() / 1000) + (14 * 24 * 60 * 60)), // 14 days from now
+    votingPhaseEnd: BigInt(Math.floor(Date.now() / 1000) + (21 * 24 * 60 * 60)), // 21 days from now
+    raiseCap: parseEther("10"), // 10 ETH cap (optional, 0 means no cap)
+    developerFeePercentage: 1000n // 10%
+};
+
+// Initial funding amount
+const initialFunding = parseEther("0.1"); // 0.1 ETH
+
+// Create the crowdfunding
+const hash = await walletClient.writeContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'createCrowdfunding',
+    args: [params],
+    value: initialFunding
+});
+
+// Wait for transaction to be mined
+const receipt = await publicClient.waitForTransactionReceipt({
+    hash
+});
+```
+
+#### Funding a Campaign
+
+```javascript
+const crowdfundingId = 0n; // ID of the crowdfunding to fund
+const fundingAmount = parseEther("1"); // 1 ETH
+
+const hash = await walletClient.writeContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'fund',
+    args: [crowdfundingId],
+    value: fundingAmount
+});
+
+// Wait for transaction to be mined
+const receipt = await publicClient.waitForTransactionReceipt({
+    hash
+});
+```
+
+#### Submitting a Solution
+
+```javascript
+// Note: This can only be called by the contract owner
+const crowdfundingId = 0n;
+const submissionHash = keccak256(stringToHex("solution-identifier"));
+const creator = '0x...'; // Address of the solution creator
+
+const hash = await walletClient.writeContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'submit',
+    args: [crowdfundingId, submissionHash, creator]
+});
+
+// Wait for transaction to be mined
+const receipt = await publicClient.waitForTransactionReceipt({
+    hash
+});
+```
+
+#### Voting on a Solution
+
+```javascript
+const crowdfundingId = 0n;
+const submissionId = '0x...'; // The submission hash
+
+const hash = await walletClient.writeContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'vote',
+    args: [crowdfundingId, submissionId]
+});
+
+// Wait for transaction to be mined
+const receipt = await publicClient.waitForTransactionReceipt({
+    hash
+});
+```
+
+#### Finalizing a Crowdfunding
+
+```javascript
+const crowdfundingId = 0n;
+
+const hash = await walletClient.writeContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'finalize',
+    args: [crowdfundingId]
+});
+
+// Wait for transaction to be mined
+const receipt = await publicClient.waitForTransactionReceipt({
+    hash
+});
+```
+
+#### Withdrawing Funds
+
+```javascript
+const crowdfundingId = 0n;
+
+const hash = await walletClient.writeContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'withdraw',
+    args: [crowdfundingId]
+});
+
+// Wait for transaction to be mined
+const receipt = await publicClient.waitForTransactionReceipt({
+    hash
+});
+```
+
+### Querying Contract State
+
+```javascript
+// Get crowdfunding details
+const crowdfundingId = 0n;
+const crowdfunding = await publicClient.readContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'getCrowdfunding',
+    args: [crowdfundingId]
+});
+
+// Get current phase of a crowdfunding
+const phase = await publicClient.readContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'getCrowdfundingPhase',
+    args: [crowdfundingId]
+});
+
+// Get submissions for a crowdfunding
+const submissions = await publicClient.readContract({
+    address: '0x...', // RepNetManager address
+    abi: repNetManagerABI,
+    functionName: 'getSubmissions',
+    args: [crowdfundingId]
+});
+```
+
+## Development
 
 ### Build
 
@@ -33,34 +250,4 @@ $ forge test
 $ forge fmt
 ```
 
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+For more information on Foundry tools, see the [Foundry Documentation](https://book.getfoundry.sh/).
