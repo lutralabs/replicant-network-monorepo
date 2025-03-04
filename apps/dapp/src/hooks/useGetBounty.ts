@@ -56,6 +56,7 @@ export function useGetBounty(id: number) {
         const enrichedBounty: Bounty = {
           ...bountyData,
           submissionIds: [...bountyData.submissionIds], // Convert readonly array to mutable array
+          accepted: bountyData.finalized,
           isActive,
           // Add Supabase data if available
           ...(supabaseData && {
