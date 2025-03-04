@@ -73,7 +73,7 @@ contract RepNetManager_FundTest is TestHelpers {
     function test_Fund_ZeroAmount() public {
         // Try to fund with zero amount
         vm.prank(user1);
-        vm.expectRevert(FundingZero.selector);
+        vm.expectRevert(RequestedFundingZero.selector);
         repNetManager.fund{value: 0}(crowdfundingId);
     }
 
@@ -83,7 +83,7 @@ contract RepNetManager_FundTest is TestHelpers {
 
         vm.deal(user1, ONE_ETH);
         vm.prank(user1);
-        vm.expectRevert(abi.encodeWithSelector(CrowdfundingNotFound.selector, nonExistentId));
+        vm.expectRevert(CrowdfundingNotFound.selector);
         repNetManager.fund{value: ONE_ETH}(nonExistentId);
     }
 
@@ -95,7 +95,7 @@ contract RepNetManager_FundTest is TestHelpers {
         // Try to fund after funding phase ended
         vm.deal(user1, ONE_ETH);
         vm.prank(user1);
-        vm.expectRevert(FundingPhaseEnded.selector);
+        vm.expectRevert(NotInFundingPhase.selector);
         repNetManager.fund{value: ONE_ETH}(crowdfundingId);
     }
 
@@ -112,7 +112,7 @@ contract RepNetManager_FundTest is TestHelpers {
         // Try to fund more than the cap allows
         vm.deal(user1, ONE_ETH);
         vm.prank(user1);
-        vm.expectRevert(FundingCapReached.selector);
+        vm.expectRevert(abi.encodeWithSelector(FundingCapReached.selector, ONE_ETH, params.raiseCap));
         repNetManager.fund{value: ONE_ETH}(lowCapCrowdfundingId);
 
         // Fund exactly up to the cap
@@ -131,7 +131,7 @@ contract RepNetManager_FundTest is TestHelpers {
         vm.prank(user1);
 
         vm.expectEmit(true, true, false, true);
-        emit Funded(crowdfundingId, user1, ONE_ETH);
+        emit CrowdfundingFunded(crowdfundingId, user1, ONE_ETH);
 
         repNetManager.fund{value: ONE_ETH}(crowdfundingId);
     }

@@ -12,8 +12,10 @@ struct Crowdfunding {
     uint256 id;
     address creator;
     address token;
-    bool accepted;
+    address winner;
+    bool finalized;
     uint256 amountRaised;
+    Votes votes;
     uint256 numSubmissions;
     uint256 numFunders;
     uint256 fundingPhaseEnd; // timestamp
@@ -22,20 +24,38 @@ struct Crowdfunding {
     uint256 raiseCap; // this is optional, 0 means no cap
     uint256 developerFeePercentage; // percentage of total supply tokens to be given to the developer
     mapping(address => uint256) deposits;
-    mapping(bytes32 => Submission) submissions; // model hash => submission
+    mapping(bytes32 => Submission) submissions;
+    bytes32[] submissionIds;
+}
+
+struct Votes {
+    uint256 voters;
+    uint256 votesPower; // should be more than X % of total supply of tokens to count
+    mapping(address => uint256) hasVoted;
+    mapping(bytes32 => uint256) submissionVotes;
+}
+
+struct Submission {
+    bytes32 id;
+    address creator;
+    uint256 timestamp;
 }
 
 struct CrowdfundingShort {
     uint256 id;
     address creator;
     address token;
-    bool accepted;
+    bool finalized;
+    address winner;
     uint256 amountRaised;
     uint256 fundingPhaseEnd;
     uint256 submissionPhaseEnd;
     uint256 votingPhaseEnd;
     uint256 raiseCap;
     uint256 developerFeePercentage;
+    uint256 numSubmissions;
+    uint256 numFunders;
+    CrowdfundingPhase phase;
 }
 
 struct CrowdfundingCreationParams {
@@ -48,31 +68,42 @@ struct CrowdfundingCreationParams {
     uint256 developerFeePercentage;
 }
 
-struct Submission {
-    bytes32 id;
-    address creator;
-    uint256 timestamp;
-}
-
-event Funded(uint256 crowdfundingId, address indexed sender, uint256 amount);
+event CrowdfundingFunded(uint256 crowdfundingId, address indexed sender, uint256 amount);
 
 event CrowdfundingCreated(uint256 indexed crowdfundingId, address indexed creator, address indexed tokenAddress);
 
-error InitialFundingRequired();
-error InitialFundingExceedsCap();
-error FundingCapReached();
-error FundingPhaseEnded();
-error SubmissionPhaseEnded();
-error VotingPhaseEnded();
-error CrowdfundingNotFound(uint256 crowdfundingId);
-error InvalidRaiseCap();
-error DeveloperFeePercentageTooHigh();
-error InvalidTimestamps();
-error CrowdfundingNotActive();
-error FundingZero();
+event SolutionSubmitted(uint256 indexed crowdfundingId, bytes32 submissionId, address indexed creator);
 
-error FundingPhaseEndMustBeInFuture();
-error MinimumFundingPhaseDurationNotMet();
-error MinimumSubmissionPhaseDurationNotMet();
-error MinimumVotingPhaseDurationNotMet();
+event CrowdfundingFinalized(uint256 indexed crowdfundingId, address indexed winner);
+
+event CrowdfundingFinalizedWithoutWinner(uint256 indexed crowdfundingId);
+
+event Withdrawal(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
+
+error CrowdfundingNotFound();
+error CrowdfundingNotActive();
+error CrowdfundingStillActive();
+error CrowdfundingAlreadyFinalized();
+
+error InitialFundingRequired();
+error InitialFundingExceedsCap(uint256 requested, uint256 cap);
+error FundingCapReached(uint256 requested, uint256 cap);
+
+error NotInFundingPhase();
+error NotInSubmissionPhase();
+error NotInVotingPhase();
+error VotesPowerTooLow();
+
+error NoDeposits();
+error SolutionAlreadySubmitted(bytes32 submissionId);
+error DeveloperFeePercentageTooHigh(uint256 developerFeePercentage);
+error RequestedFundingZero();
+error VotingBalanceZero();
+error AlreadyVoted(bytes32 submissionId);
+error CannotVoteForYourOwnSubmission(bytes32 submissionId);
+error SubmissionNotFound(bytes32 submissionId);
+error FundingPhaseEndMustBeInFuture(uint256 fundingPhaseEnd, uint256 currentTimestamp);
+error MinimumFundingPhaseDurationNotMet(uint256 duration, uint256 minDuration);
+error MinimumSubmissionPhaseDurationNotMet(uint256 duration, uint256 minDuration);
+error MinimumVotingPhaseDurationNotMet(uint256 duration, uint256 minDuration);
 error TimestampsNotInCorrectOrder();

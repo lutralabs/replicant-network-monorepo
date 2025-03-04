@@ -34,7 +34,7 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         assertEq(cf.votingPhaseEnd, params.votingPhaseEnd, "Voting phase end should match");
         assertEq(cf.raiseCap, params.raiseCap, "Raise cap should match");
         assertEq(cf.developerFeePercentage, params.developerFeePercentage, "Developer fee percentage should match");
-        assertEq(cf.accepted, false, "Crowdfunding should not be accepted initially");
+        assertEq(cf.finalized, false, "Crowdfunding should not be accepted initially");
 
         // Verify the crowdfunding phase
         CrowdfundingPhase phase = repNetManager.getCrowdfundingPhase(0);
@@ -68,7 +68,7 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         // Execute the function with initial funding exceeding cap
         vm.deal(user1, TWO_ETH);
         vm.prank(user1);
-        vm.expectRevert(InitialFundingExceedsCap.selector);
+        vm.expectRevert(abi.encodeWithSelector(InitialFundingExceedsCap.selector, TWO_ETH, params.raiseCap));
         repNetManager.createCrowdfunding{value: TWO_ETH}(params);
     }
 
@@ -80,7 +80,7 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         // Execute the function with developer fee too high
         vm.deal(user1, ONE_ETH);
         vm.prank(user1);
-        vm.expectRevert(DeveloperFeePercentageTooHigh.selector);
+        vm.expectRevert(abi.encodeWithSelector(DeveloperFeePercentageTooHigh.selector, params.developerFeePercentage));
         repNetManager.createCrowdfunding{value: ONE_ETH}(params);
     }
 
@@ -109,7 +109,9 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
 
         vm.deal(user1, ONE_ETH);
         vm.prank(user1);
-        vm.expectRevert(FundingPhaseEndMustBeInFuture.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(FundingPhaseEndMustBeInFuture.selector, fundingPhaseEnd, currentTime + 100)
+        );
         repNetManager.createCrowdfunding{value: ONE_ETH}(params1);
 
         // Test case 2: Phases in wrong order
@@ -147,7 +149,13 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         });
 
         vm.prank(user1);
-        vm.expectRevert(MinimumFundingPhaseDurationNotMet.selector);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                MinimumFundingPhaseDurationNotMet.selector,
+                fundingPhaseEnd - block.timestamp,
+                repNetManager.MIN_FUNDING_PHASE_DURATION()
+            )
+        );
         repNetManager.createCrowdfunding{value: ONE_ETH}(params3);
     }
 
