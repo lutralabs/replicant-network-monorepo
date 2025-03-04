@@ -110,6 +110,7 @@ export function useReadBounties() {
               totalRaised,
               totalFunders,
               phase,
+              accepted: bountyData.finalized,
               // Add Supabase data if available
               ...(supabaseData && {
                 title: supabaseData.title,
