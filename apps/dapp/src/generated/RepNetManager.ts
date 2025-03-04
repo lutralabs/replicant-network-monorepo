@@ -7,6 +7,13 @@ export const repNetManagerAbi = [
   {
     type: 'function',
     inputs: [],
+    name: 'CONVERSION_RATE',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
     name: 'MAX_DEVELOPER_FEE_PERCENTAGE',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
@@ -22,6 +29,13 @@ export const repNetManagerAbi = [
     type: 'function',
     inputs: [],
     name: 'MIN_SUBMISSION_PHASE_DURATION',
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'MIN_VOTES_POWER_PERCENTAGE',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'view',
   },
@@ -71,36 +85,21 @@ export const repNetManagerAbi = [
   },
   {
     type: 'function',
-    inputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
-    name: 'crowdfundings',
-    outputs: [
-      { name: 'id', internalType: 'uint256', type: 'uint256' },
-      { name: 'creator', internalType: 'address', type: 'address' },
-      { name: 'token', internalType: 'address', type: 'address' },
-      { name: 'accepted', internalType: 'bool', type: 'bool' },
-      { name: 'amountRaised', internalType: 'uint256', type: 'uint256' },
-      { name: 'numSubmissions', internalType: 'uint256', type: 'uint256' },
-      { name: 'numFunders', internalType: 'uint256', type: 'uint256' },
-      { name: 'fundingPhaseEnd', internalType: 'uint256', type: 'uint256' },
-      { name: 'submissionPhaseEnd', internalType: 'uint256', type: 'uint256' },
-      { name: 'votingPhaseEnd', internalType: 'uint256', type: 'uint256' },
-      { name: 'raiseCap', internalType: 'uint256', type: 'uint256' },
-      {
-        name: 'developerFeePercentage',
-        internalType: 'uint256',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-  },
-  {
-    type: 'function',
     inputs: [],
     name: 'erc20Factory',
     outputs: [
       { name: '', internalType: 'contract ERC20Factory', type: 'address' },
     ],
     stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_crowdfundingId', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'finalize',
+    outputs: [],
+    stateMutability: 'nonpayable',
   },
   {
     type: 'function',
@@ -126,7 +125,8 @@ export const repNetManagerAbi = [
           { name: 'id', internalType: 'uint256', type: 'uint256' },
           { name: 'creator', internalType: 'address', type: 'address' },
           { name: 'token', internalType: 'address', type: 'address' },
-          { name: 'accepted', internalType: 'bool', type: 'bool' },
+          { name: 'finalized', internalType: 'bool', type: 'bool' },
+          { name: 'winner', internalType: 'address', type: 'address' },
           { name: 'amountRaised', internalType: 'uint256', type: 'uint256' },
           { name: 'fundingPhaseEnd', internalType: 'uint256', type: 'uint256' },
           {
@@ -140,6 +140,13 @@ export const repNetManagerAbi = [
             name: 'developerFeePercentage',
             internalType: 'uint256',
             type: 'uint256',
+          },
+          { name: 'numSubmissions', internalType: 'uint256', type: 'uint256' },
+          { name: 'numFunders', internalType: 'uint256', type: 'uint256' },
+          {
+            name: 'phase',
+            internalType: 'enum CrowdfundingPhase',
+            type: 'uint8',
           },
         ],
       },
@@ -155,6 +162,36 @@ export const repNetManagerAbi = [
     outputs: [
       { name: '', internalType: 'enum CrowdfundingPhase', type: 'uint8' },
     ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_crowdfundingId', internalType: 'uint256', type: 'uint256' },
+      { name: '_submissionId', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'getSubmission',
+    outputs: [
+      {
+        name: '',
+        internalType: 'struct Submission',
+        type: 'tuple',
+        components: [
+          { name: 'id', internalType: 'bytes32', type: 'bytes32' },
+          { name: 'creator', internalType: 'address', type: 'address' },
+          { name: 'timestamp', internalType: 'uint256', type: 'uint256' },
+        ],
+      },
+    ],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_crowdfundingId', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'getSubmissions',
+    outputs: [{ name: '', internalType: 'bytes32[]', type: 'bytes32[]' }],
     stateMutability: 'view',
   },
   {
@@ -200,8 +237,38 @@ export const repNetManagerAbi = [
   },
   {
     type: 'function',
+    inputs: [
+      { name: '_crowdfundingId', internalType: 'uint256', type: 'uint256' },
+      { name: '_hash', internalType: 'bytes32', type: 'bytes32' },
+      { name: '_creator', internalType: 'address', type: 'address' },
+    ],
+    name: 'submit',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [{ name: 'newOwner', internalType: 'address', type: 'address' }],
     name: 'transferOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_crowdfundingId', internalType: 'uint256', type: 'uint256' },
+      { name: '_submissionId', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'vote',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: '_crowdfundingId', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'withdraw',
     outputs: [],
     stateMutability: 'nonpayable',
   },
@@ -238,6 +305,38 @@ export const repNetManagerAbi = [
         name: 'crowdfundingId',
         internalType: 'uint256',
         type: 'uint256',
+        indexed: true,
+      },
+      {
+        name: 'winner',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'CrowdfundingFinalized',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'crowdfundingId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+    ],
+    name: 'CrowdfundingFinalizedWithoutWinner',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'crowdfundingId',
+        internalType: 'uint256',
+        type: 'uint256',
         indexed: false,
       },
       {
@@ -253,7 +352,7 @@ export const repNetManagerAbi = [
         indexed: false,
       },
     ],
-    name: 'Funded',
+    name: 'CrowdfundingFunded',
   },
   {
     type: 'event',
@@ -275,23 +374,136 @@ export const repNetManagerAbi = [
     name: 'OwnershipTransferred',
   },
   {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'crowdfundingId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+      {
+        name: 'submissionId',
+        internalType: 'bytes32',
+        type: 'bytes32',
+        indexed: false,
+      },
+      {
+        name: 'creator',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+    ],
+    name: 'SolutionSubmitted',
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    inputs: [
+      {
+        name: 'crowdfundingId',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: true,
+      },
+      {
+        name: 'sender',
+        internalType: 'address',
+        type: 'address',
+        indexed: true,
+      },
+      {
+        name: 'amount',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
+    ],
+    name: 'Withdrawal',
+  },
+  {
     type: 'error',
     inputs: [
-      { name: 'crowdfundingId', internalType: 'uint256', type: 'uint256' },
+      { name: 'submissionId', internalType: 'bytes32', type: 'bytes32' },
     ],
-    name: 'CrowdfundingNotFound',
+    name: 'AlreadyVoted',
   },
-  { type: 'error', inputs: [], name: 'DeveloperFeePercentageTooHigh' },
-  { type: 'error', inputs: [], name: 'FundingCapReached' },
-  { type: 'error', inputs: [], name: 'FundingPhaseEndMustBeInFuture' },
-  { type: 'error', inputs: [], name: 'FundingPhaseEnded' },
-  { type: 'error', inputs: [], name: 'FundingZero' },
-  { type: 'error', inputs: [], name: 'InitialFundingExceedsCap' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'submissionId', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'CannotVoteForYourOwnSubmission',
+  },
+  { type: 'error', inputs: [], name: 'CrowdfundingAlreadyFinalized' },
+  { type: 'error', inputs: [], name: 'CrowdfundingNotFound' },
+  { type: 'error', inputs: [], name: 'CrowdfundingStillActive' },
+  {
+    type: 'error',
+    inputs: [
+      {
+        name: 'developerFeePercentage',
+        internalType: 'uint256',
+        type: 'uint256',
+      },
+    ],
+    name: 'DeveloperFeePercentageTooHigh',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'requested', internalType: 'uint256', type: 'uint256' },
+      { name: 'cap', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'FundingCapReached',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'fundingPhaseEnd', internalType: 'uint256', type: 'uint256' },
+      { name: 'currentTimestamp', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'FundingPhaseEndMustBeInFuture',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'requested', internalType: 'uint256', type: 'uint256' },
+      { name: 'cap', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'InitialFundingExceedsCap',
+  },
   { type: 'error', inputs: [], name: 'InitialFundingRequired' },
-  { type: 'error', inputs: [], name: 'InvalidTimestamps' },
-  { type: 'error', inputs: [], name: 'MinimumFundingPhaseDurationNotMet' },
-  { type: 'error', inputs: [], name: 'MinimumSubmissionPhaseDurationNotMet' },
-  { type: 'error', inputs: [], name: 'MinimumVotingPhaseDurationNotMet' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'duration', internalType: 'uint256', type: 'uint256' },
+      { name: 'minDuration', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'MinimumFundingPhaseDurationNotMet',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'duration', internalType: 'uint256', type: 'uint256' },
+      { name: 'minDuration', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'MinimumSubmissionPhaseDurationNotMet',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'duration', internalType: 'uint256', type: 'uint256' },
+      { name: 'minDuration', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'MinimumVotingPhaseDurationNotMet',
+  },
+  { type: 'error', inputs: [], name: 'NoDeposits' },
+  { type: 'error', inputs: [], name: 'NotInFundingPhase' },
+  { type: 'error', inputs: [], name: 'NotInSubmissionPhase' },
+  { type: 'error', inputs: [], name: 'NotInVotingPhase' },
   {
     type: 'error',
     inputs: [{ name: 'owner', internalType: 'address', type: 'address' }],
@@ -303,5 +515,21 @@ export const repNetManagerAbi = [
     name: 'OwnableUnauthorizedAccount',
   },
   { type: 'error', inputs: [], name: 'ReentrancyGuardReentrantCall' },
+  { type: 'error', inputs: [], name: 'RequestedFundingZero' },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'submissionId', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'SolutionAlreadySubmitted',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'submissionId', internalType: 'bytes32', type: 'bytes32' },
+    ],
+    name: 'SubmissionNotFound',
+  },
   { type: 'error', inputs: [], name: 'TimestampsNotInCorrectOrder' },
+  { type: 'error', inputs: [], name: 'VotingBalanceZero' },
 ] as const
