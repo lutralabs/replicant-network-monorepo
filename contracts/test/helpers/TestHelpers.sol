@@ -72,9 +72,9 @@ contract TestHelpers is Test {
 
         vm.deal(creator, initialFunding);
         vm.prank(creator);
-        repNetManager.createCrowdfunding{value: initialFunding}(params);
+        uint256 newCrowdfundingId = repNetManager.createCrowdfunding{value: initialFunding}(params);
 
-        return repNetManager.crowdfundingId() - 1;
+        return newCrowdfundingId;
     }
 
 }

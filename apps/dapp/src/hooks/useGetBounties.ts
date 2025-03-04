@@ -3,12 +3,15 @@ import { useReadContract } from 'wagmi';
 import { readContract } from '@wagmi/core';
 import { useState, useEffect } from 'react';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
+import { repNetManagerAbi } from '@/generated/RepNetManager';
 
 // Extended bounty type including Supabase data
 export type Bounty = {
   id: bigint;
   creator: string;
   token: string;
+  finalized: boolean;
+  winner: string;
   finalized: boolean;
   winner: string;
   amountRaised: bigint;
@@ -60,6 +63,7 @@ export function useGetBounties() {
             // Fetch base bounty data from blockchain
             const bountyData = await readContract(config, {
               abi: repNetManagerAbi,
+              abi: repNetManagerAbi,
               functionName: 'getCrowdfunding',
               args: [bountyId],
               address: process.env.CONTRACT_ADDRESS as `0x${string}`,
@@ -67,6 +71,7 @@ export function useGetBounties() {
 
             // Fetch additional blockchain data
             const isActive = await readContract(config, {
+              abi: repNetManagerAbi,
               abi: repNetManagerAbi,
               functionName: 'isCrowdfundingActive',
               args: [bountyId],
@@ -89,17 +94,24 @@ export function useGetBounties() {
             const enrichedBounty: Bounty = {
               ...bountyData,
               submissionIds: [...bountyData.submissionIds], // Convert readonly array to mutable array
+              submissionIds: [...bountyData.submissionIds], // Convert readonly array to mutable array
               isActive,
+<<<<<<< HEAD:apps/dapp/src/hooks/useGetBounties.ts
+=======
+              totalRaised,
+              totalFunders,
+              phase,
+              accepted: bountyData.finalized,
+>>>>>>> a3ed9672ec2040e42a6a880106f9ba938575390b:apps/dapp/src/hooks/useReadBounties.ts
               // Add Supabase data if available
-              ...(supabaseData && {
+              ...(supabaseData && 
                 title: supabaseData.title,
                 description: supabaseData.description,
                 type: supabaseData.type,
                 prompters: supabaseData.prompters,
                 discord: supabaseData.discord,
                 email: supabaseData.email,
-                telegram: supabaseData.telegram,
-              }),
+                telegram: supabaseData.telegram,),
             };
 
             bountiesData.push(enrichedBounty);
@@ -107,18 +119,17 @@ export function useGetBounties() {
 
           setBounties(bountiesData);
           console.log('Enriched Bounties with API data:', bountiesData);
-        } catch (error) {
-          console.error('Error fetching bounties:', error);
-        } finally {
+        } catch (error) 
+          console.error('Error fetching bounties:', error);finally 
           setIsLoading(false);
-        }
       }
     };
 
-    fetchBounties();
-  }, [numberOfBounties]);
+  fetchBounties();
+}
+, [numberOfBounties])
 
-  return {
+return {
     bounties,
     isLoading: isLoading || isLoadingCount,
     count: numberOfBounties ? Number(numberOfBounties) : 0,

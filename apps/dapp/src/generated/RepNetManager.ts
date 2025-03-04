@@ -83,7 +83,7 @@ export const repNetManagerAbi = [
       },
     ],
     name: 'createCrowdfunding',
-    outputs: [],
+    outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'payable',
   },
   {

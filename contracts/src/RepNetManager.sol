@@ -55,13 +55,14 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @notice Creates a new crowdfunding campaign
      * @dev Validates parameters, creates the crowdfunding, and funds it with the initial amount
      * @param _params The parameters for creating the crowdfunding
+     * @return id The ID of the created crowdfunding
      * @custom:throws InitialFundingRequired if msg.value is 0
      * @custom:throws InitialFundingExceedsCap if msg.value exceeds the raise cap
      * @custom:throws DeveloperFeePercentageTooHigh if the developer fee percentage is too high
      */
     function createCrowdfunding(
         CrowdfundingCreationParams memory _params
-    ) public payable nonReentrant {
+    ) public payable nonReentrant returns (uint256) {
         if (msg.value == 0) {
             revert InitialFundingRequired();
         }
@@ -72,8 +73,10 @@ contract RepNetManager is Ownable, ReentrancyGuard {
             revert DeveloperFeePercentageTooHigh(_params.developerFeePercentage);
         }
         _validateTimestamps(_params.fundingPhaseEnd, _params.submissionPhaseEnd, _params.votingPhaseEnd);
+        uint256 newCrowdfundingId = crowdfundingId;
         _createCrowdfunding(_params);
-        _fund(crowdfundingId - 1);
+        _fund(newCrowdfundingId);
+        return newCrowdfundingId;
     }
 
     /**

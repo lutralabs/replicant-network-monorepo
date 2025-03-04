@@ -43,7 +43,7 @@ contract ModelTokenERC20Test is TestHelpers {
     ) internal returns (address) {
         vm.deal(creator, 1 ether);
         vm.prank(creator);
-        repNetManager.createCrowdfunding{value: 1 ether}(
+        uint256 crowdfundingId = repNetManager.createCrowdfunding{value: 1 ether}(
             CrowdfundingCreationParams({
                 name: name,
                 symbol: symbol,
@@ -54,7 +54,7 @@ contract ModelTokenERC20Test is TestHelpers {
                 developerFeePercentage: 1000
             })
         );
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(repNetManager.crowdfundingId() - 1);
+        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
         return cf.token;
     }
 
