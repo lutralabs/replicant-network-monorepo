@@ -7,21 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract ModelTokenERC20 is IModelTokenERC20, ERC20, Ownable {
 
-    error NameTooLong();
-    error SymbolTooLong();
-
-    constructor(string memory name, string memory symbol, address owner) ERC20(name, symbol) Ownable(owner) {
-        _validateTokenInput(name, symbol);
-    }
-
-    function _validateTokenInput(string memory name, string memory symbol) internal pure {
-        if (bytes(name).length == 0 || bytes(name).length > 32) {
-            revert NameTooLong();
-        }
-        if (bytes(symbol).length == 0 || bytes(symbol).length > 10) {
-            revert SymbolTooLong();
-        }
-    }
+    constructor(string memory name, string memory symbol, address owner) ERC20(name, symbol) Ownable(owner) {}
 
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
