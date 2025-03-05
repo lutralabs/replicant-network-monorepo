@@ -6,7 +6,7 @@ networks:
     contracts:
       - name: RepNetManager
         address:
-          - 0x0669B942473E364374362DdcCFE8bdC0B15c7Aa6
+          - 0x29Af7B9fBdEe86cC31c27A63441910aAAfC847cD
         abi_file_path: ../../contracts/out/RepNetManager.sol/RepNetManager.abi.json
         handler: src/EventHandlers.ts
         events:

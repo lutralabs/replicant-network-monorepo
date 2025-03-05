@@ -21,7 +21,6 @@ type RepNetManager_CrowdfundingFinalized {
   id: ID!
   crowdfundingId: BigInt!
   winner: String!
-  rewards: BigInt!
 }
 
 type RepNetManager_CrowdfundingFinalizedWithoutWinner {
