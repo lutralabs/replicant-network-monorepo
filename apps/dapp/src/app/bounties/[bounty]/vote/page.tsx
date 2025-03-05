@@ -75,7 +75,7 @@ export default function Page() {
   }
   return (
     <div className="w-full">
-      <BountyInfo bounty={bounty} />
+      {/* <BountyInfo bounty={bounty} /> */}
       <div className="px-12">
         <Carousel className="w-full">
           <CarouselContent>

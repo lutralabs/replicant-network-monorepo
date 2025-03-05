@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useFundBounty } from '@/hooks/useFundBounty';
 import type { Bounty } from '@/hooks/useGetBounties';
 import { formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
@@ -21,6 +22,8 @@ import { useBalance } from 'wagmi';
 export const FundBountyDialog = ({ bounty }: { bounty: Bounty }) => {
   const [amount, setAmount] = useState(0);
   const { wallets } = useWallets();
+
+  const { mutate: fund } = useFundBounty();
   const wallet = wallets[0]; // Replace this with your desired wallet
 
   const balance = useBalance({
@@ -38,6 +41,10 @@ export const FundBountyDialog = ({ bounty }: { bounty: Bounty }) => {
 
     return formattedBalance < amount;
   }, [formattedBalance, amount]);
+
+  const fundBounty = () => {
+    fund({ amount, id: bounty.id });
+  };
 
   return (
     <Dialog>
@@ -109,7 +116,12 @@ export const FundBountyDialog = ({ bounty }: { bounty: Bounty }) => {
           </div>
         </div>
         <DialogFooter>
-          <Button disabled={lowBalanceError} variant="cta-solid" type="submit">
+          <Button
+            disabled={lowBalanceError}
+            onClick={() => fundBounty()}
+            variant="cta-solid"
+            type="submit"
+          >
             Fund Bounty
           </Button>
         </DialogFooter>
