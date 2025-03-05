@@ -18,9 +18,9 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract RepNetManager is Ownable, ReentrancyGuard {
 
     uint256 public constant MAX_DEVELOPER_FEE_PERCENTAGE = 5000; // 50%
-    uint256 public constant MIN_FUNDING_PHASE_DURATION = 1 days;
-    uint256 public constant MIN_SUBMISSION_PHASE_DURATION = 1 days;
-    uint256 public constant MIN_VOTING_PHASE_DURATION = 1 days;
+    uint256 public constant MIN_FUNDING_PHASE_DURATION = 5 minutes; // change to at least 5 minutes
+    uint256 public constant MIN_SUBMISSION_PHASE_DURATION = 5 minutes; // change to at least 5 minutes
+    uint256 public constant MIN_VOTING_PHASE_DURATION = 5 minutes; // change to at least 5 minutes
     uint256 public constant MIN_VOTES_POWER_PERCENTAGE = 2000; // 20%
     uint256 public constant CONVERSION_RATE = 1_000_000; // 1 eth = 1_000_000 tokens, following the ConstitutionDAO approach
     uint256 public crowdfundingId;
