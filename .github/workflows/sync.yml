@@ -1,0 +1,28 @@
+name: Sync fork
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  sync:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_run' || github.head_ref || github.ref_name }}
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.FORK_KEY }}
+      - name: Push to Lutra Labs Bot fork repo
+        env:
+          USE_SSH: true
+        run: |
+          git remote add bot-fork git@github.com:lutralabs-bot/replicant-network-monorepo.git
+          git config --global user.email "info@lutralabs.io"
+          git config --global user.name "Lutra Labs Bot"
+          git commit --amend --author="Lutra Labs Bot <info@lutralabs.io>" --no-edit
+          git push bot-fork --force
