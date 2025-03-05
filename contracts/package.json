@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "forge build",
+    "build": "forge build --extra-output-files abi",
     "clean": "forge clean",
     "test": "forge test -vv",
     "lint": "forge fmt"

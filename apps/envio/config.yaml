@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=./node_modules/envio/evm.schema.json
+name: envio
+networks:
+  - id: 10143
+    start_block: 0
+    contracts:
+      - name: RepNetManager
+        address:
+          - 0x0669B942473E364374362DdcCFE8bdC0B15c7Aa6
+        abi_file_path: ../../contracts/out/RepNetManager.sol/RepNetManager.abi.json
+        handler: src/EventHandlers.ts
+        events:
+          - event: CrowdfundingCreated(uint256 indexed crowdfundingId, address indexed creator, address indexed tokenAddress, uint256 fundingPhaseEnd, uint256 submissionPhaseEnd, uint256 votingPhaseEnd, uint256 raiseCap)
+          - event: CrowdfundingFinalized(uint256 indexed crowdfundingId, address indexed winner)
+          - event: CrowdfundingFinalizedWithoutWinner(uint256 indexed crowdfundingId)
+          - event: CrowdfundingFunded(uint256 indexed crowdfundingId, address indexed sender, uint256 amount)
+          - event: OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+          - event: SolutionSubmitted(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address indexed creator)
+          - event: Withdrawal(uint256 indexed crowdfundingId, address indexed sender, uint256 amount)
+          - event: Vote(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address indexed voter, uint256 votePower)

@@ -1,0 +1,110 @@
+type RepNetManager_CrowdfundingCreated {
+  id: ID!
+  crowdfundingId: BigInt!
+  creator: String!
+  tokenAddress: String!
+  fundingPhaseEnd: BigInt!
+  submissionPhaseEnd: BigInt!
+  votingPhaseEnd: BigInt!
+  raiseCap: BigInt!
+}
+
+type RepNetManager_Vote {
+  id: ID!
+  crowdfundingId: BigInt!
+  submissionId: String!
+  voter: String!
+  votePower: BigInt!
+}
+
+type RepNetManager_CrowdfundingFinalized {
+  id: ID!
+  crowdfundingId: BigInt!
+  winner: String!
+  rewards: BigInt!
+}
+
+type RepNetManager_CrowdfundingFinalizedWithoutWinner {
+  id: ID!
+  crowdfundingId: BigInt!
+}
+
+type RepNetManager_CrowdfundingFunded {
+  id: ID!
+  crowdfundingId: BigInt!
+  sender: String!
+  amount: BigInt!
+}
+
+type RepNetManager_OwnershipTransferred {
+  id: ID!
+  previousOwner: String!
+  newOwner: String!
+}
+
+type RepNetManager_SolutionSubmitted {
+  id: ID!
+  crowdfundingId: BigInt!
+  submissionId: String!
+  creator: String!
+}
+
+type RepNetManager_Withdrawal {
+  id: ID!
+  crowdfundingId: BigInt!
+  sender: String!
+  amount: BigInt!
+}
+
+type Crowdfunding @entity {
+  id: ID!
+  creator: User!
+  token: Token!
+  fundingPhaseEnd: BigInt!
+  submissionPhaseEnd: BigInt!
+  votingPhaseEnd: BigInt!
+  raiseCap: BigInt!
+  finalized: Boolean!
+  winner: User
+  submissions: [Submission!]! @derivedFrom(field: "crowdfunding")
+  funders: [Funding!]! @derivedFrom(field: "crowdfunding")
+}
+
+type User @entity {
+  id: ID!
+  createdCrowdfundings: [Crowdfunding!]! @derivedFrom(field: "creator")
+  fundedCrowdfundings: [Funding!]! @derivedFrom(field: "funder")
+  submissions: [Submission!]! @derivedFrom(field: "creator")
+  wonCrowdfundings: [Crowdfunding!]! @derivedFrom(field: "winner")
+}
+
+type Token @entity {
+  id: ID!
+  crowdfunding: Crowdfunding!
+}
+
+type Submission @entity {
+  id: ID!
+  crowdfunding: Crowdfunding!
+  creator: User!
+  timestamp: BigInt!
+  votes: [Vote!]! @derivedFrom(field: "submission")
+  totalVotesPower: BigInt!
+}
+
+type Funding @entity {
+  id: ID!
+  crowdfunding: Crowdfunding!
+  funder: User!
+  amount: BigInt!
+  timestamp: BigInt!
+}
+
+type Vote @entity {
+  id: ID!
+  voter: User!
+  submission: Submission!
+  crowdfunding: Crowdfunding!
+  votePower: BigInt!
+  timestamp: BigInt!
+}

@@ -71,7 +71,15 @@ struct CrowdfundingCreationParams {
 
 event CrowdfundingFunded(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
 
-event CrowdfundingCreated(uint256 indexed crowdfundingId, address indexed creator, address indexed tokenAddress);
+event CrowdfundingCreated(
+    uint256 indexed crowdfundingId,
+    address indexed creator,
+    address indexed tokenAddress,
+    uint256 fundingPhaseEnd,
+    uint256 submissionPhaseEnd,
+    uint256 votingPhaseEnd,
+    uint256 raiseCap
+);
 
 event SolutionSubmitted(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address indexed creator);
 
@@ -79,9 +87,9 @@ event CrowdfundingFinalized(uint256 indexed crowdfundingId, address indexed winn
 
 event CrowdfundingFinalizedWithoutWinner(uint256 indexed crowdfundingId);
 
-event Withdrawal(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
+event Vote(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address indexed voter, uint256 votePower);
 
-event WithdrawalRewards(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
+event Withdrawal(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
 
 error CrowdfundingNotFound();
 error CrowdfundingNotActive();

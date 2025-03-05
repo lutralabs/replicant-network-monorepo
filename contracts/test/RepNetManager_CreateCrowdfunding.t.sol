@@ -22,7 +22,15 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         vm.prank(user1);
 
         vm.expectEmit(true, true, false, false);
-        emit CrowdfundingCreated(0, user1, address(0));
+        emit CrowdfundingCreated(
+            0,
+            user1,
+            address(0),
+            params.fundingPhaseEnd,
+            params.submissionPhaseEnd,
+            params.votingPhaseEnd,
+            params.raiseCap
+        );
 
         uint256 crowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
 
@@ -193,7 +201,15 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         vm.prank(user1);
 
         vm.expectEmit(true, true, false, false);
-        emit CrowdfundingCreated(0, user1, address(0));
+        emit CrowdfundingCreated(
+            0,
+            user1,
+            address(0),
+            params.fundingPhaseEnd,
+            params.submissionPhaseEnd,
+            params.votingPhaseEnd,
+            params.raiseCap
+        );
 
         uint256 crowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
         assertEq(crowdfundingId, 0, "Returned crowdfunding ID should be 0");
@@ -208,7 +224,15 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         vm.prank(user1);
 
         vm.expectEmit(true, true, false, false);
-        emit CrowdfundingCreated(0, user1, address(0));
+        emit CrowdfundingCreated(
+            0,
+            user1,
+            address(0),
+            params.fundingPhaseEnd,
+            params.submissionPhaseEnd,
+            params.votingPhaseEnd,
+            params.raiseCap
+        );
 
         uint256 firstCrowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
 
@@ -222,7 +246,15 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
         vm.prank(user2);
 
         vm.expectEmit(true, true, false, false);
-        emit CrowdfundingCreated(1, user2, address(0));
+        emit CrowdfundingCreated(
+            1,
+            user2,
+            address(0),
+            params.fundingPhaseEnd,
+            params.submissionPhaseEnd,
+            params.votingPhaseEnd,
+            params.raiseCap
+        );
 
         uint256 secondCrowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
 

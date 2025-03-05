@@ -175,7 +175,6 @@ contract RepNetManager is Ownable, ReentrancyGuard {
             revert CrowdfundingAlreadyFinalized();
         }
         _finalize(_crowdfundingId);
-        emit CrowdfundingFinalized(_crowdfundingId, crowdfundings[_crowdfundingId].winner);
     }
 
     /**
@@ -212,6 +211,9 @@ contract RepNetManager is Ownable, ReentrancyGuard {
     ) public view crowdfundingExists(_crowdfundingId) returns (uint256) {
         return _getTotalRaised(_crowdfundingId);
     }
+
+    // TODO: get all funders
+    // getAllCrowdfunders
 
     /**
      * @notice Gets the total number of funders for a crowdfunding campaign
@@ -321,7 +323,15 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         cf.raiseCap = _params.raiseCap;
         cf.developerFeePercentage = _params.developerFeePercentage;
         cf.token = tokenAddress;
-        emit CrowdfundingCreated(crowdfundingId, msg.sender, tokenAddress);
+        emit CrowdfundingCreated(
+            crowdfundingId,
+            msg.sender,
+            tokenAddress,
+            _params.fundingPhaseEnd,
+            _params.submissionPhaseEnd,
+            _params.votingPhaseEnd,
+            _params.raiseCap
+        );
         // ok to use since it's not gonna overflow
         unchecked {
             ++crowdfundingId;
@@ -378,6 +388,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         // next line basically takes a snapshot of the balance at the time of voting
         crowdfundings[_crowdfundingId].votes.hasVoted[msg.sender] = balance;
         crowdfundings[_crowdfundingId].votes.submissionVotes[_submissionId] += balance;
+        emit Vote(_crowdfundingId, _submissionId, msg.sender, balance);
     }
 
     /**
