@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
-import { Badge } from '../ui/badge';
 import type { Bounty } from '@/hooks/useGetBounties';
-import { formatEther } from 'viem';
 import { getTimeRemaining } from '@/lib/utils';
+import { formatEther } from 'viem';
+import { Badge } from '../ui/badge';
 
 type BaseBountyCardProps = {
   bounty: Bounty;

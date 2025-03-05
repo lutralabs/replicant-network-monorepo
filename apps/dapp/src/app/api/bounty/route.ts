@@ -1,5 +1,5 @@
-import type { NextRequest } from 'next/server';
 import { supabaseServiceRoleClient } from '@/lib/supabase/serviceRoleClient';
+import type { NextRequest } from 'next/server';
 
 // Get bounty metadata from Supabase
 export async function GET(request: NextRequest) {

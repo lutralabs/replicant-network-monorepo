@@ -1,0 +1,6 @@
+{
+  "files": {
+    "ignore": ["**/database.types.ts"],
+    "include": ["src/**/*"]
+  }
+}

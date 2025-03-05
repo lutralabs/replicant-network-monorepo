@@ -2,15 +2,15 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { DynamicImage } from '@/components/DynamicImage';
-import { Skeleton } from '@/components/ui/skeleton';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { usePathname } from 'next/navigation';
-import { BOUNTIES } from '@/constants/bounties';
 import { BountyInfo } from '@/components/BountyInfo';
+import { DynamicImage } from '@/components/DynamicImage';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { BOUNTIES } from '@/constants/bounties';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function Page() {
   const [images, setImages] = useState([]);

@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import {
   Table,
+  TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  TableCell,
-  TableBody,
 } from '@/components/ui/table';
 import type { Bounty } from '@/hooks/useGetBounties';
 import { bountyStatus } from '@/lib/utils';

@@ -1,7 +1,7 @@
 import { GalleryVerticalEnd } from 'lucide-react';
 
-import { ModeToggle } from '@/components/demo/toggle-mode';
 import { LoginForm } from '@/components/LoginForm';
+import { ModeToggle } from '@/components/demo/toggle-mode';
 import Link from 'next/link';
 
 export default function LoginPage() {

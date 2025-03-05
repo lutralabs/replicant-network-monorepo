@@ -26,9 +26,9 @@ import {
 } from '@/components/ui/select';
 import { SmartDatetimeInput } from '@/components/ui/smart-datetime-input';
 import { Textarea } from '@/components/ui/textarea';
+import { useCreateBounty } from '@/hooks/useCreateBounty';
 import { formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
-import { useCreateBounty } from '@/hooks/useCreateBounty';
 
 const formSchema = z.object({
   title: z.string().min(2, {

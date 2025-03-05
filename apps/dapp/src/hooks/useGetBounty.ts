@@ -1,8 +1,8 @@
-import { config } from '@/wagmi';
-import { readContract } from '@wagmi/core';
-import { useQuery } from '@tanstack/react-query';
-import type { Bounty } from './useGetBounties';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
+import { config } from '@/wagmi';
+import { useQuery } from '@tanstack/react-query';
+import { readContract } from '@wagmi/core';
+import type { Bounty } from './useGetBounties';
 
 async function fetchBounty(id: number): Promise<Bounty | null> {
   if (id === undefined || id === null) {

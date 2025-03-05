@@ -1,8 +1,8 @@
-import { config, wagmiContractConfig } from '@/wagmi';
-import { useReadContract } from 'wagmi';
-import { readContract } from '@wagmi/core';
-import { useQuery } from '@tanstack/react-query';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
+import { config, wagmiContractConfig } from '@/wagmi';
+import { useQuery } from '@tanstack/react-query';
+import { readContract } from '@wagmi/core';
+import { useReadContract } from 'wagmi';
 
 // Extended bounty type including Supabase data
 export type Bounty = {
