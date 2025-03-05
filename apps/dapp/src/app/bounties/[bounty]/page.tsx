@@ -4,11 +4,11 @@ import { Crowdfunders } from '@/app/bounties/[bounty]/Crowdfunders';
 import { Details } from '@/app/bounties/[bounty]/Details';
 import { Overview } from '@/app/bounties/[bounty]/Overview';
 import { Submissions } from '@/app/bounties/[bounty]/Submissions';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { usePathname } from 'next/navigation';
 import { BountyInfo } from '@/components/BountyInfo';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGetBounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
 
 export default function Page() {
   const paths = usePathname();

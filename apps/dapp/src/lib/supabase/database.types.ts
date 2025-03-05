@@ -7,31 +7,6 @@ export type Json =
   | Json[];
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never;
-    };
-    Views: {
-      [_ in never]: never;
-    };
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string;
-          query?: string;
-          variables?: Json;
-          extensions?: Json;
-        };
-        Returns: Json;
-      };
-    };
-    Enums: {
-      [_ in never]: never;
-    };
-    CompositeTypes: {
-      [_ in never]: never;
-    };
-  };
   public: {
     Tables: {
       crowdfund: {
@@ -118,6 +93,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'prompts_crowdfund_id_fkey';
+            columns: ['crowdfund_id'];
+            isOneToOne: false;
+            referencedRelation: 'crowdfund';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      submitted_models: {
+        Row: {
+          accepted: boolean | null;
+          crowdfund_id: number;
+          hash: string | null;
+          id: number;
+          model_url: string | null;
+          owner_address: string | null;
+          submitted_at: string;
+        };
+        Insert: {
+          accepted?: boolean | null;
+          crowdfund_id: number;
+          hash?: string | null;
+          id?: number;
+          model_url?: string | null;
+          owner_address?: string | null;
+          submitted_at?: string;
+        };
+        Update: {
+          accepted?: boolean | null;
+          crowdfund_id?: number;
+          hash?: string | null;
+          id?: number;
+          model_url?: string | null;
+          owner_address?: string | null;
+          submitted_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'submitted_models_crowdfund_id_fkey';
             columns: ['crowdfund_id'];
             isOneToOne: false;
             referencedRelation: 'crowdfund';

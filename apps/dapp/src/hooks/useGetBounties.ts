@@ -1,8 +1,8 @@
-import { config, wagmiContractConfig } from '@/wagmi';
-import { useReadContract } from 'wagmi';
-import { readContract } from '@wagmi/core';
-import { useQuery } from '@tanstack/react-query';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
+import { config, wagmiContractConfig } from '@/wagmi';
+import { useQuery } from '@tanstack/react-query';
+import { readContract } from '@wagmi/core';
+import { useReadContract } from 'wagmi';
 
 // Extended bounty type including Supabase data
 export type Bounty = {
@@ -107,7 +107,7 @@ export function useGetBounties() {
   const query = useQuery({
     queryKey: ['bounties'],
     queryFn: fetchBounties,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60,
   });
 
   // Return in the same format as the original hook for compatibility

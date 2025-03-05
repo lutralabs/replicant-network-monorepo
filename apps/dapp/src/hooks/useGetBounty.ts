@@ -1,8 +1,8 @@
-import { config } from '@/wagmi';
-import { readContract } from '@wagmi/core';
-import { useQuery } from '@tanstack/react-query';
-import type { Bounty } from './useGetBounties';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
+import { config } from '@/wagmi';
+import { useQuery } from '@tanstack/react-query';
+import { readContract } from '@wagmi/core';
+import type { Bounty } from './useGetBounties';
 
 async function fetchBounty(id: number): Promise<Bounty | null> {
   if (id === undefined || id === null) {
@@ -65,7 +65,7 @@ export function useGetBounty(id: number) {
     queryKey: ['bounty', id],
     queryFn: () => fetchBounty(id),
     enabled: id !== undefined && id !== null,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60,
   });
 
   // Return in the same format as the original hook for compatibility

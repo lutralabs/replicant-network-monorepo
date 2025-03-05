@@ -1,7 +1,7 @@
-import type { NextRequest } from 'next/server';
-import { verifyMessage } from '@wagmi/core';
-import { config } from '@/wagmi';
 import { randomUUID } from 'node:crypto';
+import { config } from '@/wagmi';
+import { verifyMessage } from '@wagmi/core';
+import type { NextRequest } from 'next/server';
 
 // Gen SIWE
 

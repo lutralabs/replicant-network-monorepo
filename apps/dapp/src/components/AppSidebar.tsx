@@ -1,11 +1,10 @@
 'use client';
 
-import { Frame, Map as MapIcon, PieChart } from 'lucide-react';
 import { SiDiscord, SiGithub, SiX } from '@icons-pack/react-simple-icons';
+import { Frame, Map as MapIcon, PieChart } from 'lucide-react';
 import Image from 'next/image';
 import type * as React from 'react';
 
-import Logo from '../../public/RN_logo.svg?url';
 import { NavProjects } from '@/components/NavProjects';
 import {
   Sidebar,
@@ -14,6 +13,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar';
+import Logo from '../../public/RN_logo.svg?url';
 import { NavSocial } from './NavSocial';
 
 // This is sample data.

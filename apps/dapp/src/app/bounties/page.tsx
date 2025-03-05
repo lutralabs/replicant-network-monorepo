@@ -9,6 +9,7 @@ import { bountyStatus } from '@/lib/utils';
 
 export default function Page() {
   const bounties = useGetBounties();
+  console.log('bounties', bounties);
 
   return (
     <div className="w-full">

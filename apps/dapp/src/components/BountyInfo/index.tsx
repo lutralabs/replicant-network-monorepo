@@ -1,11 +1,11 @@
 import { FundBountyDialog } from '@/app/bounties/[bounty]/FundBountyDialog';
+import type { Bounty } from '@/hooks/useGetBounties';
+import { bountyStatus } from '@/lib/utils';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
-import { Button } from '../ui/button';
-import { Badge } from '../ui/badge';
-import { bountyStatus } from '@/lib/utils';
-import type { Bounty } from '@/hooks/useGetBounties';
 import { formatEther } from 'viem';
+import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 
 export const BountyInfo = ({ bounty }: { bounty: Bounty }) => {
   const variant = useMemo(() => {
@@ -36,6 +36,21 @@ export const BountyInfo = ({ bounty }: { bounty: Bounty }) => {
     }
   }, [bounty]);
 
+  const ctaLink = useMemo(() => {
+    switch (bountyStatus(bounty)) {
+      case 'active':
+        return `/bounties/${bounty.id}/submit-model`;
+      case 'completed':
+        return '';
+      case 'voting':
+        return `/bounties/${bounty.id}/vote`;
+      case 'crowdfunding':
+        return undefined;
+      case 'failed':
+        return undefined;
+    }
+  }, [bounty]);
+
   return (
     <div>
       <div className="flex w-full items-center justify-between">
@@ -49,7 +64,7 @@ export const BountyInfo = ({ bounty }: { bounty: Bounty }) => {
           (ctaText === 'Fund the Bounty' ? (
             <FundBountyDialog bounty={bounty} />
           ) : (
-            <Link href={'/bounties/bounty-form'}>
+            <Link href={ctaLink}>
               <Button variant="cta-solid">{ctaText} &gt;</Button>
             </Link>
           ))}

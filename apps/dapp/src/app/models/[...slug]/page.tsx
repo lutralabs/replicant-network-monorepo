@@ -2,11 +2,11 @@
 import Image from 'next/image';
 import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { DynamicImage } from '@/components/DynamicImage';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Page() {
   const [images, setImages] = useState([]);
