@@ -254,12 +254,18 @@ For more information on Foundry tools, see the [Foundry Documentation](https://b
 
 ### Debug method calls (onlyOwner)
 
-Change phase of an ongoing crowdfunding campaign
+#### Submitting a solution
+
+```
+ cast send <contracAddress> "submit(uint256,bytes32,address)" <cfId> <modelHash> <creatorAddress> --account <name>
+```
+
+#### Change phase of an ongoing crowdfunding campaign
 
 See [cast docs](https://book.getfoundry.sh/reference/cast/cast-send#wallet-options---raw) for how to specify the wallet.
 
 ```
-cast send 0x29Af7B9fBdEe86cC31c27A63441910aAAfC847cD "_changePhase(uint256,uint8)" <id> <phase> --account <name>
+cast send <contracAddress> "_changePhase(uint256,uint8)" <cfId> <phase> --account <name>
 # <phase>
 # 0 -> Funding
 # 1 -> Submission
