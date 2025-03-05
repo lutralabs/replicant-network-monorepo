@@ -3,7 +3,14 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {
-      "cache": true
+      "cache": true,
+      "dependsOn": [
+        {
+          "projects": ["contracts"],
+          "target": "build",
+          "params": "ignore"
+        }
+      ]
     },
     "lint": {
       "cache": true
