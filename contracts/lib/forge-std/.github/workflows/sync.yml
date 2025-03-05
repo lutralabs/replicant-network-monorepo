@@ -1,31 +1,28 @@
-name: Sync Release Branch
+name: Sync fork
 
 on:
-  release:
-    types:
-      - created
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
 
 jobs:
-  sync-release-branch:
-    runs-on: ubuntu-latest
-    if: startsWith(github.event.release.tag_name, 'v1')
+  sync:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: v1
-
-      # The email is derived from the bots user id,
-      # found here: https://api.github.com/users/github-actions%5Bbot%5D
-      - name: Configure Git
+          ref: ${{ github.event_name == 'workflow_run' || github.head_ref || github.ref_name }}
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.FORK_KEY }}
+      - name: Push to Lutra Labs Bot fork repo
+        env:
+          USE_SSH: true
         run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-
-      - name: Sync Release Branch
-        run: |
-          git fetch --tags
-          git checkout v1
-          git reset --hard ${GITHUB_REF}
-          git push --force
+          git remote add bot-fork git@github.com:lutralabs-bot/replicant-network-monorepo.git
+          git config --global user.email "info@lutralabs.io"
+          git config --global user.name "Lutra Labs Bot"
+          git commit --amend --author="Lutra Labs Bot <info@lutralabs.io>" --no-edit
+          git push bot-fork --force
