@@ -65,7 +65,7 @@ export function useGetBounty(id: number) {
     queryKey: ['bounty', id],
     queryFn: () => fetchBounty(id),
     enabled: id !== undefined && id !== null,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60,
   });
 
   // Return in the same format as the original hook for compatibility

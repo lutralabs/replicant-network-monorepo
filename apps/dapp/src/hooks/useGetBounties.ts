@@ -107,7 +107,7 @@ export function useGetBounties() {
   const query = useQuery({
     queryKey: ['bounties'],
     queryFn: fetchBounties,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchInterval: 1000 * 60,
   });
 
   // Return in the same format as the original hook for compatibility

@@ -94,11 +94,10 @@ const formSchema = z.object({
     }),
   contribution: z.coerce
     .number()
-    .int()
     .positive({
       message: 'Maximum amount must be a positive number.',
     })
-    .min(1),
+    .min(0.001),
 });
 
 export const BountyForm = () => {
@@ -152,9 +151,9 @@ export const BountyForm = () => {
       amount: values.contribution,
       title: values.title,
       symbol: values.symbol,
-      fundingPhaseEnd: values.endOfFunding.getTime(),
-      submissionPhaseEnd: values.endOfSubmissions.getTime(),
-      votingPhaseEnd: values.endOfVoting.getTime(),
+      fundingPhaseEnd: Math.round(values.endOfFunding.getTime() / 1000),
+      submissionPhaseEnd: Math.round(values.endOfSubmissions.getTime() / 1000),
+      votingPhaseEnd: Math.round(values.endOfVoting.getTime() / 1000),
       developerFeePercentage: values.devFees,
       raiseCap: values.maxAmount,
       description: values.description,
