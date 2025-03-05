@@ -16,7 +16,7 @@ import {
 } from 'generated';
 
 async function ensureUserExists(
-  user: User | null,
+  user: User | null | undefined,
   context: any,
   address: string
 ) {
@@ -123,10 +123,19 @@ RepNetManager.CrowdfundingFinalizedWithoutWinner.handlerWithLoader({
 RepNetManager.CrowdfundingFunded.handlerWithLoader({
   loader: async ({ event, context }) => {
     const user = await context.User.get(event.params.sender.toLowerCase());
-    if (!user) {
-      return null;
+    const funding = await context.Funding.get(
+      `${event.params.crowdfundingId}_${event.params.sender}`
+    );
+    if (!user && !funding) {
+      return { user: null, funding: null };
     }
-    return user;
+    if (user && !funding) {
+      return { user, funding: null };
+    }
+    if (!user && funding) {
+      return { user: null, funding };
+    }
+    return { user, funding };
   },
   handler: async ({ event, context, loaderReturn }) => {
     const entity: RepNetManager_CrowdfundingFunded = {
@@ -136,18 +145,25 @@ RepNetManager.CrowdfundingFunded.handlerWithLoader({
       amount: event.params.amount,
     };
 
-    await ensureUserExists(loaderReturn, context, event.params.sender);
+    await ensureUserExists(loaderReturn!.user, context, event.params.sender);
 
     context.RepNetManager_CrowdfundingFunded.set(entity);
 
-    // set funding entity
-    context.Funding.set({
-      id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
-      crowdfunding_id: event.params.crowdfundingId.toString(),
-      funder_id: event.params.sender.toLowerCase(),
-      amount: event.params.amount,
-      timestamp: BigInt(event.block.timestamp),
-    });
+    if (loaderReturn!.funding) {
+      context.Funding.set({
+        ...loaderReturn!.funding,
+        amount: loaderReturn!.funding.amount + event.params.amount,
+      });
+    } else {
+      // set funding entity
+      context.Funding.set({
+        id: `${event.params.crowdfundingId}_${event.params.sender}`,
+        crowdfunding_id: event.params.crowdfundingId.toString(),
+        funder_id: event.params.sender.toLowerCase(),
+        amount: event.params.amount,
+        timestamp: BigInt(event.block.timestamp),
+      });
+    }
   },
 });
 

@@ -392,12 +392,12 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
 
     // Getting the actual funding entity from the mock database
     const actualFunding = mockDbUpdated.entities.Funding.get(
-      `${event.chainId}_${event.block.number}_${event.logIndex}`
+      `${event.params.crowdfundingId}_${event.params.sender}`
     );
 
     // Creating the expected funding entity
     const expectedFunding = {
-      id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+      id: `${event.params.crowdfundingId}_${event.params.sender}`,
       crowdfunding_id: event.params.crowdfundingId.toString(),
       funder_id: event.params.sender.toLowerCase(),
       amount: event.params.amount,

@@ -2,7 +2,7 @@
   "name": "envio",
   "version": "0.1.0",
   "scripts": {
-    "build": "tsc --build --clean",
+    "build": "pnpm codegen &&tsc --build --clean",
     "watch": "tsc --watch",
     "mocha": "ts-mocha test/**/*.ts",
     "codegen": "envio codegen",
