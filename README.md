@@ -28,7 +28,7 @@ Replicant Network consists of three main components:
 5. **Model Storage**: Secure storage for AI model files and weights
 
 <p align="center">
-  <img src="assets/architecture-diagram.svg" alt="Replicant Network Architecture" width="800"/>
+  <img src="assets/architecture.svg" alt="Replicant Network Architecture" width="800"/>
 </p>
 
 ## 🚀 Key Features
