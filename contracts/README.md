@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: UNLICENSED
-
 # Replicant Network Smart Contracts
 
 This directory contains the smart contracts for the Replicant Network, a decentralized platform for crowdfunding AI model development.
@@ -17,13 +15,13 @@ The Replicant Network enables users to:
 
 ### Core Contracts
 
-* **RepNetManager.sol**: The main contract that manages the crowdfunding lifecycle, including creation, funding, submission, voting, and finalization.
-* **ModelTokenERC20.sol**: An ERC20 token contract that represents ownership in a crowdfunded model. Only the RepNetManager can mint these tokens.
-* **ERC20Factory.sol**: A factory contract that deploys new ModelTokenERC20 tokens for each crowdfunding campaign.
+* [**RepNetManager.sol**](./src/RepNetManager.sol): The main contract that manages the crowdfunding lifecycle, including creation, funding, submission, voting, and finalization.
+* [**ModelTokenERC20.sol**](./src/ModelTokenERC20.sol): An ERC20 token contract that represents ownership in a crowdfunded model. Only the RepNetManager can mint these tokens.
+* [**ERC20Factory.sol**](./src/ERC20Factory.sol): A factory contract that deploys new ModelTokenERC20 tokens for each crowdfunding campaign.
 
 ### Data Types
 
-* **DataTypes.sol**: Contains all the data structures and enums used throughout the system, including:
+* [**DataTypes.sol**](./src/DataTypes.sol): Contains all the data structures and enums used throughout the system, including:
   + `CrowdfundingPhase`: Enum for the different phases (Funding, Submission, Voting, Ended)
   + `Crowdfunding`: Main data structure for crowdfunding campaigns
   + `Submission`: Data structure for submitted solutions
@@ -31,17 +29,17 @@ The Replicant Network enables users to:
 
 ### Interfaces
 
-* **IModelTokenERC20.sol**: Interface for the ModelTokenERC20 contract
-* **IERC20Factory.sol**: Interface for the ERC20Factory contract
+* [**IModelTokenERC20.sol**](./src/IModelTokenERC20.sol): Interface for the ModelTokenERC20 contract
+* [**IERC20Factory.sol**](./src/IERC20Factory.sol): Interface for the ERC20Factory contract
 
 ## Key Constants
 
-* `MAX_DEVELOPER_FEE_PERCENTAGE`: 5000 (50%)
-* `MIN_FUNDING_PHASE_DURATION`: 1 day
-* `MIN_SUBMISSION_PHASE_DURATION`: 1 day
-* `MIN_VOTING_PHASE_DURATION`: 1 day
-* `MIN_VOTES_POWER_PERCENTAGE`: 2000 (20%)
-* `CONVERSION_RATE`: 1, 000, 000 (1 ETH = 1, 000, 000 tokens)
+* `MAX_DEVELOPER_FEE_PERCENTAGE` - The maximum percentage of the model's token supply that the AI developer will receive if they win the bounty
+* `MIN_FUNDING_PHASE_DURATION` - The minimum duration for the funding phase of a crowdfunding campaign
+* `MIN_SUBMISSION_PHASE_DURATION` - The minimum duration for the submission phase of a crowdfunding campaign
+* `MIN_VOTING_PHASE_DURATION` - The minimum duration for the voting phase of a crowdfunding campaign
+* `MIN_VOTES_POWER_PERCENTAGE` - The threshold where voting is considered successful (at minimum 20% of the whole token supply must vote for the votes to be valid)
+* `CONVERSION_RATE` - The rate at which users receive tokens for funding with MON
 
 ## Interacting with the Contracts
 
