@@ -40,6 +40,12 @@ Replicant Network consists of three main components:
 * **Reward Distribution**: Automatic distribution of rewards to winning developers
 * **Model Monetization**: Users can use models via our platform for small fees, with revenue shared among token holders
 
+Take a look at the diagram below for a visual representation of the Crowdfunding phases.
+
+<p align="center">
+  <img src="assets/flows.svg" alt="Crowdfunding Phases" width="800"/>
+</p>
+
 ## 📁 Repository Structure
 
 ```
