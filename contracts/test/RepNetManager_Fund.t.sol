@@ -23,11 +23,11 @@ contract RepNetManager_FundTest is TestHelpers {
         repNetManager.fund{value: ONE_ETH}(crowdfundingId);
 
         // Verify the funding was successful
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         assertEq(cf.amountRaised, TWO_ETH, "Total amount raised should be 2 ETH");
 
         // Verify the total funders count
-        uint256 totalFunders = repNetManager.getTotalFunders(crowdfundingId);
+        uint256 totalFunders = repNetManager.totalFunders(crowdfundingId);
         assertEq(totalFunders, 2, "Total funders should be 1");
     }
 
@@ -43,11 +43,11 @@ contract RepNetManager_FundTest is TestHelpers {
         repNetManager.fund{value: HALF_ETH}(crowdfundingId);
 
         // Verify the funding was successful
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         assertEq(cf.amountRaised, ONE_ETH + ONE_ETH + HALF_ETH, "Total amount raised should be 2.5 ETH");
 
         // Verify the total funders count
-        uint256 totalFunders = repNetManager.getTotalFunders(crowdfundingId);
+        uint256 totalFunders = repNetManager.totalFunders(crowdfundingId);
         assertEq(totalFunders, 3, "Total funders should be 3");
     }
 
@@ -62,11 +62,11 @@ contract RepNetManager_FundTest is TestHelpers {
         vm.stopPrank();
 
         // Verify the funding was successful
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         assertEq(cf.amountRaised, THREE_ETH, "Total amount raised should be 3 ETH");
 
         // Verify the total funders count
-        uint256 totalFunders = repNetManager.getTotalFunders(crowdfundingId);
+        uint256 totalFunders = repNetManager.totalFunders(crowdfundingId);
         assertEq(totalFunders, 2, "Total funders should be 1");
     }
 
@@ -89,7 +89,7 @@ contract RepNetManager_FundTest is TestHelpers {
 
     function test_Fund_AfterFundingPhaseEnded() public {
         // Advance time to after funding phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
 
         // Try to fund after funding phase ended
@@ -121,7 +121,7 @@ contract RepNetManager_FundTest is TestHelpers {
         repNetManager.fund{value: HALF_ETH}(lowCapCrowdfundingId);
 
         // Verify the funding was successful
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(lowCapCrowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(lowCapCrowdfundingId);
         assertEq(cf.amountRaised, params.raiseCap, "Total amount raised should equal the cap");
     }
 

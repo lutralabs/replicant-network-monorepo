@@ -27,14 +27,14 @@ contract RepNetManager_WithdrawTest is TestHelpers {
 
     function test_Withdraw_Success() public {
         // Move to ended phase without any submissions or votes
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.votingPhaseEnd + 1);
 
         // Finalize without a winner (no submissions/votes)
         repNetManager.finalize(crowdfundingId);
 
         // Check that the crowdfunding is finalized without a winner
-        cf = repNetManager.getCrowdfunding(crowdfundingId);
+        cf = repNetManager.crowdfunding(crowdfundingId);
         assertTrue(cf.finalized, "Crowdfunding should be finalized");
         assertEq(cf.winner, address(0), "Winner should be address(0)");
 
@@ -61,7 +61,7 @@ contract RepNetManager_WithdrawTest is TestHelpers {
         repNetManager.withdraw(crowdfundingId);
 
         // Move to submission phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
 
         // Try to withdraw during submission phase
@@ -80,7 +80,7 @@ contract RepNetManager_WithdrawTest is TestHelpers {
 
     function test_Withdraw_FailsIfCrowdfundingFinalizedWithWinner() public {
         // Move to submission phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
 
         // Submit a solution
@@ -106,7 +106,7 @@ contract RepNetManager_WithdrawTest is TestHelpers {
         repNetManager.finalize(crowdfundingId);
 
         // Check that the crowdfunding is finalized with a winner
-        cf = repNetManager.getCrowdfunding(crowdfundingId);
+        cf = repNetManager.crowdfunding(crowdfundingId);
         assertTrue(cf.finalized, "Crowdfunding should be finalized");
         assertEq(cf.winner, user3, "Winner should be user3");
 
@@ -118,7 +118,7 @@ contract RepNetManager_WithdrawTest is TestHelpers {
 
     function test_Withdraw_FailsIfNoDeposits() public {
         // Move to ended phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.votingPhaseEnd + 1);
 
         // Finalize without a winner
@@ -132,7 +132,7 @@ contract RepNetManager_WithdrawTest is TestHelpers {
 
     function test_Withdraw_MultipleFunders() public {
         // Move to ended phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.votingPhaseEnd + 1);
 
         // Finalize without a winner
@@ -181,7 +181,7 @@ contract RepNetManager_WithdrawTest is TestHelpers {
         repNetManager.fund{value: TWO_ETH}(newCrowdfundingId);
 
         // Move to ended phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(newCrowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(newCrowdfundingId);
         vm.warp(cf.votingPhaseEnd + 1);
 
         // Finalize without a winner
@@ -200,7 +200,7 @@ contract RepNetManager_WithdrawTest is TestHelpers {
 
     function test_Withdraw_EmitsEvent() public {
         // Move to ended phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.votingPhaseEnd + 1);
 
         // Finalize without a winner

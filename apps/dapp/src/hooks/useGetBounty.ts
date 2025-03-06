@@ -15,7 +15,7 @@ async function fetchBounty(id: number): Promise<Bounty | null> {
   // Fetch base bounty data from blockchain
   const bountyData = await readContract(config, {
     abi: repNetManagerAbi,
-    functionName: 'getCrowdfunding',
+    functionName: 'crowdfunding',
     args: [bountyId],
     address: process.env.CONTRACT_ADDRESS as `0x${string}`,
   });

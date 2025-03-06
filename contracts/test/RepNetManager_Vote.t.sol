@@ -33,7 +33,7 @@ contract RepNetManager_VoteTest is TestHelpers {
         repNetManager.fund{value: ONE_ETH}(crowdfundingId);
 
         // Move to submission phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
 
         // Submit solutions
@@ -62,7 +62,7 @@ contract RepNetManager_VoteTest is TestHelpers {
 
     function test_Vote_OnlyInVotingPhase() public {
         // Move to ended phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.votingPhaseEnd + 1);
 
         // Try to vote after voting phase has ended
@@ -119,7 +119,7 @@ contract RepNetManager_VoteTest is TestHelpers {
         bytes32 submissionId = keccak256("solution");
 
         // Move back to submission phase to allow new submissions
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
 
         // Owner submits on behalf of user1 (since only owner can submit in this contract)
@@ -159,7 +159,7 @@ contract RepNetManager_VoteTest is TestHelpers {
         repNetManager.fund{value: ONE_ETH}(newCrowdfundingId);
 
         // Move to submission phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(newCrowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(newCrowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
 
         // Submit solutions
@@ -182,7 +182,7 @@ contract RepNetManager_VoteTest is TestHelpers {
         repNetManager.finalize(newCrowdfundingId);
 
         // The winner should be the owner (creator of the submission)
-        CrowdfundingShort memory finalizedCf = repNetManager.getCrowdfunding(newCrowdfundingId);
+        CrowdfundingShort memory finalizedCf = repNetManager.crowdfunding(newCrowdfundingId);
         assertEq(finalizedCf.winner, owner, "Winner should be the owner");
     }
 
@@ -200,14 +200,14 @@ contract RepNetManager_VoteTest is TestHelpers {
         repNetManager.vote(crowdfundingId, submissionId1);
 
         // Move to ended phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.votingPhaseEnd + 1);
 
         // Finalize to determine the winner
         repNetManager.finalize(crowdfundingId);
 
         // Submission1 should win as it has more votes (user1 and user3)
-        CrowdfundingShort memory finalizedCf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory finalizedCf = repNetManager.crowdfunding(crowdfundingId);
         assertEq(finalizedCf.winner, user1, "Winner should be the user1");
     }
 

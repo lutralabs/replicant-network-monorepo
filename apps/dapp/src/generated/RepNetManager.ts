@@ -125,7 +125,7 @@ export const repNetManagerAbi = [
 		inputs: [
 			{ name: "_crowdfundingId", internalType: "uint256", type: "uint256" },
 		],
-		name: "getCrowdfunding",
+		name: "crowdfunding",
 		outputs: [
 			{
 				name: "",
@@ -173,7 +173,7 @@ export const repNetManagerAbi = [
 		inputs: [
 			{ name: "_crowdfundingId", internalType: "uint256", type: "uint256" },
 		],
-		name: "getCrowdfundingPhase",
+		name: "crowdfundingPhase",
 		outputs: [
 			{ name: "", internalType: "enum CrowdfundingPhase", type: "uint8" },
 		],
@@ -185,7 +185,7 @@ export const repNetManagerAbi = [
 			{ name: "_crowdfundingId", internalType: "uint256", type: "uint256" },
 			{ name: "_submissionId", internalType: "bytes32", type: "bytes32" },
 		],
-		name: "getSubmission",
+		name: "submission",
 		outputs: [
 			{
 				name: "",
@@ -205,7 +205,7 @@ export const repNetManagerAbi = [
 		inputs: [
 			{ name: "_crowdfundingId", internalType: "uint256", type: "uint256" },
 		],
-		name: "getSubmissions",
+		name: "submissions",
 		outputs: [{ name: "", internalType: "bytes32[]", type: "bytes32[]" }],
 		stateMutability: "view",
 	},
@@ -214,7 +214,7 @@ export const repNetManagerAbi = [
 		inputs: [
 			{ name: "_crowdfundingId", internalType: "uint256", type: "uint256" },
 		],
-		name: "getTotalFunders",
+		name: "totalFunders",
 		outputs: [{ name: "", internalType: "uint256", type: "uint256" }],
 		stateMutability: "view",
 	},

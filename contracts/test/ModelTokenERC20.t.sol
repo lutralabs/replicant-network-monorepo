@@ -54,7 +54,7 @@ contract ModelTokenERC20Test is TestHelpers {
                 developerFeePercentage: 1000
             })
         );
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         return cf.token;
     }
 
@@ -179,7 +179,7 @@ contract ModelTokenERC20Test is TestHelpers {
         uint256 crowdfundingId = createAndFundCrowdfunding(owner, fundingAmount);
 
         // Get the token address from the crowdfunding
-        address crowdfundingToken = repNetManager.getCrowdfunding(crowdfundingId).token;
+        address crowdfundingToken = repNetManager.crowdfunding(crowdfundingId).token;
         IModelTokenERC20 cfToken = IModelTokenERC20(crowdfundingToken);
 
         // Check initial balance (should be equal to funding amount * conversion rate)

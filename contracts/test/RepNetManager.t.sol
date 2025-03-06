@@ -232,48 +232,48 @@ contract RepNetManagerRealLifeTest is TestHelpers {
     function test_RealLifeScenario() public {
         // Verify crowdfunding phases
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingInFundingPhase)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingInFundingPhase)),
             uint256(CrowdfundingPhase.Funding),
             "Should be in funding phase"
         );
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingInSubmissionPhase)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingInSubmissionPhase)),
             uint256(CrowdfundingPhase.Submission),
             "Should be in submission phase"
         );
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingInVotingPhase)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingInVotingPhase)),
             uint256(CrowdfundingPhase.Voting),
             "Should be in voting phase"
         );
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingEndedWithWinner)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingEndedWithWinner)),
             uint256(CrowdfundingPhase.Ended),
             "Should be in ended phase"
         );
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingEndedWithoutWinner)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingEndedWithoutWinner)),
             uint256(CrowdfundingPhase.Ended),
             "Should be in ended phase"
         );
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingWithLowVotePower)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingWithLowVotePower)),
             uint256(CrowdfundingPhase.Ended),
             "Should be in ended phase"
         );
 
         // Verify crowdfunding with winner
-        CrowdfundingShort memory cfWithWinner = repNetManager.getCrowdfunding(crowdfundingEndedWithWinner);
+        CrowdfundingShort memory cfWithWinner = repNetManager.crowdfunding(crowdfundingEndedWithWinner);
         assertTrue(cfWithWinner.finalized, "Should be finalized");
         assertEq(cfWithWinner.winner, users[15], "Winner should be user15");
 
         // Verify crowdfunding without winner
-        CrowdfundingShort memory cfWithoutWinner = repNetManager.getCrowdfunding(crowdfundingEndedWithoutWinner);
+        CrowdfundingShort memory cfWithoutWinner = repNetManager.crowdfunding(crowdfundingEndedWithoutWinner);
         assertTrue(cfWithoutWinner.finalized, "Should be finalized");
         assertEq(cfWithoutWinner.winner, address(0), "Winner should be address(0)");
 
         // Verify crowdfunding with low vote power
-        CrowdfundingShort memory cfLowVotePower = repNetManager.getCrowdfunding(crowdfundingWithLowVotePower);
+        CrowdfundingShort memory cfLowVotePower = repNetManager.crowdfunding(crowdfundingWithLowVotePower);
         assertTrue(cfLowVotePower.finalized, "Should be finalized");
         assertEq(cfLowVotePower.winner, address(0), "Winner should be address(0) due to low vote power");
 
@@ -326,7 +326,7 @@ contract RepNetManagerRealLifeTest is TestHelpers {
         repNetManager.withdraw(crowdfundingEndedWithWinner);
 
         // Test token balances
-        address tokenAddress = repNetManager.getCrowdfunding(crowdfundingEndedWithWinner).token;
+        address tokenAddress = repNetManager.crowdfunding(crowdfundingEndedWithWinner).token;
         IModelTokenERC20 token = IModelTokenERC20(tokenAddress);
 
         // Winner should have developer fee tokens
@@ -365,7 +365,7 @@ contract RepNetManagerRealLifeTest is TestHelpers {
         }
 
         // Move to submission phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(newCrowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(newCrowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
 
         // Submit multiple solutions
@@ -403,7 +403,7 @@ contract RepNetManagerRealLifeTest is TestHelpers {
         repNetManager.finalize(newCrowdfundingId);
 
         // Verify the winner is the creator of solution 0
-        cf = repNetManager.getCrowdfunding(newCrowdfundingId);
+        cf = repNetManager.crowdfunding(newCrowdfundingId);
         assertTrue(cf.finalized, "Should be finalized");
         assertEq(cf.winner, users[0], "Winner should be user0 (creator of solution with most votes)");
 
@@ -444,7 +444,7 @@ contract RepNetManagerRealLifeTest is TestHelpers {
         uint256 minDurationCrowdfundingId = repNetManager.crowdfundingId() - 1;
 
         // Verify phases with minimum durations
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(minDurationCrowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(minDurationCrowdfundingId);
         assertEq(cf.fundingPhaseEnd, currentTime + MIN_FUNDING_PHASE_DURATION, "Funding phase end should match");
         assertEq(
             cf.submissionPhaseEnd,
@@ -467,7 +467,7 @@ contract RepNetManagerRealLifeTest is TestHelpers {
         uint256 maxDevFeeCrowdfundingId = repNetManager.crowdfundingId() - 1;
 
         // Verify maximum developer fee
-        cf = repNetManager.getCrowdfunding(maxDevFeeCrowdfundingId);
+        cf = repNetManager.crowdfunding(maxDevFeeCrowdfundingId);
         assertEq(
             cf.developerFeePercentage, MAX_DEVELOPER_FEE_PERCENTAGE, "Developer fee percentage should match maximum"
         );
@@ -487,7 +487,7 @@ contract RepNetManagerRealLifeTest is TestHelpers {
         repNetManager.fund{value: 100 ether}(noCapCrowdfundingId);
 
         // Verify no cap limit was enforced
-        cf = repNetManager.getCrowdfunding(noCapCrowdfundingId);
+        cf = repNetManager.crowdfunding(noCapCrowdfundingId);
         assertEq(cf.amountRaised, 101 ether, "Amount raised should include all funds");
 
         // Test case: Try to create crowdfunding with too high developer fee

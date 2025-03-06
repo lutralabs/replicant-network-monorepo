@@ -158,59 +158,7 @@
   },
   {
     "type": "function",
-    "name": "crowdfundingId",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "erc20Factory",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "contract ERC20Factory"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "finalize",
-    "inputs": [
-      {
-        "name": "_crowdfundingId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "fund",
-    "inputs": [
-      {
-        "name": "_crowdfundingId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "payable"
-  },
-  {
-    "type": "function",
-    "name": "getCrowdfunding",
+    "name": "crowdfunding",
     "inputs": [
       {
         "name": "_crowdfundingId",
@@ -306,7 +254,20 @@
   },
   {
     "type": "function",
-    "name": "getCrowdfundingPhase",
+    "name": "crowdfundingId",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "crowdfundingPhase",
     "inputs": [
       {
         "name": "_crowdfundingId",
@@ -325,48 +286,20 @@
   },
   {
     "type": "function",
-    "name": "getSubmission",
-    "inputs": [
-      {
-        "name": "_crowdfundingId",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "_submissionId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
+    "name": "erc20Factory",
+    "inputs": [],
     "outputs": [
       {
         "name": "",
-        "type": "tuple",
-        "internalType": "struct Submission",
-        "components": [
-          {
-            "name": "id",
-            "type": "bytes32",
-            "internalType": "bytes32"
-          },
-          {
-            "name": "creator",
-            "type": "address",
-            "internalType": "address"
-          },
-          {
-            "name": "timestamp",
-            "type": "uint256",
-            "internalType": "uint256"
-          }
-        ]
+        "type": "address",
+        "internalType": "contract ERC20Factory"
       }
     ],
     "stateMutability": "view"
   },
   {
     "type": "function",
-    "name": "getSubmissions",
+    "name": "finalize",
     "inputs": [
       {
         "name": "_crowdfundingId",
@@ -374,18 +307,12 @@
         "internalType": "uint256"
       }
     ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
-    "name": "getTotalFunders",
+    "name": "fund",
     "inputs": [
       {
         "name": "_crowdfundingId",
@@ -393,33 +320,8 @@
         "internalType": "uint256"
       }
     ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getTotalRaised",
-    "inputs": [
-      {
-        "name": "_crowdfundingId",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
+    "outputs": [],
+    "stateMutability": "payable"
   },
   {
     "type": "function",
@@ -510,6 +412,66 @@
   },
   {
     "type": "function",
+    "name": "submission",
+    "inputs": [
+      {
+        "name": "_crowdfundingId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "_submissionId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct Submission",
+        "components": [
+          {
+            "name": "id",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "creator",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "submissions",
+    "inputs": [
+      {
+        "name": "_crowdfundingId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "submit",
     "inputs": [
       {
@@ -530,6 +492,63 @@
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "totalFunders",
+    "inputs": [
+      {
+        "name": "_crowdfundingId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "totalRaised",
+    "inputs": [
+      {
+        "name": "_crowdfundingId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "totalSubmissions",
+    "inputs": [
+      {
+        "name": "_crowdfundingId",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",

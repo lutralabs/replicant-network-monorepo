@@ -209,7 +209,7 @@ const crowdfundingId = 0n;
 const crowdfunding = await publicClient.readContract({
     address: '0x...', // RepNetManager address
     abi: repNetManagerABI,
-    functionName: 'getCrowdfunding',
+    functionName: 'crowdfunding',
     args: [crowdfundingId]
 });
 
@@ -217,7 +217,7 @@ const crowdfunding = await publicClient.readContract({
 const phase = await publicClient.readContract({
     address: '0x...', // RepNetManager address
     abi: repNetManagerABI,
-    functionName: 'getCrowdfundingPhase',
+    functionName: 'crowdfundingPhase',
     args: [crowdfundingId]
 });
 
@@ -225,7 +225,7 @@ const phase = await publicClient.readContract({
 const submissions = await publicClient.readContract({
     address: '0x...', // RepNetManager address
     abi: repNetManagerABI,
-    functionName: 'getSubmissions',
+    functionName: 'submissions',
     args: [crowdfundingId]
 });
 ```

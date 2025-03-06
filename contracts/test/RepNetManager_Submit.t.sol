@@ -26,7 +26,7 @@ contract RepNetManager_SubmitTest is TestHelpers {
         repNetManager.fund{value: ONE_ETH}(crowdfundingId);
 
         // Move to submission phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
     }
 
@@ -37,12 +37,12 @@ contract RepNetManager_SubmitTest is TestHelpers {
         repNetManager.submit(crowdfundingId, submissionId, user1);
 
         // Verify the submission was successful
-        bytes32[] memory submissions = repNetManager.getSubmissions(crowdfundingId);
+        bytes32[] memory submissions = repNetManager.submissions(crowdfundingId);
         assertEq(submissions.length, 1, "Should have 1 submission");
         assertEq(submissions[0], submissionId, "Submission ID should match");
 
         // Verify the submission details
-        Submission memory submission = repNetManager.getSubmission(crowdfundingId, submissionId);
+        Submission memory submission = repNetManager.submission(crowdfundingId, submissionId);
         assertEq(submission.id, submissionId, "Submission ID should match");
         assertEq(submission.creator, user1, "Creator should be user1");
         assertEq(submission.timestamp, block.timestamp, "Timestamp should match current block timestamp");
@@ -58,7 +58,7 @@ contract RepNetManager_SubmitTest is TestHelpers {
 
     function test_Submit_OnlyInSubmissionPhase() public {
         // Move back to funding phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.fundingPhaseEnd - 1);
 
         // Try to submit during funding phase
@@ -113,17 +113,17 @@ contract RepNetManager_SubmitTest is TestHelpers {
         repNetManager.submit(crowdfundingId, submissionId3, user1);
 
         // Verify all submissions were successful
-        bytes32[] memory submissions = repNetManager.getSubmissions(crowdfundingId);
+        bytes32[] memory submissions = repNetManager.submissions(crowdfundingId);
         assertEq(submissions.length, 3, "Should have 3 submissions");
 
         // Verify the submission details
-        Submission memory submission1 = repNetManager.getSubmission(crowdfundingId, submissionId1);
+        Submission memory submission1 = repNetManager.submission(crowdfundingId, submissionId1);
         assertEq(submission1.creator, user1, "Creator of submission1 should be user1");
 
-        Submission memory submission2 = repNetManager.getSubmission(crowdfundingId, submissionId2);
+        Submission memory submission2 = repNetManager.submission(crowdfundingId, submissionId2);
         assertEq(submission2.creator, user2, "Creator of submission2 should be user2");
 
-        Submission memory submission3 = repNetManager.getSubmission(crowdfundingId, submissionId3);
+        Submission memory submission3 = repNetManager.submission(crowdfundingId, submissionId3);
         assertEq(submission3.creator, user1, "Creator of submission3 should be user1");
     }
 
@@ -149,7 +149,7 @@ contract RepNetManager_SubmitTest is TestHelpers {
 
     function test_Submit_UpdatesNumSubmissions() public {
         // Check initial number of submissions
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         assertEq(cf.numSubmissions, 0, "Initial number of submissions should be 0");
 
         // Submit first solution
@@ -158,7 +158,7 @@ contract RepNetManager_SubmitTest is TestHelpers {
         repNetManager.submit(crowdfundingId, submissionId1, user1);
 
         // Check updated number of submissions
-        cf = repNetManager.getCrowdfunding(crowdfundingId);
+        cf = repNetManager.crowdfunding(crowdfundingId);
         assertEq(cf.numSubmissions, 1, "Number of submissions should be 1");
 
         // Submit second solution
@@ -167,7 +167,7 @@ contract RepNetManager_SubmitTest is TestHelpers {
         repNetManager.submit(crowdfundingId, submissionId2, user2);
 
         // Check updated number of submissions
-        cf = repNetManager.getCrowdfunding(crowdfundingId);
+        cf = repNetManager.crowdfunding(crowdfundingId);
         assertEq(cf.numSubmissions, 2, "Number of submissions should be 2");
     }
 
@@ -178,7 +178,7 @@ contract RepNetManager_SubmitTest is TestHelpers {
         repNetManager.submit(crowdfundingId, submissionId, address(0));
 
         // Verify the submission was successful
-        Submission memory submission = repNetManager.getSubmission(crowdfundingId, submissionId);
+        Submission memory submission = repNetManager.submission(crowdfundingId, submissionId);
         assertEq(submission.creator, address(0), "Creator should be address(0)");
     }
 
@@ -189,7 +189,7 @@ contract RepNetManager_SubmitTest is TestHelpers {
         repNetManager.submit(crowdfundingId, submissionId, user1);
 
         // Verify the submission was successful
-        Submission memory submission = repNetManager.getSubmission(crowdfundingId, submissionId);
+        Submission memory submission = repNetManager.submission(crowdfundingId, submissionId);
         assertEq(submission.id, submissionId, "Submission ID should be bytes32(0)");
         assertEq(submission.creator, user1, "Creator should be user1");
     }

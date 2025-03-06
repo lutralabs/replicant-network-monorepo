@@ -90,7 +90,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
     function fund(
         uint256 _crowdfundingId
     ) public payable crowdfundingExists(_crowdfundingId) nonReentrant {
-        if (_getCurrentPhase(_crowdfundingId) != CrowdfundingPhase.Funding) {
+        if (_currentPhase(_crowdfundingId) != CrowdfundingPhase.Funding) {
             revert NotInFundingPhase();
         }
         if (
@@ -119,7 +119,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         bytes32 _hash,
         address _creator
     ) public crowdfundingExists(_crowdfundingId) onlyOwner {
-        if (_getCurrentPhase(_crowdfundingId) != CrowdfundingPhase.Submission) {
+        if (_currentPhase(_crowdfundingId) != CrowdfundingPhase.Submission) {
             revert NotInSubmissionPhase();
         }
         if (crowdfundings[_crowdfundingId].submissions[_hash].creator != address(0)) {
@@ -143,7 +143,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         uint256 _crowdfundingId,
         bytes32 _submissionId
     ) public crowdfundingExists(_crowdfundingId) nonReentrant {
-        if (_getCurrentPhase(_crowdfundingId) != CrowdfundingPhase.Voting) {
+        if (_currentPhase(_crowdfundingId) != CrowdfundingPhase.Voting) {
             revert NotInVotingPhase();
         }
         if (crowdfundings[_crowdfundingId].submissions[_submissionId].creator == address(0)) {
@@ -192,7 +192,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
     function withdraw(
         uint256 _crowdfundingId
     ) public crowdfundingExists(_crowdfundingId) {
-        if (_getCurrentPhase(_crowdfundingId) != CrowdfundingPhase.Ended) {
+        if (_currentPhase(_crowdfundingId) != CrowdfundingPhase.Ended) {
             revert CrowdfundingStillActive();
         }
         if (crowdfundings[_crowdfundingId].finalized && crowdfundings[_crowdfundingId].winner != address(0)) {
@@ -210,10 +210,10 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding
      * @return The total amount raised in wei
      */
-    function getTotalRaised(
+    function totalRaised(
         uint256 _crowdfundingId
     ) public view crowdfundingExists(_crowdfundingId) returns (uint256) {
-        return _getTotalRaised(_crowdfundingId);
+        return _totalRaised(_crowdfundingId);
     }
 
     /**
@@ -221,10 +221,21 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding
      * @return The total number of funders
      */
-    function getTotalFunders(
+    function totalFunders(
         uint256 _crowdfundingId
     ) public view crowdfundingExists(_crowdfundingId) returns (uint256) {
-        return _getTotalFunders(_crowdfundingId);
+        return _totalFunders(_crowdfundingId);
+    }
+
+    /**
+     * @notice Gets the total number of submissions for a crowdfunding campaign
+     * @param _crowdfundingId The ID of the crowdfunding
+     * @return The total number of submissions
+     */
+    function totalSubmissions(
+        uint256 _crowdfundingId
+    ) public view crowdfundingExists(_crowdfundingId) returns (uint256) {
+        return _totalSubmissions(_crowdfundingId);
     }
 
     /**
@@ -232,7 +243,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding
      * @return A CrowdfundingShort struct containing the crowdfunding details
      */
-    function getCrowdfunding(
+    function crowdfunding(
         uint256 _crowdfundingId
     ) public view crowdfundingExists(_crowdfundingId) returns (CrowdfundingShort memory) {
         Crowdfunding storage cf = crowdfundings[_crowdfundingId];
@@ -250,7 +261,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
             developerFeePercentage: cf.developerFeePercentage,
             numSubmissions: cf.numSubmissions,
             numFunders: cf.numFunders,
-            phase: _getCurrentPhase(_crowdfundingId),
+            phase: _currentPhase(_crowdfundingId),
             submissionIds: cf.submissionIds
         });
     }
@@ -260,10 +271,10 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding
      * @return The current phase of the crowdfunding
      */
-    function getCrowdfundingPhase(
+    function crowdfundingPhase(
         uint256 _crowdfundingId
     ) public view crowdfundingExists(_crowdfundingId) returns (CrowdfundingPhase) {
-        return _getCurrentPhase(_crowdfundingId);
+        return _currentPhase(_crowdfundingId);
     }
 
     /**
@@ -282,7 +293,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding
      * @return An array of submission IDs
      */
-    function getSubmissions(
+    function submissions(
         uint256 _crowdfundingId
     ) public view crowdfundingExists(_crowdfundingId) returns (bytes32[] memory) {
         return crowdfundings[_crowdfundingId].submissionIds;
@@ -320,7 +331,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _submissionId The ID of the submission
      * @return A Submission struct containing the submission details
      */
-    function getSubmission(
+    function submission(
         uint256 _crowdfundingId,
         bytes32 _submissionId
     ) public view crowdfundingExists(_crowdfundingId) returns (Submission memory) {
@@ -410,7 +421,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         if (balance == 0) {
             revert VotingBalanceZero();
         }
-        crowdfundings[_crowdfundingId].votes.voters++;
+        crowdfundings[_crowdfundingId].votes.numVotes++;
         crowdfundings[_crowdfundingId].votes.votesPower += balance;
         // next line basically takes a snapshot of the balance at the time of voting
         crowdfundings[_crowdfundingId].votes.hasVoted[msg.sender] = balance;
@@ -488,10 +499,21 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding
      * @return The total number of funders
      */
-    function _getTotalFunders(
+    function _totalFunders(
         uint256 _crowdfundingId
     ) internal view returns (uint256) {
         return crowdfundings[_crowdfundingId].numFunders;
+    }
+
+    /**
+     * @notice Gets the total number of submissions for a crowdfunding campaign
+     * @param _crowdfundingId The ID of the crowdfunding
+     * @return The total number of submissions
+     */
+    function _totalSubmissions(
+        uint256 _crowdfundingId
+    ) internal view returns (uint256) {
+        return crowdfundings[_crowdfundingId].numSubmissions;
     }
 
     /**
@@ -499,7 +521,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding
      * @return The total amount raised in wei
      */
-    function _getTotalRaised(
+    function _totalRaised(
         uint256 _crowdfundingId
     ) internal view returns (uint256) {
         return crowdfundings[_crowdfundingId].amountRaised;
@@ -513,7 +535,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
     function _isCrowdfundingActive(
         uint256 _crowdfundingId
     ) internal view returns (bool) {
-        return _getCurrentPhase(_crowdfundingId) != CrowdfundingPhase.Ended;
+        return _currentPhase(_crowdfundingId) != CrowdfundingPhase.Ended;
     }
 
     /**
@@ -521,7 +543,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding
      * @return The current phase of the crowdfunding
      */
-    function _getCurrentPhase(
+    function _currentPhase(
         uint256 _crowdfundingId
     ) internal view returns (CrowdfundingPhase) {
         Crowdfunding storage cf = crowdfundings[_crowdfundingId];

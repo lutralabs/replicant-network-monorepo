@@ -20,17 +20,17 @@ contract RepNetManager_DebugTest is TestHelpers {
     function test_ChangePhase_ToFunding() public {
         // Initially in funding phase
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Funding),
             "Should start in funding phase"
         );
 
         // Move to submission phase
-        CrowdfundingShort memory cf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory cf = repNetManager.crowdfunding(crowdfundingId);
         vm.warp(cf.fundingPhaseEnd + 1);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Submission),
             "Should be in submission phase after warping"
         );
@@ -40,7 +40,7 @@ contract RepNetManager_DebugTest is TestHelpers {
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Funding);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Funding),
             "Should be back in funding phase after _changePhase"
         );
@@ -49,7 +49,7 @@ contract RepNetManager_DebugTest is TestHelpers {
     function test_ChangePhase_ToSubmission() public {
         // Initially in funding phase
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Funding),
             "Should start in funding phase"
         );
@@ -59,7 +59,7 @@ contract RepNetManager_DebugTest is TestHelpers {
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Submission);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Submission),
             "Should be in submission phase after _changePhase"
         );
@@ -68,7 +68,7 @@ contract RepNetManager_DebugTest is TestHelpers {
     function test_ChangePhase_ToVoting() public {
         // Initially in funding phase
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Funding),
             "Should start in funding phase"
         );
@@ -78,7 +78,7 @@ contract RepNetManager_DebugTest is TestHelpers {
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Voting);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Voting),
             "Should be in voting phase after _changePhase"
         );
@@ -87,7 +87,7 @@ contract RepNetManager_DebugTest is TestHelpers {
     function test_ChangePhase_ToEnded() public {
         // Initially in funding phase
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Funding),
             "Should start in funding phase"
         );
@@ -97,7 +97,7 @@ contract RepNetManager_DebugTest is TestHelpers {
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Ended);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Ended),
             "Should be in ended phase after _changePhase"
         );
@@ -160,7 +160,7 @@ contract RepNetManager_DebugTest is TestHelpers {
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Submission);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Submission),
             "Should be in submission phase"
         );
@@ -170,7 +170,7 @@ contract RepNetManager_DebugTest is TestHelpers {
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Voting);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Voting),
             "Should be in voting phase"
         );
@@ -180,7 +180,7 @@ contract RepNetManager_DebugTest is TestHelpers {
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Ended);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Ended),
             "Should be in ended phase"
         );
@@ -190,7 +190,7 @@ contract RepNetManager_DebugTest is TestHelpers {
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Funding);
 
         assertEq(
-            uint256(repNetManager.getCrowdfundingPhase(crowdfundingId)),
+            uint256(repNetManager.crowdfundingPhase(crowdfundingId)),
             uint256(CrowdfundingPhase.Funding),
             "Should be back in funding phase"
         );
@@ -198,14 +198,14 @@ contract RepNetManager_DebugTest is TestHelpers {
 
     function test_ChangePhase_VerifyTimestamps() public {
         // Get initial timestamps
-        CrowdfundingShort memory initialCf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory initialCf = repNetManager.crowdfunding(crowdfundingId);
 
         // Change to submission phase
         vm.prank(owner);
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Submission);
 
         // Get updated timestamps
-        CrowdfundingShort memory updatedCf = repNetManager.getCrowdfunding(crowdfundingId);
+        CrowdfundingShort memory updatedCf = repNetManager.crowdfunding(crowdfundingId);
 
         // Verify timestamps were updated correctly
         assertEq(

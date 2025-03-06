@@ -29,7 +29,7 @@ struct Crowdfunding {
 }
 
 struct Votes {
-    uint256 voters;
+    uint256 numVotes;
     uint256 votesPower; // should be more than X % of total supply of tokens to count
     mapping(address => uint256) hasVoted;
     mapping(bytes32 => uint256) submissionVotes;
