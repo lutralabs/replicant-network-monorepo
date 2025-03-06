@@ -4,6 +4,7 @@ import { PrivyProvider } from '@privy-io/react-auth';
 import { WagmiProvider } from '@privy-io/wagmi';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ToastContainer } from 'react-toastify';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import type { AppProps } from 'next/app';
 import type { ComponentProps } from 'react';
@@ -37,7 +38,24 @@ export const Providers = ({
         }}
       >
         <QueryClientProvider client={client}>
-          <WagmiProvider config={config}>{children}</WagmiProvider>
+          <WagmiProvider config={config}>
+            {children}
+            <ToastContainer
+              icon={false}
+              position="bottom-right"
+              style={{ zIndex: 1000 }}
+              autoClose={5000}
+              progressClassName="bg-[hsl(var(--primary))]"
+              hideProgressBar={false}
+              newestOnTop={true}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="dark"
+            />
+          </WagmiProvider>
         </QueryClientProvider>
       </PrivyProvider>
     </NextThemesProvider>

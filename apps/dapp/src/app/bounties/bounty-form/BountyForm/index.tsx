@@ -29,6 +29,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useCreateBounty } from '@/hooks/useCreateBounty';
 import { formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -101,6 +102,7 @@ const formSchema = z.object({
 });
 
 export const BountyForm = () => {
+  const router = useRouter();
   const { wallets } = useWallets();
   const wallet = wallets[0]; // Replace this with your desired wallet
 
@@ -147,20 +149,31 @@ export const BountyForm = () => {
       console.log('Invalid dates');
     }
 
-    const res = createBounty({
-      amount: values.contribution,
-      title: values.title,
-      symbol: values.symbol,
-      fundingPhaseEnd: Math.round(values.endOfFunding.getTime() / 1000),
-      submissionPhaseEnd: Math.round(values.endOfSubmissions.getTime() / 1000),
-      votingPhaseEnd: Math.round(values.endOfVoting.getTime() / 1000),
-      developerFeePercentage: values.devFees,
-      raiseCap: values.maxAmount,
-      description: values.description,
-      discord: values.discord,
-      email: values.email,
-      telegram: values.telegram,
-    });
+    const res = createBounty(
+      {
+        amount: values.contribution,
+        title: values.title,
+        symbol: values.symbol,
+        fundingPhaseEnd: Math.round(values.endOfFunding.getTime() / 1000),
+        submissionPhaseEnd: Math.round(
+          values.endOfSubmissions.getTime() / 1000
+        ),
+        votingPhaseEnd: Math.round(values.endOfVoting.getTime() / 1000),
+        developerFeePercentage: values.devFees,
+        raiseCap: values.maxAmount,
+        description: values.description,
+        discord: values.discord,
+        email: values.email,
+        telegram: values.telegram,
+      },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            router.push(`/bounties/${data.bountyData.id}`);
+          }
+        },
+      }
+    );
     console.log(res);
   }
 

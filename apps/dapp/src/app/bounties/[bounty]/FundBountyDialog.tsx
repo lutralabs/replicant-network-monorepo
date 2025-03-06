@@ -1,3 +1,4 @@
+import { SuccessToast } from '@/components/Toasts';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -20,7 +21,8 @@ import { formatEther } from 'viem';
 import { useBalance } from 'wagmi';
 
 export const FundBountyDialog = ({ bounty }: { bounty: Bounty }) => {
-  const [amount, setAmount] = useState(0);
+  const [open, setOpen] = useState<boolean>(false);
+  const [amount, setAmount] = useState<number>(0);
   const { wallets } = useWallets();
 
   const { mutate: fund } = useFundBounty();
@@ -43,11 +45,18 @@ export const FundBountyDialog = ({ bounty }: { bounty: Bounty }) => {
   }, [formattedBalance, amount]);
 
   const fundBounty = () => {
-    fund({ amount, id: bounty.id });
+    fund(
+      { amount, id: bounty.id },
+      {
+        onSuccess: () => {
+          setOpen(false);
+        },
+      }
+    );
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="cta-solid">Fund the Bounty &gt;</Button>
       </DialogTrigger>

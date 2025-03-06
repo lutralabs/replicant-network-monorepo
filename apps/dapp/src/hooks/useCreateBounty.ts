@@ -1,10 +1,9 @@
+import { ErrorToast, SuccessToast } from '@/components/Toasts';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
 import { useWallets } from '@privy-io/react-auth';
 import { useMutation } from '@tanstack/react-query';
-import { readContract, simulateContract, writeContract } from '@wagmi/core';
-import { de } from 'chrono-node';
-import { RailSymbol } from 'lucide-react';
+import { simulateContract, writeContract } from '@wagmi/core';
 import { parseEther } from 'viem';
 
 export const useCreateBounty = () => {
@@ -48,14 +47,15 @@ export const useCreateBounty = () => {
         {
           name: title,
           symbol: symbol,
-          fundingPhaseEnd: BigInt(fundingPhaseEnd), // 1 week from now
-          submissionPhaseEnd: BigInt(submissionPhaseEnd), // 2 weeks from now
-          votingPhaseEnd: BigInt(votingPhaseEnd), // 3 weeks from now
+          fundingPhaseEnd: BigInt(fundingPhaseEnd), // e.g. 1 week from now
+          submissionPhaseEnd: BigInt(submissionPhaseEnd), // e.g. 2 weeks from now
+          votingPhaseEnd: BigInt(votingPhaseEnd), // e.g. 3 weeks from now
           developerFeePercentage: BigInt(developerFeePercentage), // 5% developer fee
           raiseCap: parseEther((raiseCap ?? '0').toString()),
         },
       ];
 
+      // result.result is the bounty contract index / id
       const result = await simulateContract(config, {
         abi: repNetManagerAbi,
         address: process.env.CONTRACT_ADDRESS as `0x${string}`,
@@ -64,10 +64,10 @@ export const useCreateBounty = () => {
         value: parseEther(amount.toString()),
         account: wallet.address,
       });
-      //console.log(result.result);
+
       const writeRes = await writeContract(config, result.request as any);
 
-      fetch('/api/bounty', {
+      const response = await fetch('/api/bounty', {
         method: 'POST',
         body: JSON.stringify({
           id: Number(result.result),
@@ -79,15 +79,28 @@ export const useCreateBounty = () => {
         }),
       });
 
-      return writeRes;
+      if (!response.ok) {
+        throw new Error('Failed to store metadata');
+      }
+
+      const json = await response.json();
+
+      if (json.error) {
+        throw new Error(json.error);
+      }
+
+      return { transactionId: writeRes, bountyData: json.data };
     },
     onSuccess: (data) => {
+      SuccessToast({ message: 'Bounty created successfully!' });
       if (data) {
         console.log('Success. Storing Metadata...');
+        SuccessToast({ message: data.transactionId });
       }
     },
     onError: (error) => {
       console.log('error', error);
+      ErrorToast({ error: error.message });
     },
   });
 };
