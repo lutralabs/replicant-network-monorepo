@@ -11,6 +11,7 @@ import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { ErrorToast } from '@/components/Toasts';
 
 export default function Page() {
   const [images, setImages] = useState([]);
@@ -30,6 +31,10 @@ export default function Page() {
   }
 
   const personalSign = async () => {
+    if (!wallet) {
+      ErrorToast({ error: 'No wallet found' });
+      return;
+    }
     const address = wallet.address;
     const message = prompt;
     const provider = await wallet.getEthereumProvider();
@@ -59,7 +64,6 @@ export default function Page() {
 
     const data = await res.json();
 
-    console.log('dd', data);
     setImages(data.data);
     setLoading(false);
   };

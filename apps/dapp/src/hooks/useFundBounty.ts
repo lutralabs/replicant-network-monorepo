@@ -10,6 +10,11 @@ export const useFundBounty = () => {
   const { wallets } = useWallets();
   const wallet = wallets[0];
 
+  if (!wallet) {
+    ErrorToast({ error: 'No wallet found' });
+    return;
+  }
+
   return useMutation({
     mutationKey: ['fundBounty', wallet],
     mutationFn: async (variables: {
