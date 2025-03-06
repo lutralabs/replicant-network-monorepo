@@ -8,15 +8,6 @@
   A decentralized platform for AI model crowdfunding, development, and deployment on Monad.
 </p>
 
-<p align="center">
-  <img src="https://github.com/lutralabs/replicant-network-monorepo/actions/workflows/ci.yml/badge.svg" alt="CI Status">
-  <a href="https://github.com/lutralabs/replicant-network-monorepo/blob/main/LICENSE">
-
-    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
-
-  </a>
-</p>
-
 ## 🌟 Project Overview
 
 Replicant Network is a decentralized platform that revolutionizes AI model development by creating a transparent and efficient ecosystem for crowdfunding, building, and deploying AI models. Built on Monad's accelerated EVM, it enables:
