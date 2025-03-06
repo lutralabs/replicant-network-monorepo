@@ -5,104 +5,108 @@
 <h1 align="center">Replicant Network</h1>
 
 <p align="center">
-  A decentralized platform for AI model crowdfunding, development, and deployment. It combines blockchain technology with AI infrastructure to create a transparent and efficient ecosystem for AI model creation and utilization.
+  A decentralized platform for AI model crowdfunding, development, and deployment on Monad.
 </p>
 
-## Project Overview
+<p align="center">
+  <img src="https://github.com/lutralabs/replicant-network-monorepo/actions/workflows/ci.yml/badge.svg" alt="CI Status">
+  <a href="https://github.com/lutralabs/replicant-network-monorepo/blob/main/LICENSE">
 
-Replicant Network was initially bootstrapped during the Monad Hackathon, where the core concept and architecture were developed. The project aims to democratize AI model development by creating a decentralized marketplace for funding, building, and deploying AI models.
+    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
 
-The Replicant Network monorepo contains all the components needed to run the platform:
+  </a>
+</p>
 
-* **Smart Contracts**: Solidity contracts for crowdfunding, model submission, and token management
-* **Dapp**: Next.js frontend application for interacting with the platform
-* **AI Manager**: FastAPI-based service for managing and running AI inference tasks
+## 🌟 Project Overview
 
-## Repository Structure
+Replicant Network is a decentralized platform that revolutionizes AI model development by creating a transparent and efficient ecosystem for crowdfunding, building, and deploying AI models. Built on Monad's accelerated EVM, it enables:
+
+* **Transparent Crowdfunding**: Anyone can create or contribute to AI model development campaigns
+* **Decentralized Governance**: Token holders vote on model submissions
+* **Efficient Deployment**: Seamless deployment of AI models for inference
+* **Tokenization & Shared Ownership**: Models are tokenized, enabling shared ownership and revenue sharing among contributors
+
+## 🏗️ Architecture
+
+Replicant Network consists of three main components:
+
+1. **Smart Contracts**: Solidity contracts deployed on Monad for crowdfunding, model submission, and token management
+2. **Dapp**: Next.js frontend application for interacting with the platform
+3. **AI Manager**: FastAPI-based service for managing and running AI inference tasks
+4. **Model/Crowdfunding Metadata Storage**: IPFS-based storage for model and campaign metadata
+5. **Model Storage**: Secure storage for AI model files and weights
+
+<p align="center">
+  <img src="assets/architecture-diagram.svg" alt="Replicant Network Architecture" width="800"/>
+</p>
+
+## 🚀 Key Features
+
+* **Crowdfunding Campaigns**: Create and fund AI model development campaigns
+* **Token-Based Governance & Ownership**: Each campaign creates its own ERC20 token for voting, ownership, and revenue sharing
+* **Model Submission**: Developers can submit AI models to campaigns
+* **Voting System**: Token holders vote on the best model submissions
+* **Reward Distribution**: Automatic distribution of rewards to winning developers
+* **Model Monetization**: Users can use models via our platform for small fees, with revenue shared among token holders
+
+## 📁 Repository Structure
 
 ```
 replicant-network-monorepo/
 ├── apps/
 │   ├── dapp/             # Next.js frontend application
-│   │   ├── public/       # Static assets
-│   │   └── src/          # Source code
-│   └── ai-manager/       # AI inference service
-│       ├── src/          # Source code
-│       ├── ai-models/    # AI model storage
-│       └── benchmarking/ # Performance testing
-├── assets/               # Shared assets (logos, images)
+│   ├── ai-manager/       # AI inference service
+│   └── envio/            # Indexer for blockchain events
 └── contracts/            # Solidity smart contracts
-     ├── src/              # Contract source code
-     ├── test/             # Contract tests
-     ├── script/           # Contract related scripts
-     └── lib/              # Dependencies
 ```
 
-## Key Components
+## 🛠️ Technologies Used
 
-### Smart Contracts
+* **Blockchain**: Monad (EVM-compatible)
+* **Smart Contracts**: Solidity, Foundry
+* **Frontend**: Next.js, TypeScript, TailwindCSS, wagmi
+* **Backend**: FastAPI, Python
+* **AI**: PyTorch
+* **DevOps**: Docker, GitHub Actions
 
-The contracts module contains Solidity smart contracts that power the Replicant Network:
-
-* **RepNetManager**: Main contract for managing crowdfunding campaigns, model submissions, and voting
-* **ModelToken**: ERC20 token implementation for model-specific tokens
-* **ERC20Factory**: Factory contract for creating new model tokens
-
-### Dapp (Frontend)
-
-A Next.js application that provides the user interface for:
-
-* Browsing and participating in crowdfunding campaigns
-* Submitting AI models
-* Voting on model submissions
-* Interacting with deployed models
-
-### AI Manager
-
-A Python-based service that handles:
-
-* AI model inference via a REST API
-* Asynchronous processing of AI tasks using Celery
-* Model discovery and management
-* Performance monitoring and scaling
-
-## Getting Started
+## 🏁 Getting Started
 
 ### Prerequisites
 
 * Node.js (v20.18.0 or higher)
 * PNPM (v9.14.2 or higher)
 * Python 3.10+
-* Docker and Docker Compose (for AI Manager)
+* Docker (for AI Manager)
 
 ### Installation
 
 1. Clone the repository:
    
 
-```
-git clone https://github.com/your-org/replicant-network-monorepo.git
+```bash
+git clone https://github.com/lutralabs/replicant-network-monorepo.git
 cd replicant-network-monorepo
 ```
 
 2. Install dependencies:
    
 
-```
+```bash
 pnpm install
 ```
 
 3. Build all packages:
    
 
-```
+```bash
 pnpm build
 ```
 
 ### Running the Dapp
 
-```
+```bash
 cd apps/dapp
+# Set the variables in .env as seen in .env.example
 pnpm dev
 ```
 
@@ -110,7 +114,7 @@ The application will be available at http://localhost:3000.
 
 ### Running the AI Manager
 
-```
+```bash
 cd apps/ai-manager
 docker-compose up -d
 ```
@@ -119,19 +123,25 @@ The API will be available at http://localhost:8000.
 
 ### Deploying Smart Contracts
 
-```
+```bash
 cd contracts
-forge create src/RepNetManager.sol:RepNetManager --private-key monad-deployer --broadcast
+forge create src/RepNetManager.sol:RepNetManager --private-key <your-private-key>
 ```
 
-## Development
+## 🧪 Testing
 
-This monorepo uses NX for managing the workspace and dependencies. Common commands:
+```bash
+# Run all tests
+pnpm test
 
-* `pnpm nx run-many --target=build`: Build all packages
-* `pnpm nx run-many --target=test`: Run tests for all packages
-* `pnpm nx run-many --target=lint`: Lint all packages
+# Run specific tests
+cd contracts
+forge test
 
-## License
+cd apps/envio
+pnpm test
+```
 
-MIT
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
