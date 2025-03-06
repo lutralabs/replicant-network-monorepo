@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "forge build --extra-output-files abi",
+    "build": "forge build --extra-output-files abi && cp ./out/RepNetmanager.sol/RepNetManager.abi.json ../apps/envio/abis",
     "clean": "forge clean",
     "test": "forge test -vv",
     "lint": "forge fmt"
