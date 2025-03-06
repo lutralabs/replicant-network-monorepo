@@ -5,7 +5,7 @@
 <h1 align="center">Replicant Network</h1>
 
 <p align="center">
-  A decentralized platform for AI model crowdfunding, development, and deployment on Monad.
+  AI Models. Made for You.
 </p>
 
 ## 🌟 Project Overview
