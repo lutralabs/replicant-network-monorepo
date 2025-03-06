@@ -6,8 +6,6 @@ import DynamicBreadcrumb from '../DynamicBreadcrumb';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '../ui/sidebar';
 
 import { LoginButton } from './LoginButton';
-import { Button } from '../ui/button';
-import { ErrorToast, InfoToast, SuccessToast } from '../Toasts';
 
 export const CoreLayout = ({ children }) => {
   return (
@@ -24,27 +22,6 @@ export const CoreLayout = ({ children }) => {
               />
               <div className="flex w-full items-center justify-between">
                 <DynamicBreadcrumb />
-                <Button
-                  onClick={() => {
-                    ErrorToast({ error: 'test' });
-                  }}
-                >
-                  Error
-                </Button>
-                <Button
-                  onClick={() => {
-                    InfoToast({ title: 'test', description: 'test' });
-                  }}
-                >
-                  Info
-                </Button>
-                <Button
-                  onClick={() => {
-                    SuccessToast({ message: 'test' });
-                  }}
-                >
-                  Success
-                </Button>
                 <LoginButton />
               </div>
             </div>
