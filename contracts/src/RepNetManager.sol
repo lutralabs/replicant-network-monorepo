@@ -49,7 +49,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         erc20Factory = new ERC20Factory();
     }
 
-    // publics
+    // Public methods
 
     /**
      * @notice Creates a new crowdfunding campaign
@@ -216,9 +216,6 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         return _getTotalRaised(_crowdfundingId);
     }
 
-    // TODO: get all funders
-    // getAllCrowdfunders
-
     /**
      * @notice Gets the total number of funders for a crowdfunding campaign
      * @param _crowdfundingId The ID of the crowdfunding
@@ -330,7 +327,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         return crowdfundings[_crowdfundingId].submissions[_submissionId];
     }
 
-    // internals
+    // Internal methods
 
     /**
      * @notice Creates a new crowdfunding campaign
