@@ -1,0 +1,34 @@
+query GetCrowdfunding($id: String = "") {
+  Crowdfunding(where: {id: {_eq: $id}}) {
+    id
+    fundingPhaseEnd
+    submissionPhaseEnd
+    votingPhaseEnd
+    totalRaised
+    numFunders
+    finalized
+    createdAt
+    winner_id
+    raiseCap
+    creator_id
+    numSubmissions
+    token_id
+    funders {
+      funder_id
+      timestamp
+      amount
+    }
+    submissions {
+      creator_id
+      id
+      votes {
+        id
+        votePower
+        voter_id
+        timestamp
+      }
+      totalVotesPower
+      timestamp
+    }
+  }
+}

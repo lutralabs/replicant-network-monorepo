@@ -13,6 +13,7 @@ import {
   type RepNetManager_Withdrawal,
   type User,
   type Crowdfunding,
+  type RepNetManager_DebugPhaseChanged,
 } from 'generated';
 
 async function ensureUserExists(
@@ -62,8 +63,10 @@ RepNetManager.CrowdfundingCreated.handlerWithLoader({
       creator_id: event.params.creator.toLowerCase(),
       token_id: event.params.tokenAddress.toLowerCase(),
       winner_id: undefined,
+      numSubmissions: BigInt(0),
       totalRaised: BigInt(0),
-      numFunders: BigInt(1),
+      numFunders: BigInt(0),
+      createdAt: BigInt(event.block.timestamp),
       fundingPhaseEnd: event.params.fundingPhaseEnd,
       submissionPhaseEnd: event.params.submissionPhaseEnd,
       votingPhaseEnd: event.params.votingPhaseEnd,
@@ -196,10 +199,13 @@ RepNetManager.OwnershipTransferred.handler(async ({ event, context }) => {
 RepNetManager.SolutionSubmitted.handlerWithLoader({
   loader: async ({ event, context }) => {
     const user = await context.User.get(event.params.creator.toLowerCase());
+    const crowdfunding = await context.Crowdfunding.get(
+      event.params.crowdfundingId.toString()
+    );
     if (!user) {
-      return null;
+      return { user: null, crowdfunding };
     }
-    return user;
+    return { user, crowdfunding };
   },
   handler: async ({ event, context, loaderReturn }) => {
     const entity: RepNetManager_SolutionSubmitted = {
@@ -208,9 +214,13 @@ RepNetManager.SolutionSubmitted.handlerWithLoader({
       submissionId: event.params.submissionId,
       creator: event.params.creator.toLowerCase(),
     };
-    await ensureUserExists(loaderReturn, context, event.params.creator);
+    await ensureUserExists(loaderReturn.user, context, event.params.creator);
     context.RepNetManager_SolutionSubmitted.set(entity);
 
+    context.Crowdfunding.set({
+      ...loaderReturn.crowdfunding!,
+      numSubmissions: loaderReturn.crowdfunding!.numSubmissions + BigInt(1),
+    });
     // set submission entity
     context.Submission.set({
       id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
@@ -260,6 +270,33 @@ RepNetManager.Vote.handlerWithLoader({
       voter_id: event.params.voter.toLowerCase(),
       votePower: event.params.votePower,
       timestamp: BigInt(event.block.timestamp),
+    });
+  },
+});
+
+RepNetManager.DebugPhaseChanged.handlerWithLoader({
+  loader: async ({ event, context }) => {
+    const crowdfunding = await context.Crowdfunding.get(
+      event.params.crowdfundingId.toString()
+    );
+    return crowdfunding;
+  },
+  handler: async ({ event, context, loaderReturn }) => {
+    const entity: RepNetManager_DebugPhaseChanged = {
+      id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+      crowdfundingId: event.params.crowdfundingId,
+      fundingPhaseEnd: event.params.fundingPhaseEnd,
+      submissionPhaseEnd: event.params.submissionPhaseEnd,
+      votingPhaseEnd: event.params.votingPhaseEnd,
+    };
+
+    context.RepNetManager_DebugPhaseChanged.set(entity);
+
+    context.Crowdfunding.set({
+      ...loaderReturn!,
+      fundingPhaseEnd: event.params.fundingPhaseEnd,
+      submissionPhaseEnd: event.params.submissionPhaseEnd,
+      votingPhaseEnd: event.params.votingPhaseEnd,
     });
   },
 });

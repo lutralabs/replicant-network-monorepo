@@ -141,7 +141,7 @@ contract RepNetManager_VoteTest is TestHelpers {
 
         // Try to vote without having funded
         vm.prank(nonFunder);
-        vm.expectRevert(VotingBalanceZero.selector);
+        vm.expectRevert(NoDeposits.selector);
         repNetManager.vote(crowdfundingId, submissionId1);
     }
 

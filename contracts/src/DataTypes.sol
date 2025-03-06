@@ -91,6 +91,10 @@ event Vote(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address
 
 event Withdrawal(uint256 indexed crowdfundingId, address indexed sender, uint256 amount);
 
+event DebugPhaseChanged(
+    uint256 indexed crowdfundingId, uint256 fundingPhaseEnd, uint256 submissionPhaseEnd, uint256 votingPhaseEnd
+);
+
 error CrowdfundingNotFound();
 error CrowdfundingNotActive();
 error CrowdfundingStillActive();

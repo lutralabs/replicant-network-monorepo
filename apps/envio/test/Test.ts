@@ -129,7 +129,9 @@ describe('RepNetManager contract CrowdfundingCreated event tests', () => {
       raiseCap: event.params.raiseCap,
       finalized: false,
       totalRaised: BigInt(0),
-      numFunders: BigInt(1),
+      numFunders: BigInt(0),
+      numSubmissions: BigInt(0),
+      createdAt: BigInt(event.block.timestamp),
     };
 
     // Asserting that the crowdfunding entity in the mock database is the same as the expected entity
@@ -164,6 +166,7 @@ describe('RepNetManager contract CrowdfundingFinalized event tests', async () =>
     finalized: false,
     totalRaised: BigInt(0),
     numFunders: BigInt(0),
+    numSubmissions: BigInt(0),
   };
 
   beforeEach(() => {
@@ -259,6 +262,7 @@ describe('RepNetManager contract CrowdfundingFinalizedWithoutWinner event tests'
     finalized: false,
     totalRaised: BigInt(0),
     numFunders: BigInt(1),
+    numSubmissions: BigInt(0),
   };
 
   beforeEach(() => {
@@ -345,6 +349,7 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
       id: crowdfundingId,
       totalRaised: BigInt(0),
       numFunders: BigInt(0),
+      numSubmissions: BigInt(0),
       creator_id: '0x123',
       token_id: '0x456',
       winner_id: undefined,
@@ -396,6 +401,7 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
       winner_id: undefined,
       fundingPhaseEnd: BigInt(1000),
       submissionPhaseEnd: BigInt(2000),
+      numSubmissions: BigInt(0),
       votingPhaseEnd: BigInt(3000),
       raiseCap: BigInt(5000),
       finalized: false,
@@ -431,6 +437,7 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
       id: crowdfundingId,
       totalRaised: BigInt(0),
       numFunders: BigInt(0),
+      numSubmissions: BigInt(0),
       creator_id: '0x123',
       token_id: '0x456',
       winner_id: undefined,
@@ -521,9 +528,25 @@ describe('RepNetManager contract SolutionSubmitted event tests', () => {
 
   it('RepNetManager_SolutionSubmitted is created correctly', async () => {
     // Processing the event
+    const crowdfundingId = event.params.crowdfundingId.toString();
+    const mockCrowdfunding = {
+      id: crowdfundingId,
+      numSubmissions: BigInt(0),
+      creator_id: '0x123',
+      token_id: '0x456',
+      winner_id: undefined,
+      fundingPhaseEnd: BigInt(1000),
+      submissionPhaseEnd: BigInt(2000),
+      votingPhaseEnd: BigInt(3000),
+      raiseCap: BigInt(5000),
+      finalized: false,
+      numFunders: BigInt(0),
+      totalRaised: BigInt(0),
+    };
+    const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
     const mockDbUpdated = await RepNetManager.SolutionSubmitted.processEvent({
       event,
-      mockDb,
+      mockDb: newDb,
     });
 
     // Getting the actual entity from the mock database
@@ -551,9 +574,25 @@ describe('RepNetManager contract SolutionSubmitted event tests', () => {
 
   it('User entity is created correctly for solution creator', async () => {
     // Processing the event
+    const crowdfundingId = event.params.crowdfundingId.toString();
+    const mockCrowdfunding = {
+      id: crowdfundingId,
+      numSubmissions: BigInt(0),
+      creator_id: '0x123',
+      token_id: '0x456',
+      winner_id: undefined,
+      fundingPhaseEnd: BigInt(1000),
+      submissionPhaseEnd: BigInt(2000),
+      votingPhaseEnd: BigInt(3000),
+      raiseCap: BigInt(5000),
+      finalized: false,
+      numFunders: BigInt(0),
+      totalRaised: BigInt(0),
+    };
+    const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
     const mockDbUpdated = await RepNetManager.SolutionSubmitted.processEvent({
       event,
-      mockDb,
+      mockDb: newDb,
     });
 
     // Getting the actual user entity from the mock database
@@ -576,9 +615,25 @@ describe('RepNetManager contract SolutionSubmitted event tests', () => {
 
   it('Submission entity is created correctly', async () => {
     // Processing the event
+    const crowdfundingId = event.params.crowdfundingId.toString();
+    const mockCrowdfunding = {
+      id: crowdfundingId,
+      numSubmissions: BigInt(0),
+      creator_id: '0x123',
+      token_id: '0x456',
+      winner_id: undefined,
+      fundingPhaseEnd: BigInt(1000),
+      submissionPhaseEnd: BigInt(2000),
+      votingPhaseEnd: BigInt(3000),
+      raiseCap: BigInt(5000),
+      finalized: false,
+      numFunders: BigInt(0),
+      totalRaised: BigInt(0),
+    };
+    const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
     const mockDbUpdated = await RepNetManager.SolutionSubmitted.processEvent({
       event,
-      mockDb,
+      mockDb: newDb,
     });
 
     // Getting the actual submission entity from the mock database

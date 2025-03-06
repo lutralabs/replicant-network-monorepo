@@ -1,0 +1,13 @@
+query GetCrowdfundings($finalized: Boolean) {
+  Crowdfunding(where: {finalized: {_eq: $finalized}}) {
+    id
+    fundingPhaseEnd
+    submissionPhaseEnd
+    votingPhaseEnd
+    totalRaised
+    numFunders
+    raiseCap
+    creator_id
+    numSubmissions
+  }
+}

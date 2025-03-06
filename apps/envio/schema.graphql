@@ -55,6 +55,14 @@ type RepNetManager_Withdrawal {
   amount: BigInt!
 }
 
+type RepNetManager_DebugPhaseChanged {
+  id: ID!
+  crowdfundingId: BigInt!
+  fundingPhaseEnd: BigInt!
+  submissionPhaseEnd: BigInt!
+  votingPhaseEnd: BigInt!
+}
+
 type Crowdfunding @entity {
   id: ID!
   creator: User!
@@ -63,12 +71,14 @@ type Crowdfunding @entity {
   submissionPhaseEnd: BigInt!
   totalRaised: BigInt!
   numFunders: BigInt!
+  numSubmissions: BigInt!
   votingPhaseEnd: BigInt!
   raiseCap: BigInt!
   finalized: Boolean!
   winner: User
   submissions: [Submission!]! @derivedFrom(field: "crowdfunding")
   funders: [Funding!]! @derivedFrom(field: "crowdfunding")
+  createdAt: BigInt!
 }
 
 type User @entity {

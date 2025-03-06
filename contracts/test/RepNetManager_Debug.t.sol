@@ -136,9 +136,9 @@ contract RepNetManager_DebugTest is TestHelpers {
         vm.prank(owner);
         repNetManager._changePhase(crowdfundingId, CrowdfundingPhase.Voting);
 
-        // Now voting should work, but revert with VotingBalanceZero
+        // Now voting should work, but revert with NoDeposits
         vm.prank(user2);
-        vm.expectRevert(VotingBalanceZero.selector);
+        vm.expectRevert(NoDeposits.selector);
         repNetManager.vote(crowdfundingId, submissionId);
 
         // Try to finalize (should fail while active)

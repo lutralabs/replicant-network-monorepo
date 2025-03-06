@@ -18,3 +18,4 @@ networks:
           - event: SolutionSubmitted(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address indexed creator)
           - event: Withdrawal(uint256 indexed crowdfundingId, address indexed sender, uint256 amount)
           - event: Vote(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address indexed voter, uint256 votePower)
+          - event: DebugPhaseChanged(uint256 indexed crowdfundingId, uint256 fundingPhaseEnd, uint256 submissionPhaseEnd, uint256 votingPhaseEnd)

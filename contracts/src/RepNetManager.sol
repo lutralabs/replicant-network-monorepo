@@ -152,6 +152,10 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         if (_hasVoted(_crowdfundingId, msg.sender)) {
             revert AlreadyVoted(_submissionId);
         }
+        // check if user has deposited
+        if (!_hasDeposited(_crowdfundingId, msg.sender)) {
+            revert NoDeposits();
+        }
         if (crowdfundings[_crowdfundingId].submissions[_submissionId].creator == msg.sender) {
             revert CannotVoteForYourOwnSubmission(_submissionId);
         }
@@ -298,6 +302,19 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         address _voter
     ) public view crowdfundingExists(_crowdfundingId) returns (bool) {
         return _hasVoted(_crowdfundingId, _voter);
+    }
+
+    /**
+     * @notice Checks if a user has deposited for a crowdfunding campaign
+     * @param _crowdfundingId The ID of the crowdfunding
+     * @param _funder The address of the user
+     * @return True if the user has deposited, false otherwise
+     */
+    function hasDeposited(
+        uint256 _crowdfundingId,
+        address _funder
+    ) public view crowdfundingExists(_crowdfundingId) returns (bool) {
+        return _hasDeposited(_crowdfundingId, _funder);
     }
 
     /**
@@ -533,6 +550,16 @@ contract RepNetManager is Ownable, ReentrancyGuard {
     }
 
     /**
+     * @notice Checks if a user has deposited for a crowdfunding campaign
+     * @param _crowdfundingId The ID of the crowdfunding
+     * @param _funder The address of the user
+     * @return True if the user has deposited, false otherwise
+     */
+    function _hasDeposited(uint256 _crowdfundingId, address _funder) internal view returns (bool) {
+        return crowdfundings[_crowdfundingId].deposits[_funder] != 0;
+    }
+
+    /**
      * @notice Validates the timestamps for a crowdfunding campaign
      * @dev Checks that timestamps are in the correct order and meet minimum duration requirements
      * @param fundingPhaseEnd The end timestamp for the funding phase
@@ -592,7 +619,10 @@ contract RepNetManager is Ownable, ReentrancyGuard {
      * @param _crowdfundingId The ID of the crowdfunding to change the phase of
      * @param _phase The phase to change to
      */
-    function _changePhase(uint256 _crowdfundingId, CrowdfundingPhase _phase) public onlyOwner {
+    function _changePhase(
+        uint256 _crowdfundingId,
+        CrowdfundingPhase _phase
+    ) public crowdfundingExists(_crowdfundingId) onlyOwner {
         Crowdfunding storage cf = crowdfundings[_crowdfundingId];
         if (_phase == CrowdfundingPhase.Funding) {
             cf.fundingPhaseEnd = block.timestamp + 1 days;
@@ -611,6 +641,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
             cf.submissionPhaseEnd = block.timestamp - 2 days;
             cf.votingPhaseEnd = block.timestamp - 1 days;
         }
+        emit DebugPhaseChanged(_crowdfundingId, cf.fundingPhaseEnd, cf.submissionPhaseEnd, cf.votingPhaseEnd);
     }
 
 }
