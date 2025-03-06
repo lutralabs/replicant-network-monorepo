@@ -4,7 +4,7 @@ export const CONFIG = {
     graphqlUrl: 'https://indexer.dev.hyperindex.xyz/b906ee3/v1/graphql',
   },
   testnet: {
-    contractAddress: '0x29af7b9fbdee86cc31c27a63441910aaafc847cd',
+    contractAddress: '0xC70E380E0f2e8edE495C94E696b279778307b182',
     graphqlUrl: 'https://indexer.dev.hyperindex.xyz/b906ee3/v1/graphql',
   },
 };
