@@ -128,6 +128,8 @@ describe('RepNetManager contract CrowdfundingCreated event tests', () => {
       votingPhaseEnd: event.params.votingPhaseEnd,
       raiseCap: event.params.raiseCap,
       finalized: false,
+      totalRaised: BigInt(0),
+      numFunders: BigInt(1),
     };
 
     // Asserting that the crowdfunding entity in the mock database is the same as the expected entity
@@ -160,6 +162,8 @@ describe('RepNetManager contract CrowdfundingFinalized event tests', async () =>
     votingPhaseEnd: BigInt(3000),
     raiseCap: BigInt(5000),
     finalized: false,
+    totalRaised: BigInt(0),
+    numFunders: BigInt(0),
   };
 
   beforeEach(() => {
@@ -200,7 +204,9 @@ describe('RepNetManager contract CrowdfundingFinalized event tests', async () =>
 
   it('Crowdfunding entity is updated correctly with winner', async () => {
     // Ensure the Crowdfunding entity exists in the mockDb
-    const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
+    const newDb = mockDb.entities.Crowdfunding.set({
+      ...mockCrowdfunding,
+    });
 
     // Processing the event
     const mockDbUpdated =
@@ -251,6 +257,8 @@ describe('RepNetManager contract CrowdfundingFinalizedWithoutWinner event tests'
     votingPhaseEnd: BigInt(3000),
     raiseCap: BigInt(5000),
     finalized: false,
+    totalRaised: BigInt(0),
+    numFunders: BigInt(1),
   };
 
   beforeEach(() => {
@@ -330,9 +338,27 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
 
   it('RepNetManager_CrowdfundingFunded is created correctly', async () => {
     // Processing the event
+
+    // add mock crowdfunding entity in the database
+    const crowdfundingId = event.params.crowdfundingId.toString();
+    const mockCrowdfunding = {
+      id: crowdfundingId,
+      totalRaised: BigInt(0),
+      numFunders: BigInt(0),
+      creator_id: '0x123',
+      token_id: '0x456',
+      winner_id: undefined,
+      fundingPhaseEnd: BigInt(1000),
+      submissionPhaseEnd: BigInt(2000),
+      votingPhaseEnd: BigInt(3000),
+      raiseCap: BigInt(5000),
+      finalized: false,
+    };
+    const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
+
     const mockDbUpdated = await RepNetManager.CrowdfundingFunded.processEvent({
       event,
-      mockDb,
+      mockDb: newDb,
     });
 
     // Getting the actual entity from the mock database
@@ -360,9 +386,24 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
 
   it('User entity is created correctly for funder', async () => {
     // Processing the event
+    const crowdfundingId = event.params.crowdfundingId.toString();
+    const mockCrowdfunding = {
+      id: crowdfundingId,
+      totalRaised: BigInt(0),
+      numFunders: BigInt(0),
+      creator_id: '0x123',
+      token_id: '0x456',
+      winner_id: undefined,
+      fundingPhaseEnd: BigInt(1000),
+      submissionPhaseEnd: BigInt(2000),
+      votingPhaseEnd: BigInt(3000),
+      raiseCap: BigInt(5000),
+      finalized: false,
+    };
+    const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
     const mockDbUpdated = await RepNetManager.CrowdfundingFunded.processEvent({
       event,
-      mockDb,
+      mockDb: newDb,
     });
 
     // Getting the actual user entity from the mock database
@@ -385,9 +426,24 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
 
   it('Funding entity is created correctly', async () => {
     // Processing the event
+    const crowdfundingId = event.params.crowdfundingId.toString();
+    const mockCrowdfunding = {
+      id: crowdfundingId,
+      totalRaised: BigInt(0),
+      numFunders: BigInt(0),
+      creator_id: '0x123',
+      token_id: '0x456',
+      winner_id: undefined,
+      fundingPhaseEnd: BigInt(1000),
+      submissionPhaseEnd: BigInt(2000),
+      votingPhaseEnd: BigInt(3000),
+      raiseCap: BigInt(5000),
+      finalized: false,
+    };
+    const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
     const mockDbUpdated = await RepNetManager.CrowdfundingFunded.processEvent({
       event,
-      mockDb,
+      mockDb: newDb,
     });
 
     // Getting the actual funding entity from the mock database
