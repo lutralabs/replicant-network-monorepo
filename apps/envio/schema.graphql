@@ -61,6 +61,8 @@ type Crowdfunding @entity {
   token: Token!
   fundingPhaseEnd: BigInt!
   submissionPhaseEnd: BigInt!
+  totalRaised: BigInt!
+  numFunders: BigInt!
   votingPhaseEnd: BigInt!
   raiseCap: BigInt!
   finalized: Boolean!

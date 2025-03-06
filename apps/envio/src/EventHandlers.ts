@@ -62,6 +62,8 @@ RepNetManager.CrowdfundingCreated.handlerWithLoader({
       creator_id: event.params.creator.toLowerCase(),
       token_id: event.params.tokenAddress.toLowerCase(),
       winner_id: undefined,
+      totalRaised: BigInt(0),
+      numFunders: BigInt(1),
       fundingPhaseEnd: event.params.fundingPhaseEnd,
       submissionPhaseEnd: event.params.submissionPhaseEnd,
       votingPhaseEnd: event.params.votingPhaseEnd,
@@ -123,19 +125,22 @@ RepNetManager.CrowdfundingFinalizedWithoutWinner.handlerWithLoader({
 RepNetManager.CrowdfundingFunded.handlerWithLoader({
   loader: async ({ event, context }) => {
     const user = await context.User.get(event.params.sender.toLowerCase());
+    const crowdfunding = await context.Crowdfunding.get(
+      event.params.crowdfundingId.toString()
+    );
     const funding = await context.Funding.get(
       `${event.params.crowdfundingId}_${event.params.sender}`
     );
     if (!user && !funding) {
-      return { user: null, funding: null };
+      return { user: null, funding: null, crowdfunding };
     }
     if (user && !funding) {
-      return { user, funding: null };
+      return { user, funding: null, crowdfunding };
     }
     if (!user && funding) {
-      return { user: null, funding };
+      return { user: null, funding, crowdfunding };
     }
-    return { user, funding };
+    return { user, funding, crowdfunding };
   },
   handler: async ({ event, context, loaderReturn }) => {
     const entity: RepNetManager_CrowdfundingFunded = {
@@ -154,8 +159,19 @@ RepNetManager.CrowdfundingFunded.handlerWithLoader({
         ...loaderReturn!.funding,
         amount: loaderReturn!.funding.amount + event.params.amount,
       });
+      context.Crowdfunding.set({
+        ...loaderReturn!.crowdfunding!,
+        totalRaised:
+          loaderReturn!.crowdfunding!.totalRaised + event.params.amount,
+      });
     } else {
       // set funding entity
+      context.Crowdfunding.set({
+        ...loaderReturn!.crowdfunding!,
+        totalRaised:
+          loaderReturn!.crowdfunding!.totalRaised + event.params.amount,
+        numFunders: loaderReturn!.crowdfunding!.numFunders + BigInt(1),
+      });
       context.Funding.set({
         id: `${event.params.crowdfundingId}_${event.params.sender}`,
         crowdfunding_id: event.params.crowdfundingId.toString(),

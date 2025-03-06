@@ -149,7 +149,7 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         if (crowdfundings[_crowdfundingId].submissions[_submissionId].creator == address(0)) {
             revert SubmissionNotFound(_submissionId);
         }
-        if (crowdfundings[_crowdfundingId].votes.hasVoted[msg.sender] != 0) {
+        if (_hasVoted(_crowdfundingId, msg.sender)) {
             revert AlreadyVoted(_submissionId);
         }
         if (crowdfundings[_crowdfundingId].submissions[_submissionId].creator == msg.sender) {
@@ -285,6 +285,19 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         uint256 _crowdfundingId
     ) public view crowdfundingExists(_crowdfundingId) returns (bytes32[] memory) {
         return crowdfundings[_crowdfundingId].submissionIds;
+    }
+
+    /**
+     * @notice Checks if a user has voted for a crowdfunding campaign
+     * @param _crowdfundingId The ID of the crowdfunding
+     * @param _voter The address of the user
+     * @return True if the user has voted, false otherwise
+     */
+    function hasVoted(
+        uint256 _crowdfundingId,
+        address _voter
+    ) public view crowdfundingExists(_crowdfundingId) returns (bool) {
+        return _hasVoted(_crowdfundingId, _voter);
     }
 
     /**
@@ -507,6 +520,16 @@ contract RepNetManager is Ownable, ReentrancyGuard {
         } else {
             return CrowdfundingPhase.Ended;
         }
+    }
+
+    /**
+     * @notice Checks if a user has voted for a crowdfunding campaign
+     * @param _crowdfundingId The ID of the crowdfunding
+     * @param _voter The address of the user
+     * @return True if the user has voted, false otherwise
+     */
+    function _hasVoted(uint256 _crowdfundingId, address _voter) internal view returns (bool) {
+        return crowdfundings[_crowdfundingId].votes.hasVoted[_voter] != 0;
     }
 
     /**
