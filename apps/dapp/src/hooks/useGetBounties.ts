@@ -11,6 +11,8 @@ export type BountyCard = {
   raiseCap: bigint;
   numSubmissions: bigint;
   numFunders: bigint;
+  finalized: boolean;
+  winner: string | null;
   // Supabase metadata
   title?: string;
   description?: string;
@@ -22,52 +24,40 @@ export type BountyCard = {
 };
 
 async function fetchBounties() {
-  const count = await fetchBountiesCount();
-  console.log(`Fetching ${count} bounties`);
+  // Get crowdfundings from GraphQL
+  const crowdfundings = await getCrowdfundings();
+  console.log(`Fetched ${crowdfundings.length} bounties from GraphQL`);
 
-  const bountiesData = [];
-  for (let i = 0; i < count; i++) {
-    const bountyId = BigInt(i);
+  // Transform GraphQL data to match BountyCard type
+  const bountiesData = await Promise.all(
+    crowdfundings.map(async (crowdfunding) => {
+      const bountyId = Number(crowdfunding.id);
 
-    // Fetch base bounty data from blockchain
-    const bountyData = await readContract(config, {
-      abi: repNetManagerAbi,
-      functionName: 'crowdfunding',
-      args: [bountyId],
-      address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-    });
-
-    // Fetch additional blockchain data
-    const isActive = await readContract(config, {
-      abi: repNetManagerAbi,
-      functionName: 'isCrowdfundingActive',
-      args: [bountyId],
-      address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-    });
-
-    // Fetch metadata from API
-    let supabaseData = null;
-    try {
-      const response = await fetch(`/api/bounty?id=${i}`);
-      if (response.ok) {
-        const result = await response.json();
-        supabaseData = result.data;
+      // Fetch metadata from API
+      let supabaseData = null;
+      try {
+        const response = await fetch(`/api/bounty?id=${bountyId}`);
+        if (response.ok) {
+          const result = await response.json();
+          supabaseData = result.data;
+        }
+      } catch (error) {
+        console.error(`Error fetching metadata for bounty ${bountyId}:`, error);
       }
-    } catch (error) {
-      console.error(`Error fetching metadata for bounty ${i}:`, error);
-    }
 
-      // Convert GraphQL data to Bounty type
+      // Convert GraphQL data to BountyCard type
       const enrichedBounty: BountyCard = {
         id: BigInt(crowdfunding.id),
         creator: crowdfunding.creator_id,
-        amountRaised: BigInt(crowdfunding.totalRaised),
-        fundingPhaseEnd: BigInt(crowdfunding.fundingPhaseEnd),
-        submissionPhaseEnd: BigInt(crowdfunding.submissionPhaseEnd),
-        votingPhaseEnd: BigInt(crowdfunding.votingPhaseEnd),
-        raiseCap: BigInt(crowdfunding.raiseCap),
-        numSubmissions: BigInt(crowdfunding.numSubmissions),
-        numFunders: BigInt(crowdfunding.numFunders),
+        amountRaised: BigInt(crowdfunding.totalRaised || 0),
+        fundingPhaseEnd: BigInt(crowdfunding.fundingPhaseEnd || 0),
+        submissionPhaseEnd: BigInt(crowdfunding.submissionPhaseEnd || 0),
+        votingPhaseEnd: BigInt(crowdfunding.votingPhaseEnd || 0),
+        raiseCap: BigInt(crowdfunding.raiseCap || 0),
+        numSubmissions: BigInt(crowdfunding.numSubmissions || 0),
+        numFunders: BigInt(crowdfunding.numFunders || 0),
+        finalized: crowdfunding.finalized,
+        winner: crowdfunding.winner_id ?? null,
         ...(supabaseData && {
           title: supabaseData.title,
           description: supabaseData.description,

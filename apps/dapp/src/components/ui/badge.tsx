@@ -12,7 +12,13 @@ const badgeVariants = tv({
 				"border-transparent bg-purple-600 text-primary-foreground [a&]:hover:bg-primary/90",
 			secondary:
 				"border-transparent bg-green-500 text-white [a&]:hover:bg-green-500/90",
-			destructive:
+				tertiary:
+				"border-transparent bg-yellow-500 text-white [a&]:hover:bg-green-500/90",
+				blue:
+				"border-transparent bg-blue-500 text-white [a&]:hover:bg-green-500/90",	
+				orange:
+				"border-transparent bg-orange-500 text-white [a&]:hover:bg-green-500/90",	
+				destructive:
 				"border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
 			outline:
 				"text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",

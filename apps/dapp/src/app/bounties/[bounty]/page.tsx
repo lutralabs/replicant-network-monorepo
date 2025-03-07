@@ -17,6 +17,7 @@ export default function Page() {
   console.log(slug);
 
   const bounty = useGetBounty(Number(slug));
+  console.log('bnt', bounty);
 
   if (bounty.isLoading) {
     return <div>Loading...</div>;

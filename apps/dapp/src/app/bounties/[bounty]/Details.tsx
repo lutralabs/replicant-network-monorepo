@@ -1,4 +1,4 @@
-import type { Bounty } from '@/hooks/useGetBounties';
+import type { Bounty } from '@/hooks/useGetBounty';
 import React from 'react';
 import { formatEther } from 'viem';
 
@@ -31,30 +31,32 @@ export const Details = ({ bounty }: { bounty: Bounty }) => {
         <li className="flex justify-between border-b-1 hover:bg-purple-50 border-gray-200 p-4">
           <div className="font-medium">Creator Deposit</div>
           <div className="text-end">
-            {/* {
-              bounty.funders.find(
-                (funder) => funder.address === bounty.bountyOwnerAddress
-              )?.amount
-            } */}
-            TBD
+            {formatEther(
+              BigInt(
+                bounty.funders?.find(
+                  (funder) => funder.funder_id === bounty.creator
+                )?.amount
+              ) ?? BigInt(0)
+            )}{' '}
+            MON
           </div>
         </li>
         <li className="flex justify-between border-b-1 hover:bg-purple-50 border-gray-200 p-4">
           <div className="font-medium">Crowdfunding Period</div>
           <div className="text-end">
-            {new Date(Number(bounty.fundingPhaseEnd)).toUTCString()}
+            {new Date(Number(bounty.fundingPhaseEnd) * 1000).toUTCString()}
           </div>
         </li>
         <li className="flex justify-between border-b-1 hover:bg-purple-50 border-gray-200 p-4">
           <div className="font-medium">Development Period</div>
           <div className="text-end">
-            {new Date(Number(bounty.submissionPhaseEnd)).toUTCString()}
+            {new Date(Number(bounty.submissionPhaseEnd) * 1000).toUTCString()}
           </div>
         </li>
         <li className="flex justify-between p-4 hover:bg-purple-50">
           <div className="font-medium">Voting Period</div>
           <div className="text-end">
-            {new Date(Number(bounty.votingPhaseEnd)).toUTCString()}
+            {new Date(Number(bounty.votingPhaseEnd) * 1000).toUTCString()}
           </div>
         </li>
       </ul>
