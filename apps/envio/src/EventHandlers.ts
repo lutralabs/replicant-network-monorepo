@@ -223,7 +223,7 @@ RepNetManager.SolutionSubmitted.handlerWithLoader({
     });
     // set submission entity
     context.Submission.set({
-      id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+      id: `${event.params.submissionId}`,
       crowdfunding_id: event.params.crowdfundingId.toString(),
       creator_id: event.params.creator.toLowerCase(),
       timestamp: BigInt(event.block.timestamp),

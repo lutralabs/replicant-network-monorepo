@@ -638,12 +638,12 @@ describe('RepNetManager contract SolutionSubmitted event tests', () => {
 
     // Getting the actual submission entity from the mock database
     const actualSubmission = mockDbUpdated.entities.Submission.get(
-      `${event.chainId}_${event.block.number}_${event.logIndex}`
+      `${event.params.submissionId}`
     );
 
     // Creating the expected submission entity
     const expectedSubmission = {
-      id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+      id: `${event.params.submissionId}`,
       crowdfunding_id: event.params.crowdfundingId.toString(),
       creator_id: event.params.creator.toLowerCase(),
       timestamp: BigInt(event.block.timestamp),
