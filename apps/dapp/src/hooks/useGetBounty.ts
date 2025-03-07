@@ -2,7 +2,36 @@ import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
 import { useQuery } from '@tanstack/react-query';
 import { readContract } from '@wagmi/core';
-import type { Bounty } from './useGetBounties';
+
+// Extended bounty type including Supabase data
+export type Bounty = {
+  id: bigint;
+  creator: string;
+  token: string;
+  finalized: boolean;
+  winner: string;
+  amountRaised: bigint;
+  fundingPhaseEnd: bigint;
+  submissionPhaseEnd: bigint;
+  votingPhaseEnd: bigint;
+  raiseCap: bigint;
+  developerFeePercentage: bigint;
+  submissionIds: `0x${string}`[];
+  numSubmissions: bigint;
+  numFunders: bigint;
+  phase: number;
+  accepted: boolean;
+  // Additional blockchain data
+  isActive: boolean;
+  // Supabase metadata
+  title?: string;
+  description?: string;
+  type?: string;
+  prompters?: string[];
+  discord?: string | null;
+  email?: string | null;
+  telegram?: string | null;
+};
 
 async function fetchBounty(id: number): Promise<Bounty | null> {
   if (id === undefined || id === null) {

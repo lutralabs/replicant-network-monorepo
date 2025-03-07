@@ -1,29 +1,16 @@
-import { repNetManagerAbi } from '@/generated/RepNetManager';
-import { config, wagmiContractConfig } from '@/wagmi';
+import { getCrowdfundings } from '@/lib/queries/getCrowdfundings';
 import { useQuery } from '@tanstack/react-query';
-import { readContract } from '@wagmi/core';
-import { useReadContract } from 'wagmi';
 
-// Extended bounty type including Supabase data
-export type Bounty = {
+export type BountyCard = {
   id: bigint;
   creator: string;
-  token: string;
-  finalized: boolean;
-  winner: string;
   amountRaised: bigint;
   fundingPhaseEnd: bigint;
   submissionPhaseEnd: bigint;
   votingPhaseEnd: bigint;
   raiseCap: bigint;
-  developerFeePercentage: bigint;
-  submissionIds: `0x${string}`[];
   numSubmissions: bigint;
   numFunders: bigint;
-  phase: number;
-  accepted: boolean;
-  // Additional blockchain data
-  isActive: boolean;
   // Supabase metadata
   title?: string;
   description?: string;
@@ -33,16 +20,6 @@ export type Bounty = {
   email?: string | null;
   telegram?: string | null;
 };
-
-async function fetchBountiesCount() {
-  const count = await readContract(config, {
-    abi: repNetManagerAbi,
-    functionName: 'crowdfundingId',
-    address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-  });
-
-  return Number(count);
-}
 
 async function fetchBounties() {
   const count = await fetchBountiesCount();
@@ -80,27 +57,33 @@ async function fetchBounties() {
       console.error(`Error fetching metadata for bounty ${i}:`, error);
     }
 
-    // Combine all data
-    const enrichedBounty: Bounty = {
-      ...bountyData,
-      submissionIds: [...bountyData.submissionIds],
-      isActive,
-      accepted: bountyData.finalized,
-      ...(supabaseData && {
-        title: supabaseData.title,
-        description: supabaseData.description,
-        type: supabaseData.type,
-        prompters: supabaseData.prompters,
-        discord: supabaseData.discord,
-        email: supabaseData.email,
-        telegram: supabaseData.telegram,
-      }),
-    };
+      // Convert GraphQL data to Bounty type
+      const enrichedBounty: BountyCard = {
+        id: BigInt(crowdfunding.id),
+        creator: crowdfunding.creator_id,
+        amountRaised: BigInt(crowdfunding.totalRaised),
+        fundingPhaseEnd: BigInt(crowdfunding.fundingPhaseEnd),
+        submissionPhaseEnd: BigInt(crowdfunding.submissionPhaseEnd),
+        votingPhaseEnd: BigInt(crowdfunding.votingPhaseEnd),
+        raiseCap: BigInt(crowdfunding.raiseCap),
+        numSubmissions: BigInt(crowdfunding.numSubmissions),
+        numFunders: BigInt(crowdfunding.numFunders),
+        ...(supabaseData && {
+          title: supabaseData.title,
+          description: supabaseData.description,
+          type: supabaseData.type,
+          prompters: supabaseData.prompters,
+          discord: supabaseData.discord,
+          email: supabaseData.email,
+          telegram: supabaseData.telegram,
+        }),
+      };
 
-    bountiesData.push(enrichedBounty);
-  }
+      return enrichedBounty;
+    })
+  );
 
-  return { bounties: bountiesData, count };
+  return { bounties: bountiesData, count: bountiesData.length };
 }
 
 export function useGetBounties() {
