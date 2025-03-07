@@ -1,4 +1,5 @@
 import type { BountyCard } from '@/hooks/useGetBounties';
+import type { Bounty } from '@/hooks/useGetBounty';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -10,7 +11,7 @@ export const formatBalance = (balance: string | number | bigint) => {
   return Number(balance) / 10 ** 18;
 };
 
-export const bountyStatus = (bounty: BountyCard) => {
+export const bountyStatus = (bounty: BountyCard | Bounty) => {
   if (bounty.finalized) {
     if (bounty.winner) {
       return 'completed';

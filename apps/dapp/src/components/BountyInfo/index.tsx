@@ -7,7 +7,10 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import type { Bounty } from '@/hooks/useGetBounty';
 
-export const BountyInfo = ({ bounty }: { bounty: Bounty }) => {
+export const BountyInfo = ({
+  bounty,
+  button,
+}: { bounty: Bounty; button?: boolean }) => {
   const variant = useMemo(() => {
     switch (bountyStatus(bounty)) {
       case 'submissions':
@@ -26,6 +29,8 @@ export const BountyInfo = ({ bounty }: { bounty: Bounty }) => {
   }, [bounty]);
 
   const ctaText = useMemo(() => {
+    if (button === false) return;
+
     switch (bountyStatus(bounty)) {
       case 'submissions':
         return 'Submit a Model';

@@ -1,4 +1,4 @@
-import type { Bounty } from '@/hooks/useGetBounties';
+import type { Bounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
 import React from 'react';
 
@@ -8,7 +8,7 @@ export const Overview = ({ bounty }: { bounty: Bounty }) => {
       {bountyStatus(bounty) === 'completed' && (
         <div className="flex gap-x-2 items-center mb-12 w-fit p-4 rounded-md text-white bg-green-600">
           <div className="text-xl font-medium">Winning Model: </div>
-          {/* <div>{bounty.winningModel}</div> */}
+          <div>{bounty.winner}</div>
         </div>
       )}
 

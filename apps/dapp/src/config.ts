@@ -5,6 +5,6 @@ export const CONFIG = {
   },
   testnet: {
     contractAddress: process.env.CONTRACT_ADDRESS,
-    graphqlUrl: 'https://indexer.dev.hyperindex.xyz/f8b0d3f/v1/graphql',
+    graphqlUrl: 'https://indexer.dev.hyperindex.xyz/1945022/v1/graphql',
   },
 };

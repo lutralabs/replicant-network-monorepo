@@ -7,6 +7,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import type { Bounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
 import Link from 'next/link';
@@ -29,8 +35,15 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
         <TableBody>
           {bounty.submissions.map((model) => (
             <TableRow key={model.id}>
-              <TableCell className="p-4 font-medium text-md">
-                {model.id}
+              <TableCell className="p-4 font-medium text-md max-w-[200px]">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="truncate">{model.id}</div>
+                    </TooltipTrigger>
+                    <TooltipContent>{model.id}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </TableCell>
               <TableCell className="p-4 font-medium text-md">
                 {new Date(Number(model.timestamp) * 1000).toUTCString()}
@@ -46,7 +59,7 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
         </TableBody>
       </Table>
 
-      {bountyStatus(bounty) === 'voting' && (
+      {bountyStatus(bounty) === 'submissions' && (
         <div className="w-full flex justify-end mt-12">
           <div className="flex gap-x-2">
             <Link href={`/bounties/${bounty.id}/test-models`}>
