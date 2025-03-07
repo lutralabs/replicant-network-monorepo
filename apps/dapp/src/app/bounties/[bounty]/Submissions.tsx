@@ -7,7 +7,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import type { Bounty } from '@/hooks/useGetBounties';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import type { Bounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
 import Link from 'next/link';
 import React from 'react';
@@ -27,23 +33,29 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {/* {bounty.submittedModels.map((model) => (
-            <TableRow key={model.hash}>
-              <TableCell className="p-4 font-medium text-md">
-                {model.hash}
+          {bounty.submissions.map((model) => (
+            <TableRow key={model.id}>
+              <TableCell className="p-4 font-medium text-md max-w-[200px]">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="truncate">{model.id}</div>
+                    </TooltipTrigger>
+                    <TooltipContent>{model.id}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </TableCell>
               <TableCell className="p-4 font-medium text-md">
-                {model.date}
+                {new Date(Number(model.timestamp) * 1000).toUTCString()}
               </TableCell>
               <TableCell className="p-4 font-medium text-md">
-                {model.author}
+                {model.creator_id}
               </TableCell>
               <TableCell className="p-4 font-medium text-md">
-                {model.votes}
+                {model.totalVotesPower}
               </TableCell>
             </TableRow>
-          ))} */}
-          TBD
+          ))}
         </TableBody>
       </Table>
 

@@ -1,4 +1,5 @@
-import type { Bounty } from '@/hooks/useGetBounties';
+import type { BountyCard } from '@/hooks/useGetBounties';
+import type { Bounty } from '@/hooks/useGetBounty';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -10,37 +11,39 @@ export const formatBalance = (balance: string | number | bigint) => {
   return Number(balance) / 10 ** 18;
 };
 
-export const bountyStatus = (bounty: Bounty) => {
-  if (bounty.phase === 0) {
-    return 'crowdfunding';
-  }
-  if (bounty.phase === 1) {
-    return 'active';
-  }
-  if (bounty.phase === 2) {
-    return 'voting';
-  }
-  if (bounty.phase === 3) {
-    return 'completed';
-  }
-  if (bounty.phase === 4) {
+export const bountyStatus = (bounty: BountyCard | Bounty) => {
+  if (bounty.finalized) {
+    if (bounty.winner) {
+      return 'completed';
+    }
     return 'failed';
   }
+  if (Date.now() < Number(bounty.fundingPhaseEnd) * 1000) {
+    return 'crowdfunding';
+  }
+  if (Date.now() < Number(bounty.submissionPhaseEnd) * 1000) {
+    return 'submissions';
+  }
+  if (Date.now() < Number(bounty.votingPhaseEnd) * 1000) {
+    return 'voting';
+  }
+  return 'stale';
 };
 
-export const getTimeRemaining = (bounty: Bounty) => {
+export const getTimeRemaining = (bounty: BountyCard) => {
   let time;
   switch (bountyStatus(bounty)) {
     case 'crowdfunding':
-      time = Number(bounty.fundingPhaseEnd) / 1000;
+      time = Number(bounty.fundingPhaseEnd);
       break;
-    case 'active':
-      time = Number(bounty.submissionPhaseEnd) / 1000;
+    case 'submissions':
+      time = Number(bounty.submissionPhaseEnd);
       break;
     case 'voting':
     case 'completed':
     case 'failed':
-      time = Number(bounty.votingPhaseEnd) / 1000;
+    case 'stale':
+      time = Number(bounty.votingPhaseEnd);
       break;
   }
   const now = new Date();

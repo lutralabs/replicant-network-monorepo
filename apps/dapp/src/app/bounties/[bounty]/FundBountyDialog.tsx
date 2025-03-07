@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useFundBounty } from '@/hooks/useFundBounty';
-import type { Bounty } from '@/hooks/useGetBounties';
+import type { Bounty } from '@/hooks/useGetBounty';
 import { formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
 import { useWallets } from '@privy-io/react-auth';

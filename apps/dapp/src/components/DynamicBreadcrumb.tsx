@@ -1,8 +1,7 @@
-// /components/NextBreadcrumb.tsx
 'use client';
 
 import { usePathname } from 'next/navigation';
-import React, { type ReactNode } from 'react';
+import React from 'react';
 
 import {
   Breadcrumb,
@@ -13,13 +12,18 @@ import {
   BreadcrumbSeparator,
 } from './ui/breadcrumb';
 
-type TBreadCrumbProps = {
-  homeElement: ReactNode;
-  separator: ReactNode;
-  containerClasses?: string;
-  listClasses?: string;
-  activeClasses?: string;
-  capitalizeLinks?: boolean;
+// Helper function to format path segments
+const formatPathSegment = (segment: string): string => {
+  // Don't transform segments that are numeric or IDs
+  if (/^\d+$/.test(segment)) {
+    return segment; // Return numbers unchanged
+  }
+
+  // Split by hyphens or underscores and capitalize each word
+  return segment
+    .split(/[-_]/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 };
 
 const DynamicBreadcrumb = () => {
@@ -32,20 +36,23 @@ const DynamicBreadcrumb = () => {
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>
-        <BreadcrumbSeparator />
+
         {pathNames.map((link, index) => {
           const href = `/${pathNames.slice(0, index + 1).join('/')}`;
-          const itemLink = link;
+          const formattedLink = formatPathSegment(link);
+          const isLastItem = pathNames.length === index + 1;
+
           return (
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-            <BreadcrumbItem key={index}>
-              {pathNames.length === index + 1 ? (
-                <BreadcrumbPage>{itemLink}</BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink href={href}>{itemLink}</BreadcrumbLink>
-              )}
-              {pathNames.length !== index + 1 && <BreadcrumbSeparator />}
-            </BreadcrumbItem>
+            <React.Fragment key={link}>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                {isLastItem ? (
+                  <BreadcrumbPage>{formattedLink}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink href={href}>{formattedLink}</BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            </React.Fragment>
           );
         })}
       </BreadcrumbList>

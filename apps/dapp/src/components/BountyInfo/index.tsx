@@ -1,52 +1,65 @@
 import { FundBountyDialog } from '@/app/bounties/[bounty]/FundBountyDialog';
-import type { Bounty } from '@/hooks/useGetBounties';
 import { bountyStatus } from '@/lib/utils';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 import { formatEther } from 'viem';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import type { Bounty } from '@/hooks/useGetBounty';
 
-export const BountyInfo = ({ bounty }: { bounty: Bounty }) => {
+export const BountyInfo = ({
+  bounty,
+  button,
+}: { bounty: Bounty; button?: boolean }) => {
   const variant = useMemo(() => {
     switch (bountyStatus(bounty)) {
-      case 'active':
+      case 'submissions':
+        return 'blue';
       case 'completed':
         return 'secondary';
       case 'voting':
+        return 'tertiary';
       case 'crowdfunding':
         return 'default';
       case 'failed':
         return 'destructive';
+      case 'stale':
+        return 'orange';
     }
   }, [bounty]);
 
   const ctaText = useMemo(() => {
+    if (button === false) return;
+
     switch (bountyStatus(bounty)) {
-      case 'active':
+      case 'submissions':
         return 'Submit a Model';
       case 'completed':
         return 'Use Winning Model';
       case 'voting':
-        return 'Vote';
+        return 'Test & Vote';
       case 'crowdfunding':
-        return 'Fund the Bounty';
+        return 'Fund Bounty';
       case 'failed':
         return undefined;
+      case 'stale':
+        return 'Finalize Bounty';
     }
   }, [bounty]);
 
   const ctaLink = useMemo(() => {
     switch (bountyStatus(bounty)) {
-      case 'active':
+      case 'submissions':
         return `/bounties/${bounty.id}/submit-model`;
       case 'completed':
-        return '';
+        return undefined;
       case 'voting':
         return `/bounties/${bounty.id}/vote`;
       case 'crowdfunding':
         return undefined;
       case 'failed':
+        return undefined;
+      case 'stale':
         return undefined;
     }
   }, [bounty]);
@@ -61,7 +74,7 @@ export const BountyInfo = ({ bounty }: { bounty: Bounty }) => {
           </div>
         </div>
         {ctaText &&
-          (ctaText === 'Fund the Bounty' ? (
+          (ctaText === 'Fund Bounty' ? (
             <FundBountyDialog bounty={bounty} />
           ) : (
             <Link href={ctaLink}>
@@ -88,12 +101,16 @@ export const BountyInfo = ({ bounty }: { bounty: Bounty }) => {
           </div>
           <div>
             Start Date:{' '}
-            <span className="text-md font-semibold text-black">TBD</span>
+            <span className="text-md font-semibold text-black">
+              {new Date(Number(bounty.created_at) * 1000).toLocaleDateString()}
+            </span>
           </div>
           <div>
             End Date:{' '}
             <span className="text-md font-semibold text-black">
-              {new Date(Number(bounty.votingPhaseEnd)).toLocaleDateString()}
+              {new Date(
+                Number(bounty.votingPhaseEnd) * 1000
+              ).toLocaleDateString()}
             </span>
           </div>
         </div>

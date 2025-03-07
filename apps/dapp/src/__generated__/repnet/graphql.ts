@@ -3189,7 +3189,7 @@ export type GetCrowdfundingsQueryVariables = Exact<{
 }>;
 
 
-export type GetCrowdfundingsQuery = { __typename?: 'query_root', Crowdfunding: Array<{ __typename?: 'Crowdfunding', id: string, fundingPhaseEnd: any, submissionPhaseEnd: any, votingPhaseEnd: any, totalRaised: any, numFunders: any, raiseCap: any, creator_id: string, numSubmissions: any }> };
+export type GetCrowdfundingsQuery = { __typename?: 'query_root', Crowdfunding: Array<{ __typename?: 'Crowdfunding', id: string, fundingPhaseEnd: any, submissionPhaseEnd: any, votingPhaseEnd: any, totalRaised: any, numFunders: any, raiseCap: any, creator_id: string, numSubmissions: any, finalized: boolean, winner_id?: string | null, }> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -3243,8 +3243,8 @@ export const GetCrowdfundingDocument = new TypedDocumentString(`
 }
     `) as unknown as TypedDocumentString<GetCrowdfundingQuery, GetCrowdfundingQueryVariables>;
 export const GetCrowdfundingsDocument = new TypedDocumentString(`
-    query GetCrowdfundings($finalized: Boolean) {
-  Crowdfunding(where: {finalized: {_eq: $finalized}}) {
+    query GetCrowdfundings {
+  Crowdfunding {
     id
     fundingPhaseEnd
     submissionPhaseEnd
@@ -3254,6 +3254,8 @@ export const GetCrowdfundingsDocument = new TypedDocumentString(`
     raiseCap
     creator_id
     numSubmissions
+    finalized
+    winner_id
   }
 }
     `) as unknown as TypedDocumentString<GetCrowdfundingsQuery, GetCrowdfundingsQueryVariables>;

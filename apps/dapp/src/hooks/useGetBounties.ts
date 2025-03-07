@@ -1,29 +1,18 @@
-import { repNetManagerAbi } from '@/generated/RepNetManager';
-import { config, wagmiContractConfig } from '@/wagmi';
+import { getCrowdfundings } from '@/lib/queries/getCrowdfundings';
 import { useQuery } from '@tanstack/react-query';
-import { readContract } from '@wagmi/core';
-import { useReadContract } from 'wagmi';
 
-// Extended bounty type including Supabase data
-export type Bounty = {
+export type BountyCard = {
   id: bigint;
   creator: string;
-  token: string;
-  finalized: boolean;
-  winner: string;
   amountRaised: bigint;
   fundingPhaseEnd: bigint;
   submissionPhaseEnd: bigint;
   votingPhaseEnd: bigint;
   raiseCap: bigint;
-  developerFeePercentage: bigint;
-  submissionIds: `0x${string}`[];
   numSubmissions: bigint;
   numFunders: bigint;
-  phase: number;
-  accepted: boolean;
-  // Additional blockchain data
-  isActive: boolean;
+  finalized: boolean;
+  winner: string | null;
   // Supabase metadata
   title?: string;
   description?: string;
@@ -34,73 +23,57 @@ export type Bounty = {
   telegram?: string | null;
 };
 
-async function fetchBountiesCount() {
-  const count = await readContract(config, {
-    abi: repNetManagerAbi,
-    functionName: 'crowdfundingId',
-    address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-  });
-
-  return Number(count);
-}
-
 async function fetchBounties() {
-  const count = await fetchBountiesCount();
-  console.log(`Fetching ${count} bounties`);
+  // Get crowdfundings from GraphQL
+  const crowdfundings = await getCrowdfundings();
+  console.log(`Fetched ${crowdfundings.length} bounties from GraphQL`);
 
-  const bountiesData = [];
-  for (let i = 0; i < count; i++) {
-    const bountyId = BigInt(i);
+  // Transform GraphQL data to match BountyCard type
+  const bountiesData = await Promise.all(
+    crowdfundings.map(async (crowdfunding) => {
+      const bountyId = Number(crowdfunding.id);
 
-    // Fetch base bounty data from blockchain
-    const bountyData = await readContract(config, {
-      abi: repNetManagerAbi,
-      functionName: 'crowdfunding',
-      args: [bountyId],
-      address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-    });
-
-    // Fetch additional blockchain data
-    const isActive = await readContract(config, {
-      abi: repNetManagerAbi,
-      functionName: 'isCrowdfundingActive',
-      args: [bountyId],
-      address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-    });
-
-    // Fetch metadata from API
-    let supabaseData = null;
-    try {
-      const response = await fetch(`/api/bounty?id=${i}`);
-      if (response.ok) {
-        const result = await response.json();
-        supabaseData = result.data;
+      // Fetch metadata from API
+      let supabaseData = null;
+      try {
+        const response = await fetch(`/api/bounty?id=${bountyId}`);
+        if (response.ok) {
+          const result = await response.json();
+          supabaseData = result.data;
+        }
+      } catch (error) {
+        console.error(`Error fetching metadata for bounty ${bountyId}:`, error);
       }
-    } catch (error) {
-      console.error(`Error fetching metadata for bounty ${i}:`, error);
-    }
 
-    // Combine all data
-    const enrichedBounty: Bounty = {
-      ...bountyData,
-      submissionIds: [...bountyData.submissionIds],
-      isActive,
-      accepted: bountyData.finalized,
-      ...(supabaseData && {
-        title: supabaseData.title,
-        description: supabaseData.description,
-        type: supabaseData.type,
-        prompters: supabaseData.prompters,
-        discord: supabaseData.discord,
-        email: supabaseData.email,
-        telegram: supabaseData.telegram,
-      }),
-    };
+      // Convert GraphQL data to BountyCard type
+      const enrichedBounty: BountyCard = {
+        id: BigInt(crowdfunding.id),
+        creator: crowdfunding.creator_id,
+        amountRaised: BigInt(crowdfunding.totalRaised || 0),
+        fundingPhaseEnd: BigInt(crowdfunding.fundingPhaseEnd || 0),
+        submissionPhaseEnd: BigInt(crowdfunding.submissionPhaseEnd || 0),
+        votingPhaseEnd: BigInt(crowdfunding.votingPhaseEnd || 0),
+        raiseCap: BigInt(crowdfunding.raiseCap || 0),
+        numSubmissions: BigInt(crowdfunding.numSubmissions || 0),
+        numFunders: BigInt(crowdfunding.numFunders || 0),
+        finalized: crowdfunding.finalized,
+        winner: crowdfunding.winner_id ?? null,
+        ...(supabaseData && {
+          title: supabaseData.title,
+          description: supabaseData.description,
+          type: supabaseData.type,
+          prompters: supabaseData.prompters,
+          discord: supabaseData.discord,
+          email: supabaseData.email,
+          telegram: supabaseData.telegram,
+        }),
+      };
 
-    bountiesData.push(enrichedBounty);
-  }
+      return enrichedBounty;
+    })
+  );
 
-  return { bounties: bountiesData, count };
+  return { bounties: bountiesData, count: bountiesData.length };
 }
 
 export function useGetBounties() {

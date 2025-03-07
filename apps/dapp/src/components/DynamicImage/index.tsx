@@ -23,7 +23,7 @@ export function DynamicImage({ src, alt, width, height }) {
     return () => clearInterval(interval);
   }, [src]);
 
-  if (loading) return <Skeleton className="w-[512px] h-[512px] rounded-lg" />;
+  if (loading) return <Skeleton className="w-[256px] h-[256px] rounded-lg" />;
 
   return (
     <Image
