@@ -41,33 +41,33 @@ export async function POST(request: NextRequest) {
   console.log(prompt, signedMessage, address, bountyId, models);
 
   // 2. Contract call -> isVotingPhase
-  // try {
-  //   const phase = await publicClient.readContract({
-  //     address: process.env.CONTRACT_ADDRESS as `0x${string}`,
-  //     abi: repNetManagerAbi,
-  //     functionName: 'crowdfundingPhase',
-  //     args: [BigInt(bountyId)],
-  //   });
+  try {
+    const phase = await publicClient.readContract({
+      address: process.env.CONTRACT_ADDRESS as `0x${string}`,
+      abi: repNetManagerAbi,
+      functionName: 'crowdfundingPhase',
+      args: [BigInt(bountyId)],
+    });
 
-  //   if (phase !== CrowdfundingPhase.VOTING_PHASE) {
-  //     return Response.json(
-  //       {
-  //         message:
-  //           'This bounty is not currently in the voting phase. You can only test models during the voting phase.',
-  //       },
-  //       { status: 403 }
-  //     );
-  //   }
-  // } catch (error) {
-  //   console.error('Error checking bounty phase:', error);
-  //   return Response.json(
-  //     {
-  //       message:
-  //         'There was a problem checking the bounty phase. Please try again later.',
-  //     },
-  //     { status: 500 }
-  //   );
-  // }
+    if (phase !== CrowdfundingPhase.VOTING_PHASE) {
+      return Response.json(
+        {
+          message:
+            'This bounty is not currently in the voting phase. You can only test models during the voting phase.',
+        },
+        { status: 403 }
+      );
+    }
+  } catch (error) {
+    console.error('Error checking bounty phase:', error);
+    return Response.json(
+      {
+        message:
+          'There was a problem checking the bounty phase. Please try again later.',
+      },
+      { status: 500 }
+    );
+  }
 
   console.log('valid phase');
 
@@ -171,7 +171,7 @@ export async function POST(request: NextRequest) {
   const promises = models.map(async (model) => {
     const body = {
       id: randomUUID(),
-      model_id: model.hash,
+      model_id: model.hash.substring(2),
       prompt,
       negative_prompt: 'blurry, low quality',
       num_inference_steps: 15,

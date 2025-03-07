@@ -58,21 +58,21 @@ export default function Page() {
   const currentPhase = bountyStatus(bounty);
   const isVotingPhase = currentPhase === 'voting';
 
-  // if (!isVotingPhase) {
-  //   return (
-  //     <div className="w-full h-full pb-12 flex flex-col gap-y-12">
-  //       <BountyInfo bounty={bounty} button={false} />
-  //       <Alert>
-  //         <AlertCircle className="h-4 w-4" />
-  //         <AlertTitle>Not Available</AlertTitle>
-  //         <AlertDescription>
-  //           Testing models is only available during the voting phase. Current
-  //           phase: {currentPhase}
-  //         </AlertDescription>
-  //       </Alert>
-  //     </div>
-  //   );
-  // }
+  if (!isVotingPhase) {
+    return (
+      <div className="w-full h-full pb-12 flex flex-col gap-y-12">
+        <BountyInfo bounty={bounty} button={false} />
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Not Available</AlertTitle>
+          <AlertDescription>
+            Testing models is only available during the voting phase. Current
+            phase: {currentPhase}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   if (!authenticated) {
     return (

@@ -59,7 +59,7 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
         </TableBody>
       </Table>
 
-      {bountyStatus(bounty) === 'submissions' && (
+      {bountyStatus(bounty) === 'voting' && (
         <div className="w-full flex justify-end mt-12">
           <div className="flex gap-x-2">
             <Link href={`/bounties/${bounty.id}/test-models`}>
