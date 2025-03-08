@@ -5,8 +5,10 @@ import { WagmiProvider } from '@privy-io/wagmi';
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
+import { ToastContainer } from 'react-toastify';
 import type { AppProps } from 'next/app';
 import type { ComponentProps } from 'react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { config, monad } from '@/wagmi';
 
@@ -37,7 +39,25 @@ export const Providers = ({
         }}
       >
         <QueryClientProvider client={client}>
-          <WagmiProvider config={config}>{children}</WagmiProvider>
+          <WagmiProvider config={config}>
+            {children}
+            <ToastContainer
+              icon={false}
+              position="bottom-right"
+              style={{ zIndex: 1000 }}
+              autoClose={5000}
+              progressClassName="bg-[hsl(var(--primary))]"
+              hideProgressBar={false}
+              newestOnTop={true}
+              closeOnClick={false}
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+          </WagmiProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </PrivyProvider>
     </NextThemesProvider>

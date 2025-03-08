@@ -52,7 +52,7 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
                 {model.creator_id}
               </TableCell>
               <TableCell className="p-4 font-medium text-md">
-                {model.totalVotesPower}
+                {model.votes.length}
               </TableCell>
             </TableRow>
           ))}

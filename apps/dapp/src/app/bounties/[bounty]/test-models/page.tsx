@@ -13,7 +13,9 @@ import { usePathname } from 'next/navigation';
 import { useGetBounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { toast } from 'sonner';
+import { ErrorToast } from '@/components/Toast/ErrorToast';
+import { SuccessToast } from '@/components/Toast/SuccessToast';
+import { InfoToast } from '@/components/Toast/InfoToast';
 
 export default function Page() {
   const [images, setImages] = useState([]);
@@ -136,7 +138,7 @@ export default function Page() {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to sign prompt';
       setError(`Signing error: ${errorMessage}`);
-      toast.error('Failed to sign prompt');
+      ErrorToast({ error: 'Failed to sign prompt' });
     }
   };
 
@@ -202,12 +204,12 @@ export default function Page() {
 
       const data = await res.json();
       setImages(data.data);
-      toast.success('Images generated successfully');
+      SuccessToast({ message: 'Images generated successfully' });
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : 'Failed to generate images';
       setError(errorMessage);
-      toast.error(errorMessage);
+      ErrorToast({ error: errorMessage });
     } finally {
       setLoading(false);
     }
