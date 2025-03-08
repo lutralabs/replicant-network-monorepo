@@ -6,11 +6,18 @@ import { formatEther } from 'viem';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import type { Bounty } from '@/hooks/useGetBounty';
+import { useWallets } from '@privy-io/react-auth';
 
 export const BountyInfo = ({
   bounty,
   button,
-}: { bounty: Bounty; button?: boolean }) => {
+}: {
+  bounty: Bounty;
+  button?: boolean;
+}) => {
+  const { wallets } = useWallets();
+  const wallet = wallets[0];
+
   const variant = useMemo(() => {
     switch (bountyStatus(bounty)) {
       case 'submissions':
@@ -28,6 +35,14 @@ export const BountyInfo = ({
     }
   }, [bounty]);
 
+  const isUserFunder = useMemo(() => {
+    if (!wallet) return false;
+    return bounty.funders.some(
+      (funder) =>
+        funder.funder_id.toLowerCase() === wallet.address.toLowerCase()
+    );
+  }, [bounty, wallet]);
+
   const ctaText = useMemo(() => {
     if (button === false) return;
 
@@ -37,7 +52,7 @@ export const BountyInfo = ({
       case 'completed':
         return 'Use Winning Model';
       case 'voting':
-        return 'Test & Vote';
+        return isUserFunder ? 'Vote' : undefined;
       case 'crowdfunding':
         return 'Fund Bounty';
       case 'failed':
@@ -45,7 +60,7 @@ export const BountyInfo = ({
       case 'stale':
         return 'Finalize Bounty';
     }
-  }, [bounty]);
+  }, [bounty, isUserFunder]);
 
   const ctaLink = useMemo(() => {
     switch (bountyStatus(bounty)) {
@@ -73,14 +88,20 @@ export const BountyInfo = ({
             Bounty for a Custom Model Created on Replicant Network
           </div>
         </div>
-        {ctaText &&
+        {bountyStatus(bounty) === 'voting' && !isUserFunder ? (
+          <div className="text-gray-600">
+            You did not participate in this bounty
+          </div>
+        ) : (
+          ctaText &&
           (ctaText === 'Fund Bounty' ? (
             <FundBountyDialog bounty={bounty} />
           ) : (
             <Link href={ctaLink}>
               <Button variant="cta-solid">{ctaText} &gt;</Button>
             </Link>
-          ))}
+          ))
+        )}
       </div>
       <div className="mt-6 w-full">
         <div className="flex justify-start gap-x-12 items-center text-gray-600">

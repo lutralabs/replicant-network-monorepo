@@ -7,11 +7,11 @@ import { DynamicImage } from '@/components/DynamicImage';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { AlertCircle, ArrowRight } from 'lucide-react';
+import { AlertCircle, ArrowRight, CornerRightUp } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useGetBounty } from '@/hooks/useGetBounty';
-import { bountyStatus } from '@/lib/utils';
+import { bountyStatus, cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { ErrorToast } from '@/components/Toast/ErrorToast';
 import { SuccessToast } from '@/components/Toast/SuccessToast';
@@ -272,22 +272,35 @@ export default function Page() {
             onChange={(e) => setPrompt(e.target.value)}
             disabled={loading}
           />
-          <Button
-            size="sm"
-            className="rounded-full bg-gray-200 border-0 hover:bg-gray-100"
-            icon
+          <button
+            type="button"
+            className={cn(
+              'rounded-full py-2 px-2',
+              loading ? 'bg-none' : 'bg-purple-500 hover:bg-purple-400',
+              !prompt.trim() ? 'opacity-50 hover:bg-purple-500' : 'opacity-100'
+            )}
             onClick={validateAndSign}
             disabled={loading || !prompt.trim()}
           >
             {loading ? (
-              <span className="animate-spin">⏳</span>
+              <div
+                className="w-6 h-6 bg-purple-500 rounded-sm animate-spin transition duration-700"
+                style={{ animationDuration: '3s' }}
+              />
             ) : (
-              <ArrowRight className="w-4 h-4" />
+              <CornerRightUp
+                className={cn(
+                  'w-4 h-4 transition-opacity text-white',
+                  !prompt.trim() ? 'opacity-50' : 'opacity-100'
+                )}
+              />
             )}
-          </Button>
+          </button>
         </div>
         <p className="text-xs text-gray-500 px-2">
-          Enter a prompt to test the models and help evaluate their performance.
+          {loading
+            ? 'Generating images...'
+            : 'Enter a prompt to test the models and help evaluate their performance.'}
         </p>
       </div>
     </div>

@@ -15,10 +15,25 @@ import {
 } from '@/components/ui/tooltip';
 import type { Bounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
+import { useWallets } from '@privy-io/react-auth';
 import Link from 'next/link';
-import React from 'react';
+import React, { useMemo } from 'react';
 
-export const Submissions = ({ bounty }: { bounty: Bounty }) => {
+export const Submissions = ({
+  bounty,
+}: {
+  bounty: Bounty;
+}) => {
+  const { wallets } = useWallets();
+  const wallet = wallets[0];
+  const isUserFunder = useMemo(() => {
+    if (!wallet) return false;
+    return bounty.funders.some(
+      (funder) =>
+        funder.funder_id.toLowerCase() === wallet.address.toLowerCase()
+    );
+  }, [bounty, wallet]);
+
   return (
     <div className="bg-white max-w-[1050px] rounded-lg mt-4 p-4">
       <div className="text-xl font-medium">Submissions</div>
@@ -61,18 +76,24 @@ export const Submissions = ({ bounty }: { bounty: Bounty }) => {
 
       {bountyStatus(bounty) === 'voting' && (
         <div className="w-full flex justify-end mt-12">
-          <div className="flex gap-x-2">
-            <Link href={`/bounties/${bounty.id}/test-models`}>
-              <Button variant="cta-solid" size="sm">
-                Try Models
-              </Button>
-            </Link>
-            <Link href={`/bounties/${bounty.id}/vote`}>
-              <Button variant="cta-solid" size="sm">
-                Vote
-              </Button>
-            </Link>
-          </div>
+          {isUserFunder ? (
+            <div className="flex gap-x-2">
+              <Link href={`/bounties/${bounty.id}/test-models`}>
+                <Button variant="cta-solid" size="sm">
+                  Try Models
+                </Button>
+              </Link>
+              <Link href={`/bounties/${bounty.id}/vote`}>
+                <Button variant="cta-solid" size="sm">
+                  Vote
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div className="text-gray-600">
+              You did not participate in this bounty
+            </div>
+          )}
         </div>
       )}
     </div>
