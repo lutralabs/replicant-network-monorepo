@@ -122,3 +122,5 @@ error MinimumFundingPhaseDurationNotMet(uint256 duration, uint256 minDuration);
 error MinimumSubmissionPhaseDurationNotMet(uint256 duration, uint256 minDuration);
 error MinimumVotingPhaseDurationNotMet(uint256 duration, uint256 minDuration);
 error TimestampsNotInCorrectOrder();
+error InsufficientTokenBalance(uint256 available, uint256 required);
+error InsufficientTokenAllowance(uint256 available, uint256 required);
