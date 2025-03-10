@@ -23,14 +23,14 @@ export const GlowingStarsBackgroundCard = ({
         setMouseEnter(false);
       }}
       className={cn(
-        'relative bg-[linear-gradient(110deg,#ffffff_0.6%,#f8f8f8)] p-4 max-w-md h-full w-full rounded-xl border border-[#eaeaea] shadow-sm',
+        'bg-[linear-gradient(110deg,#ffffff_0.6%,#f8f8f8)] p-4 max-w-md max-h-[20rem] h-full w-full rounded-xl border border-[#eaeaea]',
         className
       )}
     >
-      <div className="absolute inset-0 top-0 h-24 overflow-hidden">
+      <div className="flex justify-center items-center">
         <Illustration mouseEnter={mouseEnter} />
       </div>
-      <div className="relative z-10">{children}</div>
+      <div className="px-2 pb-6">{children}</div>
     </div>
   );
 };
@@ -64,7 +64,7 @@ export const GlowingStarsTitle = ({
 };
 
 export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
-  const stars = 72; // Reduced number of stars
+  const stars = 72;
   const columns = 18;
 
   const [glowingStars, setGlowingStars] = useState<number[]>([]);
@@ -84,7 +84,7 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
 
   return (
     <div
-      className="h-24 w-full opacity-80"
+      className="h-24 p-1 w-full"
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
@@ -100,7 +100,7 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
             key={`matrix-col-${
               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               starIdx
-            }`}
+            }}`}
             className="relative flex items-center justify-center"
           >
             <Star
@@ -126,16 +126,15 @@ const Star = ({ isGlowing, delay }: { isGlowing: boolean; delay: number }) => {
         scale: 1,
       }}
       animate={{
-        scale: isGlowing ? [1, 1.2, 1.5, 1.2, 1] : 1, // Reduced scale effect
-        background: isGlowing ? '#9333ea' : '#c4c4c4', // Purple for glowing stars, light gray for normal
+        scale: isGlowing ? [1, 1.2, 2.5, 2.2, 1.5] : 1,
+        background: isGlowing ? '#9333ea' : '#c4c4c4',
       }}
       transition={{
         duration: 2,
         ease: 'easeInOut',
         delay: delay,
       }}
-      className={cn('h-[1px] w-[1px] rounded-full relative z-20')}
-      style={{ backgroundColor: isGlowing ? '#9333ea' : '#c4c4c4' }}
+      className={cn('bg-[#666] h-[1px] w-[1px] rounded-full relative z-20')}
     />
   );
 };
@@ -147,7 +146,7 @@ const Glow = ({ delay }: { delay: number }) => {
         opacity: 0,
       }}
       animate={{
-        opacity: 0.8,
+        opacity: 1,
       }}
       transition={{
         duration: 2,
@@ -157,7 +156,7 @@ const Glow = ({ delay }: { delay: number }) => {
       exit={{
         opacity: 0,
       }}
-      className="absolute left-1/2 -translate-x-1/2 z-10 h-[4px] w-[4px] rounded-full bg-purple-500 blur-[6px] shadow-[0_0_10px_4px_rgba(147,51,234,0.7)]"
+      className="absolute  left-1/2 -translate-x-1/2 z-10 h-[4px] w-[4px] rounded-full bg-purple-500 blur-[1px] shadow-2xl shadow-blue-400"
     />
   );
 };

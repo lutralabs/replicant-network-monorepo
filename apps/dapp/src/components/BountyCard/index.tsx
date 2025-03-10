@@ -5,6 +5,11 @@ import { bountyStatus, getTimeRemaining } from '@/lib/utils';
 import { formatEther } from 'viem';
 import { Badge } from '../ui/badge';
 import { ArrowRight, Clock, Users } from 'lucide-react';
+import {
+  GlowingStarsBackgroundCard,
+  GlowingStarsTitle,
+  GlowingStarsDescription,
+} from '../GlowingStarCard';
 
 type BaseBountyCardProps = {
   bounty: BountyCardType;
@@ -202,7 +207,7 @@ const BaseBountyCard: React.FC<
   };
 
   return (
-    <div className="flex h-[220px] w-[320px] flex-col rounded-2xl bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md">
+    <GlowingStarsBackgroundCard className="h-[300px] w-[320px]">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <div className={`h-2.5 w-2.5 rounded-full bg-${statusColor}-500`} />
@@ -217,14 +222,16 @@ const BaseBountyCard: React.FC<
       </div>
 
       <div className="mt-3">
-        <h3 className="truncate text-lg font-medium">{bounty.title}</h3>
-        <p className="mt-1 line-clamp-1 text-sm text-gray-500">
+        <GlowingStarsTitle className="truncate text-lg">
+          {bounty.title}
+        </GlowingStarsTitle>
+        <GlowingStarsDescription className="mt-1 line-clamp-1 text-sm">
           {bounty.description}
-        </p>
+        </GlowingStarsDescription>
       </div>
 
       {children}
-    </div>
+    </GlowingStarsBackgroundCard>
   );
 };
 
