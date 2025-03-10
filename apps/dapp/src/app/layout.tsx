@@ -34,6 +34,14 @@ export const metadata: Metadata = {
     'artificial intelligence',
   ],
   openGraph: {
+    images: [
+      {
+        url: 'https://rplcnt.io/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'Replicant Network Page Image',
+      },
+    ],
     title: 'Replicant Network',
     description:
       'Replicant Network is an upcoming platform democratizing AI model development through decentralized collaboration.',
@@ -47,7 +55,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     images: [
       {
-        url: '/api/og',
+        url: 'https://rplcnt.io/api/og',
         width: 1200,
         height: 630,
         alt: 'Replicant Network Page Image',
