@@ -55,6 +55,7 @@ export default function Page() {
         </Tabs>
         {['crowdfunding', 'failed'].includes(bountyStatus(bounty.bounty)) && (
           <SwapCard
+            bounty={bounty.bounty}
             mode={
               bountyStatus(bounty.bounty) === 'crowdfunding' ? 'buy' : 'sell'
             }
