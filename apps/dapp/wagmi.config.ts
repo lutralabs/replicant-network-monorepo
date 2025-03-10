@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [
     foundry({
       project: '../../contracts',
-      include: ['RepNetManager.json'],
+      include: ['RepNetManager.json', 'ModelTokenERC20.json'],
     }),
   ],
 });

@@ -32,6 +32,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '../ui/accordion';
+import { useGetSymbol } from '@/hooks/useGetSymbol';
 
 // Token list for paying
 const base = [
@@ -67,54 +68,40 @@ const base = [
   // },
 ];
 
-// Token list for receiving
-const receiveTokens = [
-  {
-    id: 'usdc',
-    name: 'USD Coin',
-    symbol: 'USDC',
-    icon: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
-  },
-  {
-    id: 'usdt',
-    name: 'Tether',
-    symbol: 'USDT',
-    icon: 'https://cryptologos.cc/logos/tether-usdt-logo.png',
-  },
-  {
-    id: 'uni',
-    name: 'Uniswap',
-    symbol: 'UNI',
-    icon: 'https://cryptologos.cc/logos/uniswap-uni-logo.png',
-  },
-  {
-    id: 'link',
-    name: 'Chainlink',
-    symbol: 'LINK',
-    icon: 'https://cryptologos.cc/logos/chainlink-link-logo.png',
-  },
-];
-
 export default function TokenSwap({
   bounty,
   mode,
 }: { bounty: Bounty; mode: 'buy' | 'sell' }) {
-  let payTokens = receiveTokens;
-  if (mode === 'buy') {
-    // TODO set pay and receive tokens lists based on mode
-    payTokens = base;
-  }
-  // TODO set pay and receive tokens lists based on mode
+  const { data: tokenInfo, isLoading: dynamicTokenLoading } = useGetSymbol(
+    bounty.token
+  );
+
+  const monadToken = {
+    id: 'monad',
+    name: 'Monad',
+    symbol: 'MON',
+    icon: 'https://docs.monad.xyz/img/monad_logo.png',
+  };
+
+  const dynamicToken = useMemo(
+    () => ({
+      id: bounty.token,
+      name: tokenInfo?.name || 'Token',
+      symbol: tokenInfo?.symbol.toUpperCase() || '--',
+      icon: undefined,
+    }),
+    [bounty.token, tokenInfo]
+  );
+
+  const payToken = mode === 'buy' ? monadToken : dynamicToken;
+  const receiveToken = mode === 'buy' ? dynamicToken : monadToken;
+
   const { ready, authenticated, login } = usePrivy();
   const { wallets } = useWallets();
   const wallet = wallets[0]; // Replace this with your desired wallet
 
   const [payAmount, setPayAmount] = useState<string>('');
   const [receiveAmount, setReceiveAmount] = useState<string>('');
-  const [payToken, setPayToken] = useState(payTokens[0]);
-  const [receiveToken, setReceiveToken] = useState<
-    (typeof receiveTokens)[0] | null
-  >(null);
 
   const switchChain = async (wallet: ConnectedWallet) => {
     await wallet.switchChain(10143);
@@ -135,13 +122,13 @@ export default function TokenSwap({
 
   const handlePayAmountChange = (value: string) => {
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      if (payAmount && Number(value) > Number(payAmount)) {
+      if (payAmount && Number(value) > formattedBalance) {
         setPayAmount(formattedBalance.toString());
         return;
       }
       setPayAmount(value);
       // Calculate the receive amount based on exchange rates
-      setReceiveAmount(value);
+      setReceiveAmount((Number(value) * 1000000).toString());
     }
   };
 
@@ -149,12 +136,12 @@ export default function TokenSwap({
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setReceiveAmount(value);
       // Calculate the pay amount based on exchange rates
-      setPayAmount(value);
+      setPayAmount((Number(value) / 1000000).toString());
     }
   };
 
   const widgetStatus = useMemo(() => {
-    if (!ready) {
+    if (!ready || (mode === 'buy' ? false : dynamicTokenLoading)) {
       return 'Loading...';
     }
     if (authenticated) {
@@ -164,7 +151,7 @@ export default function TokenSwap({
       return 'Wrong chain';
     }
     return 'Connect wallet';
-  }, [ready, authenticated]);
+  }, [dynamicTokenLoading, ready, authenticated, mode]);
 
   const handleSwap = async () => {
     try {
@@ -240,40 +227,72 @@ export default function TokenSwap({
                   className="flex items-center justify-between gap-2 bg-white border border-gray-200 rounded-full px-3 py-1 h-auto max-w-[120px]"
                 >
                   <div className="flex items-center gap-2">
-                    {payToken && (
-                      <Image
-                        src={payToken.icon || '/placeholder.svg'}
-                        alt={payToken.name}
-                        width={20}
-                        height={20}
-                        className="rounded-full"
-                      />
+                    {mode === 'buy' ? (
+                      <>
+                        <Image
+                          src={payToken.icon || '/placeholder.svg'}
+                          alt={payToken.name}
+                          width={20}
+                          height={20}
+                          className="rounded-full"
+                        />
+                        <span>{payToken?.symbol}</span>
+                      </>
+                    ) : dynamicTokenLoading ? (
+                      <span>--</span>
+                    ) : (
+                      <>
+                        {payToken.icon && (
+                          <Image
+                            src={payToken.icon || '/placeholder.svg'}
+                            alt={payToken.name}
+                            width={20}
+                            height={20}
+                            className="rounded-full"
+                          />
+                        )}
+                        <span>{payToken?.symbol}</span>
+                      </>
                     )}
-                    <span>{payToken?.symbol}</span>
                   </div>
                   <ChevronDown className="h-4 w-4 ml-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="max-w-[160px]">
-                {payTokens.map((token) => (
-                  <DropdownMenuItem
-                    key={token.id}
-                    onClick={() => setPayToken(token)}
-                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
-                  >
-                    <Image
-                      src={token.icon || '/placeholder.svg'}
-                      alt={token.name}
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    />
-                    <span>{token.symbol}</span>
-                    {payToken?.id === token.id && (
+                <DropdownMenuItem
+                  onClick={() => {}}
+                  className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                >
+                  {mode === 'buy' ? (
+                    <>
+                      <Image
+                        src={payToken.icon || '/placeholder.svg'}
+                        alt={payToken.name}
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
+                      <span>{payToken.symbol}</span>
                       <Check className="h-4 w-4 ml-auto" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
+                    </>
+                  ) : dynamicTokenLoading ? (
+                    <span>--</span>
+                  ) : (
+                    <>
+                      {payToken.icon && (
+                        <Image
+                          src={payToken.icon || '/placeholder.svg'}
+                          alt={payToken.name}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
+                      )}
+                      <span>{payToken.symbol}</span>
+                      <Check className="h-4 w-4 ml-auto" />
+                    </>
+                  )}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -302,7 +321,7 @@ export default function TokenSwap({
         {/* You receive section */}
         <div className="bg-slate-50 rounded-lg p-3 mt-1">
           <div className="text-sm text-gray-500 mb-2">You receive</div>
-          <div className="flex items-center gap-4 justify-between">
+          <div className="flex items-center gap-2 justify-between">
             <Input
               type="text"
               value={receiveAmount}
@@ -333,9 +352,26 @@ export default function TokenSwap({
                       : 'bg-purple-500 hover:bg-purple-400 text-white'
                   } rounded-full px-3 py-1 h-auto max-w-[120px]`}
                 >
-                  {receiveToken ? (
-                    <>
-                      <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2">
+                    {mode === 'buy' ? (
+                      dynamicTokenLoading ? (
+                        <span>--</span>
+                      ) : (
+                        <>
+                          {receiveToken.icon && (
+                            <Image
+                              src={receiveToken.icon || '/placeholder.svg'}
+                              alt={receiveToken.name}
+                              width={20}
+                              height={20}
+                              className="rounded-full"
+                            />
+                          )}
+                          <span>{receiveToken.symbol}</span>
+                        </>
+                      )
+                    ) : (
+                      <>
                         <Image
                           src={receiveToken.icon || '/placeholder.svg'}
                           alt={receiveToken.name}
@@ -343,35 +379,50 @@ export default function TokenSwap({
                           height={20}
                           className="rounded-full"
                         />
-                        <span>{receiveToken.symbol}</span>
-                      </div>
-                      <ChevronDown className="h-4 w-4 ml-4" />
-                    </>
-                  ) : (
-                    <span>Select token</span>
-                  )}
+                        <span>{receiveToken?.symbol}</span>
+                      </>
+                    )}
+                  </div>
+                  <ChevronDown className="h-4 w-4 ml-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="max-w-[160px]">
-                {receiveTokens.map((token) => (
-                  <DropdownMenuItem
-                    key={token.id}
-                    onClick={() => setReceiveToken(token)}
-                    className="flex items-center gap-2 px-3 py-2 cursor-pointer"
-                  >
-                    <Image
-                      src={token.icon || '/placeholder.svg'}
-                      alt={token.name}
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    />
-                    <span>{token.symbol}</span>
-                    {receiveToken?.id === token.id && (
+                <DropdownMenuItem
+                  onClick={() => {}}
+                  className="flex items-center gap-2 px-3 py-2 cursor-pointer"
+                >
+                  {mode === 'buy' ? (
+                    dynamicTokenLoading ? (
+                      <span>--</span>
+                    ) : (
+                      <>
+                        {receiveToken.icon && (
+                          <Image
+                            src={receiveToken.icon || '/placeholder.svg'}
+                            alt={receiveToken.name}
+                            width={24}
+                            height={24}
+                            className="rounded-full"
+                          />
+                        )}
+                        <span>{receiveToken.symbol}</span>
+                        <Check className="h-4 w-4 ml-auto" />
+                      </>
+                    )
+                  ) : (
+                    <>
+                      <Image
+                        src={receiveToken.icon || '/placeholder.svg'}
+                        alt={receiveToken.name}
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
+                      <span>{receiveToken.symbol}</span>
                       <Check className="h-4 w-4 ml-auto" />
-                    )}
-                  </DropdownMenuItem>
-                ))}
+                    </>
+                  )}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -431,7 +482,7 @@ export default function TokenSwap({
         <Button
           className="w-full mt-4 bg-purple-500 hover:bg-purple-400 text-white py-6 rounded-xl text-lg font-medium"
           onClick={handleActionButtonClick}
-          disabled={!ready}
+          disabled={!ready || (mode === 'buy' ? false : dynamicTokenLoading)}
         >
           {widgetStatus}
         </Button>
