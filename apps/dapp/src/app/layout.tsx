@@ -14,7 +14,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.APP_URL),
+  metadataBase: new URL(process.env.APP_URL ?? 'http://localhost:3000'),
   title: {
     default: 'Replicant Network | Custom AI Models. At Your Fingertips.',
     template: 'Replicant Network | %s',
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
       'Replicant Network is an upcoming platform democratizing AI model development through decentralized collaboration.',
     type: 'website',
     locale: 'en_US',
-    url: process.env.APP_URL,
+    url: process.env.APP_URL ?? 'http://localhost:3000',
     siteName: 'Replicant Network',
     emails: ['info@lutralabs.io'],
   },
