@@ -58,7 +58,7 @@ export const BountyInfo = ({
       case 'failed':
         return undefined;
       case 'stale':
-        return 'Finalize Bounty';
+        return undefined;
     }
   }, [bounty, isUserFunder]);
 
@@ -67,7 +67,7 @@ export const BountyInfo = ({
       case 'submissions':
         return `/bounties/${bounty.id}/submit-model`;
       case 'completed':
-        return undefined;
+        return `/models/${bounty.winner}`;
       case 'voting':
         return `/bounties/${bounty.id}/vote`;
       case 'crowdfunding':

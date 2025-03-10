@@ -76,42 +76,68 @@ export const BountiesClient = () => {
         <button
           type="button"
           onClick={() => setUserIntent('fund')}
-          className="p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-white hover:from-blue-100 hover:to-blue-50 border border-blue-100 shadow-sm hover:shadow-md hover:shadow-blue-100/50 transform hover:-translate-y-1"
         >
-          <CreditCard size={40} className="mb-4 text-blue-500" />
-          <div className="text-xl font-medium mb-3">Fund Model Bounties</div>
-          <p className="text-gray-600 text-center">
-            Contribute MON to exciting AI model projects
-          </p>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-200 to-transparent opacity-30 rounded-bl-full" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="p-3 bg-blue-100 rounded-xl mb-5 text-blue-600 group-hover:bg-blue-200 group-hover:text-blue-700 transition-all">
+              <CreditCard size={36} />
+            </div>
+            <div className="text-xl font-semibold mb-3 text-blue-900">
+              Fund Model Bounties
+            </div>
+            <p className="text-gray-600 text-center">
+              Contribute MON to exciting AI model projects
+            </p>
+          </div>
         </button>
 
         <button
           type="button"
           onClick={() => setUserIntent('submit')}
-          className="p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-white hover:from-purple-100 hover:to-purple-50 border border-purple-100 shadow-sm hover:shadow-md hover:shadow-purple-100/50 transform hover:-translate-y-1"
         >
-          <Code size={40} className="mb-4 text-purple-500" />
-          <div className="text-xl font-medium mb-3">Submit a Model</div>
-          <p className="text-gray-600 text-center">
-            For developers to submit models to open bounties
-          </p>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-purple-200 to-transparent opacity-30 rounded-bl-full" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="p-3 bg-purple-100 rounded-xl mb-5 text-purple-600 group-hover:bg-purple-200 group-hover:text-purple-700 transition-all">
+              <Code size={36} />
+            </div>
+            <div className="text-xl font-semibold mb-3 text-purple-900">
+              Submit a Model
+            </div>
+            <p className="text-gray-600 text-center">
+              For developers to submit models to open bounties
+            </p>
+          </div>
         </button>
 
         <button
           type="button"
           onClick={() => setUserIntent('browse')}
-          className="p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-green-50 to-white hover:from-green-100 hover:to-green-50 border border-green-100 shadow-sm hover:shadow-md hover:shadow-green-100/50 transform hover:-translate-y-1"
         >
-          <Compass size={40} className="mb-4 text-green-500" />
-          <div className="text-xl font-medium mb-3">Browse All Bounties</div>
-          <p className="text-gray-600 text-center">
-            Explore all active and past bounty projects
-          </p>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-green-200 to-transparent opacity-30 rounded-bl-full" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="p-3 bg-green-100 rounded-xl mb-5 text-green-600 group-hover:bg-green-200 group-hover:text-green-700 transition-all">
+              <Compass size={36} />
+            </div>
+            <div className="text-xl font-semibold mb-3 text-green-900">
+              Browse All Bounties
+            </div>
+            <p className="text-gray-600 text-center">
+              Explore all active and past bounty projects
+            </p>
+          </div>
         </button>
       </div>
 
       <Link href={'/bounties/bounty-form'} className="mt-12">
-        <Button variant="outline">Or Create Your Own Bounty</Button>
+        <Button
+          variant="outline"
+          className="hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
+        >
+          Or Create Your Own Bounty
+        </Button>
       </Link>
     </div>
   );
