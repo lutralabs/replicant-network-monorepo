@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { createPublicClient, http } from 'viem';
 import { AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -27,7 +26,10 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetBounty } from '@/hooks/useGetBounty';
+import { useVote } from '@/hooks/useVote';
+import { useHasVoted } from '@/hooks/useHasVoted';
 import { bountyStatus } from '@/lib/utils';
+import { ErrorToast } from '@/components/Toast';
 
 type TestImage = {
   url: string;
@@ -46,9 +48,9 @@ type TestPrompt = {
 export default function Page() {
   const [testPrompts, setTestPrompts] = useState<TestPrompt[]>([]);
   const [loading, setLoading] = useState(true);
+  const [votingInProgress, setVotingInProgress] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
-  const [votingInProgress, setVotingInProgress] = useState(false);
 
   const { wallets, ready: walletsLoading } = useWallets();
   const { authenticated } = usePrivy();
@@ -65,6 +67,13 @@ export default function Page() {
     isLoading: bountyLoading,
     error: bountyError,
   } = useGetBounty(bountyId);
+
+  // Get voting functions and states
+  const { mutate: vote } = useVote();
+
+  // Check if user has already voted
+  const { data: hasVoted, isLoading: checkingVoteStatus } =
+    useHasVoted(bountyId);
 
   // Fetch test images when the component mounts
   useEffect(() => {
@@ -115,52 +124,25 @@ export default function Page() {
   // Function to handle voting
   async function handleVote() {
     if (!selectedModel || !wallet || !authenticated) {
-      toast.error('Please select a model and connect your wallet to vote');
+      ErrorToast({
+        error: 'Please select a model and connect your wallet to vote',
+      });
+      return;
+    }
+
+    if (hasVoted) {
+      ErrorToast({ error: 'You have already voted on this bounty' });
       return;
     }
 
     setVotingInProgress(true);
-    // try {
-    //   // Check if user has already voted
-    //   const hasVoted = await publicClient.readContract({
-    //     address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
-    //     abi: repNetManagerAbi,
-    //     functionName: 'hasVoted',
-    //     args: [BigInt(bountyId), wallet.address as `0x${string}`],
-    //   });
 
-    //   if (hasVoted) {
-    //     toast.error('You have already voted for this bounty');
-    //     return;
-    //   }
+    vote({
+      model: selectedModel,
+      id: BigInt(bountyId),
+    });
 
-    //   // Prepare the transaction
-    //   const provider = await wallet.getEthereumProvider();
-    //   const ethersProvider = new ethers.providers.Web3Provider(provider);
-    //   const signer = ethersProvider.getSigner();
-
-    //   // Create contract instance
-    //   const contract = new ethers.Contract(
-    //     process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as string,
-    //     repNetManagerAbi,
-    //     signer
-    //   );
-
-    //   // Execute the vote transaction
-    //   const tx = await contract.vote(bountyId, selectedModel);
-
-    //   toast.loading('Voting transaction submitted...');
-    //   await tx.wait();
-
-    //   toast.success('Your vote has been recorded!');
-    // } catch (err) {
-    //   const message =
-    //     err instanceof Error ? err.message : 'Failed to submit vote';
-    //   console.error('Voting error:', err);
-    //   toast.error(`Error: ${message}`);
-    // } finally {
-    //   setVotingInProgress(false);
-    // }
+    setVotingInProgress(false);
   }
 
   // Loading state
@@ -190,21 +172,21 @@ export default function Page() {
   const currentPhase = bountyStatus(bounty);
   const isVotingPhase = currentPhase === 'voting';
 
-  // if (!isVotingPhase) {
-  //   return (
-  //     <div className="w-full h-full pb-12 flex flex-col gap-y-12">
-  //       <BountyInfo bounty={bounty} button={false} />
-  //       <Alert>
-  //         <AlertCircle className="h-4 w-4" />
-  //         <AlertTitle>Not Available</AlertTitle>
-  //         <AlertDescription>
-  //           Voting is only available during the voting phase. Current phase:{' '}
-  //           {currentPhase}
-  //         </AlertDescription>
-  //       </Alert>
-  //     </div>
-  //   );
-  // }
+  if (!isVotingPhase) {
+    return (
+      <div className="w-full h-full pb-12 flex flex-col gap-y-12">
+        <BountyInfo bounty={bounty} button={false} />
+        <Alert>
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Not Available</AlertTitle>
+          <AlertDescription>
+            Voting is only available during the voting phase. Current phase:{' '}
+            {currentPhase}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   if (!authenticated) {
     return (
@@ -260,7 +242,7 @@ export default function Page() {
       )}
 
       <div className="px-12">
-        {loading ? (
+        {loading || checkingVoteStatus ? (
           <div className="flex flex-col items-center gap-y-6 mt-8">
             <Skeleton className="h-64 w-full" />
             <Skeleton className="h-8 w-1/2" />
@@ -310,6 +292,7 @@ export default function Page() {
                 <Select
                   onValueChange={setSelectedModel}
                   value={selectedModel || undefined}
+                  disabled={hasVoted}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Choose a model to vote for" />
@@ -333,10 +316,20 @@ export default function Page() {
 
               <Button
                 onClick={handleVote}
-                disabled={!selectedModel || votingInProgress || !authenticated}
+                disabled={
+                  !selectedModel ||
+                  votingInProgress ||
+                  !authenticated ||
+                  hasVoted
+                }
                 className="w-full"
+                variant="cta-solid"
               >
-                {votingInProgress ? 'Submitting Vote...' : 'Submit Vote'}
+                {votingInProgress
+                  ? 'Submitting Vote...'
+                  : hasVoted
+                    ? 'Already Voted'
+                    : 'Submit Vote'}
               </Button>
             </div>
           </>
