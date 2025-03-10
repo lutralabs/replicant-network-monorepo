@@ -223,7 +223,7 @@ RepNetManager.SolutionSubmitted.handlerWithLoader({
     });
     // set submission entity
     context.Submission.set({
-      id: `${event.params.submissionId}`,
+      id: `${event.params.crowdfundingId}_${event.params.submissionId}`,
       crowdfunding_id: event.params.crowdfundingId.toString(),
       creator_id: event.params.creator.toLowerCase(),
       timestamp: BigInt(event.block.timestamp),
@@ -246,10 +246,13 @@ RepNetManager.Withdrawal.handler(async ({ event, context }) => {
 RepNetManager.Vote.handlerWithLoader({
   loader: async ({ event, context }) => {
     const user = await context.User.get(event.params.voter.toLowerCase());
+    const submission = await context.Submission.get(
+      `${event.params.crowdfundingId}_${event.params.submissionId}`
+    );
     if (!user) {
-      return null;
+      return { user: null, submission: submission };
     }
-    return user;
+    return { user, submission };
   },
   handler: async ({ event, context, loaderReturn }) => {
     const entity: RepNetManager_Vote = {
@@ -259,17 +262,22 @@ RepNetManager.Vote.handlerWithLoader({
       voter: event.params.voter,
       votePower: event.params.votePower,
     };
-    await ensureUserExists(loaderReturn, context, event.params.voter);
+    await ensureUserExists(loaderReturn.user, context, event.params.voter);
     context.RepNetManager_Vote.set(entity);
 
     // set vote entity
     context.Vote.set({
-      id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+      id: `${event.params.crowdfundingId}_${event.params.submissionId}_${event.params.voter}`,
       crowdfunding_id: event.params.crowdfundingId.toString(),
-      submission_id: event.params.submissionId,
+      submission_id: `${event.params.crowdfundingId.toString()}_${event.params.submissionId}`,
       voter_id: event.params.voter.toLowerCase(),
       votePower: event.params.votePower,
       timestamp: BigInt(event.block.timestamp),
+    });
+    context.Submission.set({
+      ...loaderReturn.submission!,
+      totalVotesPower:
+        loaderReturn.submission!.totalVotesPower + event.params.votePower,
     });
   },
 });
