@@ -1,7 +1,6 @@
 'use client';
+
 import { Separator } from '@radix-ui/react-separator';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import type { PropsWithChildren } from 'react';
 
 import { AppSidebar } from '../AppSidebar';
 import DynamicBreadcrumb from '../DynamicBreadcrumb';

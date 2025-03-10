@@ -45,7 +45,7 @@ export default function Page() {
           and Web3 developers through the crowdfunding campaigns.
         </div>
       </div>
-      <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
+      <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
         {MODELS.map((model) => (
           <ModelCard key={model.id} {...model} />
         ))}

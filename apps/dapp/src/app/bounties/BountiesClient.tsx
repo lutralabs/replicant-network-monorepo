@@ -242,7 +242,7 @@ export const BountiesClient = () => {
 
           {/* Loading state with skeletons */}
           {bounties.isLoading && (
-            <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
+            <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
               {[1, 2, 3].map((i) => (
                 <BountyCardSkeleton key={i} />
               ))}
@@ -259,7 +259,7 @@ export const BountiesClient = () => {
                   <TabsTrigger value="past">Past Bounties</TabsTrigger>
                 </TabsList>
                 <TabsContent value="active">
-                  <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
+                  <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
                     {activeBounties.length > 0 ? (
                       activeBounties.map((bounty) => (
                         <BountyCard
@@ -281,7 +281,7 @@ export const BountiesClient = () => {
                   </div>
                 </TabsContent>
                 <TabsContent value="past">
-                  <div className="mt-12 flex flex-wrap gap-x-12 gap-y-12">
+                  <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
                     {pastBounties.length > 0 ? (
                       pastBounties.map((bounty) => (
                         <BountyCard
