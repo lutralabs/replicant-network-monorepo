@@ -22,7 +22,7 @@
 	--accent-foreground: hsl(0 0% 9%);
 	--destructive: hsl(0, 72%, 51%);
 	--destructive-button-text: hsl(0, 0%, 98%);
-	--destructive-foreground: hsl(0 0% 98%);
+	--destructive-foreground: hsl(0 72% 51%);
 	--border: hsl(240, 6%, 90%);
 	--input: hsl(240, 6%, 90%);
 	--ring: hsl(0 0% 3.9%);
@@ -59,7 +59,7 @@
 	--accent-foreground: hsl(0 0% 98%);
 	--destructive: hsl(0, 63%, 31%);
 	--destructive-button-text: hsl(0, 86%, 97%);
-	--destructive-foreground: hsl(0 0% 98%);
+	--destructive-foreground: hsl(0 72% 51%);
 	--border: hsl(240, 4%, 16%);
 	--input: hsl(240, 4%, 16%);
 	--ring: hsl(0 0% 83.1%);

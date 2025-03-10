@@ -245,7 +245,7 @@ export const BountiesClient = () => {
         <button
           type="button"
           onClick={() => setUserIntent('fund')}
-          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-white hover:from-blue-100 hover:to-blue-50 border border-blue-100 shadow-sm hover:shadow-md hover:shadow-blue-100/50 transform hover:-translate-y-1"
+          className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
         >
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-200 to-transparent opacity-30 rounded-bl-full" />
           <div className="relative z-10 flex flex-col items-center">
@@ -264,7 +264,7 @@ export const BountiesClient = () => {
         <button
           type="button"
           onClick={() => setUserIntent('submit')}
-          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-white hover:from-purple-100 hover:to-purple-50 border border-purple-100 shadow-sm hover:shadow-md hover:shadow-purple-100/50 transform hover:-translate-y-1"
+          className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
         >
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-purple-200 to-transparent opacity-30 rounded-bl-full" />
           <div className="relative z-10 flex flex-col items-center">
@@ -283,7 +283,7 @@ export const BountiesClient = () => {
         <button
           type="button"
           onClick={() => setUserIntent('browse')}
-          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-green-50 to-white hover:from-green-100 hover:to-green-50 border border-green-100 shadow-sm hover:shadow-md hover:shadow-green-100/50 transform hover:-translate-y-1"
+          className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
         >
           <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-green-200 to-transparent opacity-30 rounded-bl-full" />
           <div className="relative z-10 flex flex-col items-center">

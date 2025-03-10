@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
       discord: requestBody.discord || null,
       email: requestBody.email || null,
       telegram: requestBody.telegram || null,
+      token_image_url: requestBody.token_image_url || null,
     };
 
     console.log('storing in DB', bountyData);
