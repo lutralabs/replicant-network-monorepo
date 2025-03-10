@@ -105,7 +105,7 @@ export const BountyInfo = ({
       </div>
       <div className="mt-6 w-full">
         <div className="flex justify-start gap-x-12 items-center text-gray-600">
-          <Badge className="text-md px-3" variant={variant}>
+          <Badge className="text-md px-3 capitalize" variant={variant}>
             {bountyStatus(bounty)}
           </Badge>
           <div>
