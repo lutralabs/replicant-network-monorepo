@@ -267,7 +267,7 @@ export const BountyForm = () => {
             });
             setTimeout(() => {
               router.push('/bounties');
-            }, 1500);
+            }, 5000);
           },
           onError: (error) => {
             ErrorToast({ error: error.message });

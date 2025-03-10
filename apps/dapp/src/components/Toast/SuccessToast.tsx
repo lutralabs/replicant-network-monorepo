@@ -16,7 +16,7 @@ export const SuccessToast = (props: SuccessToastProps) => {
       </div>
     </div>,
     {
-      autoClose: 1000,
+      autoClose: 5000,
     }
   );
 };
