@@ -1,7 +1,7 @@
 'use client';
 
 import { SiDiscord, SiGithub, SiX } from '@icons-pack/react-simple-icons';
-import { Frame, Map as MapIcon, PieChart } from 'lucide-react';
+import { Frame, PieChart } from 'lucide-react';
 import Image from 'next/image';
 import type * as React from 'react';
 
@@ -16,7 +16,6 @@ import {
 import Logo from '../../public/RN_logo.svg?url';
 import { NavSocial } from './NavSocial';
 
-// This is sample data.
 const ITEMS = {
   pages: [
     {
@@ -44,11 +43,11 @@ const SOCIAL = {
       url: 'https://github.com/lutralabs',
       icon: SiGithub,
     },
-    // {
-    //   name: 'X',
-    //   url: '',
-    //   icon: SiX,
-    // },
+    {
+      name: 'X',
+      url: 'https://x.com/rplcnt_io',
+      icon: SiX,
+    },
   ],
 };
 
