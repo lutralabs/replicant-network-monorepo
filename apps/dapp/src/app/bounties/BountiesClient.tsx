@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { BountyCard } from '@/components/BountyCard';
 import { Button } from '@/components/ui/button';
@@ -18,9 +18,19 @@ import {
   CreditCard,
   Code,
   Compass,
+  Filter,
+  X,
 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 // Skeleton component for loading state using UI Skeleton component
 const BountyCardSkeleton = () => (
@@ -42,11 +52,37 @@ export const BountiesClient = () => {
     'none' | 'fund' | 'submit' | 'browse'
   >('none');
 
+  // Simplified state for filters
+  const [statusFilters, setStatusFilters] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<string>('active');
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+
   // Filter bounties for each tab
   const activeBounties =
     bounties.bounties?.filter((bounty) => bounty.finalized === false) || [];
   const pastBounties =
     bounties.bounties?.filter((bounty) => bounty.finalized === true) || [];
+
+  // Get available status filters based on active tab
+  const getAvailableFilters = () => {
+    if (activeTab === 'active') {
+      return ['crowdfunding', 'submissions', 'voting', 'stale'];
+    }
+    return ['completed', 'failed'];
+  };
+
+  // Handle tab change
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setStatusFilters([]); // Reset filters when changing tabs
+  };
+
+  // Track active filters for UI display
+  useEffect(() => {
+    const filters = [];
+    if (statusFilters.length > 0) filters.push('Status');
+    setActiveFilters(filters);
+  }, [statusFilters]);
 
   // Filter bounties based on user intent
   const getIntentBounties = () => {
@@ -63,6 +99,139 @@ export const BountiesClient = () => {
     return activeBounties;
   };
 
+  // Apply status filters to the bounty list
+  const applyStatusFilters = (bountyList) => {
+    // If no status filters, return the original list
+    if (statusFilters.length === 0) return bountyList;
+
+    // Otherwise, filter by selected statuses
+    return bountyList.filter((bounty) =>
+      statusFilters.includes(bountyStatus(bounty))
+    );
+  };
+
+  // Toggle status filter
+  const toggleStatusFilter = (status) => {
+    setStatusFilters((prev) =>
+      prev.includes(status)
+        ? prev.filter((s) => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  // Get the current list of bounties based on active/past toggle and filters
+  const getCurrentBounties = () => {
+    const currentList = activeTab === 'active' ? activeBounties : pastBounties;
+    return applyStatusFilters(currentList);
+  };
+
+  // Simplified filter interface component
+  const FilterInterface = () => (
+    <div className="space-y-4 mt-6 mb-6">
+      <div className="flex items-center gap-4">
+        {/* Use Tabs component with onValueChange to reset filters */}
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="">
+          <TabsList className="grid grid-cols-2 bg-white">
+            <TabsTrigger value="active">Active Bounties</TabsTrigger>
+            <TabsTrigger value="past">Past Bounties</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        {/* Status filter dropdown with dynamically filtered options */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="h-10 gap-2">
+              <Filter size={14} /> Status Filter
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-56">
+            <DropdownMenuLabel>
+              Filter by Status ({activeTab === 'active' ? 'Active' : 'Past'})
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+
+            {/* Only show relevant filter options based on tab */}
+            {getAvailableFilters().includes('crowdfunding') && (
+              <DropdownMenuCheckboxItem
+                checked={statusFilters.includes('crowdfunding')}
+                onCheckedChange={() => toggleStatusFilter('crowdfunding')}
+              >
+                Crowdfunding
+              </DropdownMenuCheckboxItem>
+            )}
+
+            {getAvailableFilters().includes('submissions') && (
+              <DropdownMenuCheckboxItem
+                checked={statusFilters.includes('submissions')}
+                onCheckedChange={() => toggleStatusFilter('submissions')}
+              >
+                Submissions
+              </DropdownMenuCheckboxItem>
+            )}
+
+            {getAvailableFilters().includes('voting') && (
+              <DropdownMenuCheckboxItem
+                checked={statusFilters.includes('voting')}
+                onCheckedChange={() => toggleStatusFilter('voting')}
+              >
+                Voting
+              </DropdownMenuCheckboxItem>
+            )}
+
+            {getAvailableFilters().includes('stale') && (
+              <DropdownMenuCheckboxItem
+                checked={statusFilters.includes('stale')}
+                onCheckedChange={() => toggleStatusFilter('stale')}
+              >
+                Stale
+              </DropdownMenuCheckboxItem>
+            )}
+
+            {getAvailableFilters().includes('completed') && (
+              <DropdownMenuCheckboxItem
+                checked={statusFilters.includes('completed')}
+                onCheckedChange={() => toggleStatusFilter('completed')}
+              >
+                Completed
+              </DropdownMenuCheckboxItem>
+            )}
+
+            {getAvailableFilters().includes('failed') && (
+              <DropdownMenuCheckboxItem
+                checked={statusFilters.includes('failed')}
+                onCheckedChange={() => toggleStatusFilter('failed')}
+              >
+                Failed
+              </DropdownMenuCheckboxItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      {/* Active filters display - Moved to a new line and made badges larger */}
+      {activeFilters.length > 0 && (
+        <div className="flex flex-wrap gap-3 mt-3">
+          {statusFilters.map((filter) => (
+            <Badge
+              key={filter}
+              variant="outline"
+              className="px-3 py-1.5 text-sm bg-gray-50 hover:bg-gray-100 transition-colors border-gray-200"
+            >
+              {filter.charAt(0).toUpperCase() + filter.slice(1)}
+              <button
+                type="button"
+                onClick={() => toggleStatusFilter(filter)}
+                className="ml-2 text-gray-500 hover:text-gray-900"
+              >
+                <X size={14} />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
   // Intent selection UI
   const IntentSelectionUI = () => (
     <div className="flex flex-col items-center justify-center py-16">
@@ -76,42 +245,68 @@ export const BountiesClient = () => {
         <button
           type="button"
           onClick={() => setUserIntent('fund')}
-          className="p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-white hover:from-blue-100 hover:to-blue-50 border border-blue-100 shadow-sm hover:shadow-md hover:shadow-blue-100/50 transform hover:-translate-y-1"
         >
-          <CreditCard size={40} className="mb-4 text-blue-500" />
-          <div className="text-xl font-medium mb-3">Fund Model Bounties</div>
-          <p className="text-gray-600 text-center">
-            Contribute MON to exciting AI model projects
-          </p>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-200 to-transparent opacity-30 rounded-bl-full" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="p-3 bg-blue-100 rounded-xl mb-5 text-blue-600 group-hover:bg-blue-200 group-hover:text-blue-700 transition-all">
+              <CreditCard size={36} />
+            </div>
+            <div className="text-xl font-semibold mb-3 text-blue-900">
+              Fund Model Bounties
+            </div>
+            <p className="text-gray-600 text-center">
+              Contribute MON to exciting AI model projects
+            </p>
+          </div>
         </button>
 
         <button
           type="button"
           onClick={() => setUserIntent('submit')}
-          className="p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-purple-50 to-white hover:from-purple-100 hover:to-purple-50 border border-purple-100 shadow-sm hover:shadow-md hover:shadow-purple-100/50 transform hover:-translate-y-1"
         >
-          <Code size={40} className="mb-4 text-purple-500" />
-          <div className="text-xl font-medium mb-3">Submit a Model</div>
-          <p className="text-gray-600 text-center">
-            For developers to submit models to open bounties
-          </p>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-purple-200 to-transparent opacity-30 rounded-bl-full" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="p-3 bg-purple-100 rounded-xl mb-5 text-purple-600 group-hover:bg-purple-200 group-hover:text-purple-700 transition-all">
+              <Code size={36} />
+            </div>
+            <div className="text-xl font-semibold mb-3 text-purple-900">
+              Submit a Model
+            </div>
+            <p className="text-gray-600 text-center">
+              For developers to submit models to open bounties
+            </p>
+          </div>
         </button>
 
         <button
           type="button"
           onClick={() => setUserIntent('browse')}
-          className="p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group relative overflow-hidden p-8 rounded-2xl transition-all duration-300 bg-gradient-to-br from-green-50 to-white hover:from-green-100 hover:to-green-50 border border-green-100 shadow-sm hover:shadow-md hover:shadow-green-100/50 transform hover:-translate-y-1"
         >
-          <Compass size={40} className="mb-4 text-green-500" />
-          <div className="text-xl font-medium mb-3">Browse All Bounties</div>
-          <p className="text-gray-600 text-center">
-            Explore all active and past bounty projects
-          </p>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-green-200 to-transparent opacity-30 rounded-bl-full" />
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="p-3 bg-green-100 rounded-xl mb-5 text-green-600 group-hover:bg-green-200 group-hover:text-green-700 transition-all">
+              <Compass size={36} />
+            </div>
+            <div className="text-xl font-semibold mb-3 text-green-900">
+              Browse All Bounties
+            </div>
+            <p className="text-gray-600 text-center">
+              Explore all active and past bounty projects
+            </p>
+          </div>
         </button>
       </div>
 
       <Link href={'/bounties/bounty-form'} className="mt-12">
-        <Button variant="outline">Or Create Your Own Bounty</Button>
+        <Button
+          variant="outline"
+          className="hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
+        >
+          Or Create Your Own Bounty
+        </Button>
       </Link>
     </div>
   );
@@ -157,7 +352,7 @@ export const BountiesClient = () => {
 
           {/* Show status guide only in browse mode */}
           {userIntent === 'browse' && (
-            <div className="w-full mt-6 mb-8">
+            <div className="w-full mt-6 mb-4">
               <Button
                 variant="outline"
                 className="flex items-center gap-2 text-gray-600 border-dashed"
@@ -229,6 +424,9 @@ export const BountiesClient = () => {
             </div>
           )}
 
+          {/* Add simplified filter interface in browse mode */}
+          {userIntent === 'browse' && <FilterInterface />}
+
           {/* Error handling */}
           {bounties.error && (
             <Alert variant="destructive" className="mt-4">
@@ -253,54 +451,37 @@ export const BountiesClient = () => {
           {!bounties.isLoading &&
             !bounties.error &&
             (userIntent === 'browse' ? (
-              <Tabs className="mt-4" defaultValue="active">
-                <TabsList className="grid w-[400px] grid-cols-2 bg-white">
-                  <TabsTrigger value="active">Active Bounties</TabsTrigger>
-                  <TabsTrigger value="past">Past Bounties</TabsTrigger>
-                </TabsList>
-                <TabsContent value="active">
-                  <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
-                    {activeBounties.length > 0 ? (
-                      activeBounties.map((bounty) => (
-                        <BountyCard
-                          key={bounty.id}
-                          status={bountyStatus(bounty)}
-                          bounty={bounty}
-                        />
-                      ))
-                    ) : (
-                      <div className="w-full text-center p-12 border border-dashed rounded-lg">
-                        <p className="text-gray-500">
-                          No active bounties available at the moment.
-                        </p>
-                        <p className="text-gray-400 mt-2">
-                          Be the first to create one!
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
-                <TabsContent value="past">
-                  <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
-                    {pastBounties.length > 0 ? (
-                      pastBounties.map((bounty) => (
-                        <BountyCard
-                          key={bounty.id}
-                          status={bountyStatus(bounty)}
-                          bounty={bounty}
-                        />
-                      ))
-                    ) : (
-                      <div className="w-full text-center p-12 border border-dashed rounded-lg">
-                        <p className="text-gray-500">No past bounties found.</p>
-                        <p className="text-gray-400 mt-2">
-                          Completed and Failed bounties will appear here.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
-              </Tabs>
+              <div className="mt-8 pb-12">
+                <div className="flex flex-wrap gap-x-12 gap-y-12">
+                  {getCurrentBounties().length > 0 ? (
+                    getCurrentBounties().map((bounty) => (
+                      <BountyCard
+                        key={bounty.id}
+                        status={bountyStatus(bounty)}
+                        bounty={bounty}
+                      />
+                    ))
+                  ) : (
+                    <div className="w-full text-center p-12 border border-dashed rounded-lg">
+                      <p className="text-gray-500">
+                        No {activeTab === 'active' ? 'active' : 'past'} bounties
+                        found
+                        {statusFilters.length > 0
+                          ? ' with selected filters'
+                          : ''}
+                        .
+                      </p>
+                      <p className="text-gray-400 mt-2">
+                        {statusFilters.length > 0
+                          ? 'Try adjusting your filters.'
+                          : activeTab === 'active'
+                            ? 'Be the first to create one!'
+                            : 'Completed and Failed bounties will appear here.'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
             ) : (
               <div className="mt-8">
                 <h3 className="text-xl font-medium mb-6">
