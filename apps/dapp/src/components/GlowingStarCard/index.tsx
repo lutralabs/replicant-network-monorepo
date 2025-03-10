@@ -23,14 +23,14 @@ export const GlowingStarsBackgroundCard = ({
         setMouseEnter(false);
       }}
       className={cn(
-        'bg-[linear-gradient(110deg,#ffffff_0.6%,#f8f8f8)] p-4 max-w-md max-h-[20rem] h-full w-full rounded-xl border border-[#eaeaea]',
+        'bg-[linear-gradient(110deg,#ffffff_0.6%,#f8f8f8)] p-4 max-w-md h-[300px] w-[320px] rounded-xl border border-[#eaeaea]',
         className
       )}
     >
       <div className="flex justify-center items-center">
         <Illustration mouseEnter={mouseEnter} />
       </div>
-      <div className="px-2 pb-6">{children}</div>
+      <div className="px-2 pb-6 h-[calc(100%-72px)]">{children}</div>
     </div>
   );
 };
