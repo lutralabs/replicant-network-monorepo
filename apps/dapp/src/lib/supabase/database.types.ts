@@ -16,6 +16,7 @@ export type Database = {
           email: string | null;
           id: number;
           telegram: string | null;
+          testers: string[] | null;
           title: string;
           type: string | null;
         };
@@ -25,6 +26,7 @@ export type Database = {
           email?: string | null;
           id?: number;
           telegram?: string | null;
+          testers?: string[] | null;
           title?: string;
           type?: string | null;
         };
@@ -34,6 +36,7 @@ export type Database = {
           email?: string | null;
           id?: number;
           telegram?: string | null;
+          testers?: string[] | null;
           title?: string;
           type?: string | null;
         };

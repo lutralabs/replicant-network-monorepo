@@ -8,4 +8,6 @@ interface IModelTokenERC20 is IERC20, IERC20Metadata {
 
     function mint(address to, uint256 amount) external;
 
+    function burn(address account, uint256 amount) external;
+
 }

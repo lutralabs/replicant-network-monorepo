@@ -13,4 +13,8 @@ contract ModelTokenERC20 is IModelTokenERC20, ERC20, Ownable {
         _mint(to, amount);
     }
 
+    function burn(address account, uint256 amount) public onlyOwner {
+        _burn(account, amount);
+    }
+
 }

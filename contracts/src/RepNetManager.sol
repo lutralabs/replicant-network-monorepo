@@ -183,15 +183,19 @@ contract RepNetManager is Ownable, ReentrancyGuard {
 
     /**
      * @notice Withdraws funds from a crowdfunding campaign
-     * @dev Can only be called when the crowdfunding is in the Ended phase, not finalized with a winner, and the user has deposits
+     * @dev Can only be called when the crowdfunding is in the Ended phase, not finalized with a winner, and the user has deposits.
+     * The user must have enough ERC20 tokens (equal to their ETH deposit * CONVERSION_RATE) which will be burned during withdrawal.
+     * The user must also approve this contract to spend their tokens.
      * @param _crowdfundingId The ID of the crowdfunding to withdraw from
      * @custom:throws CrowdfundingStillActive if the crowdfunding is still active
      * @custom:throws CrowdfundingAlreadyFinalized if the crowdfunding is finalized with a winner
      * @custom:throws NoDeposits if the user has no deposits
+     * @custom:throws InsufficientTokenBalance if the user doesn't have enough tokens to withdraw
+     * @custom:throws InsufficientTokenAllowance if the user hasn't approved enough tokens to be burned
      */
     function withdraw(
         uint256 _crowdfundingId
-    ) public crowdfundingExists(_crowdfundingId) {
+    ) public crowdfundingExists(_crowdfundingId) nonReentrant {
         if (_currentPhase(_crowdfundingId) != CrowdfundingPhase.Ended) {
             revert CrowdfundingStillActive();
         }
@@ -471,17 +475,27 @@ contract RepNetManager is Ownable, ReentrancyGuard {
 
     /**
      * @notice Withdraws funds from a crowdfunding campaign
-     * @dev Transfers the user's deposits back to them
+     * @dev Burns the user's tokens at the conversion rate and returns their ETH.
+     * Requires the user to have enough tokens
      * @param _crowdfundingId The ID of the crowdfunding to withdraw from
      */
     function _withdraw(
         uint256 _crowdfundingId
     ) internal {
         Crowdfunding storage cf = crowdfundings[_crowdfundingId];
-        uint256 amount = cf.deposits[msg.sender];
+        uint256 ethAmount = cf.deposits[msg.sender];
+        uint256 tokenAmount = ethAmount * CONVERSION_RATE;
+
+        IModelTokenERC20 token = IModelTokenERC20(cf.token);
+        if (token.balanceOf(msg.sender) < tokenAmount) {
+            revert InsufficientTokenBalance(token.balanceOf(msg.sender), tokenAmount);
+        }
+
+        token.burn(msg.sender, tokenAmount);
         cf.deposits[msg.sender] = 0;
-        payable(msg.sender).transfer(amount);
-        emit Withdrawal(_crowdfundingId, msg.sender, amount);
+        payable(msg.sender).transfer(ethAmount);
+
+        emit Withdrawal(_crowdfundingId, msg.sender, ethAmount);
     }
 
     /**

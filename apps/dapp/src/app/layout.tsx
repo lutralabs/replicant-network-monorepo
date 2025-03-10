@@ -14,7 +14,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Your App Name | Home',
+  title: 'Replicant Network',
   description: 'Your app description',
   metadataBase: new URL('https://google.com'),
   openGraph: {

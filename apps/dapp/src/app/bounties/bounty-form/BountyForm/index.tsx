@@ -1,7 +1,8 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useWallets } from '@privy-io/react-auth';
-import { useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBalance } from 'wagmi';
 import { z } from 'zod';
@@ -26,9 +27,13 @@ import {
 } from '@/components/ui/select';
 import { SmartDatetimeInput } from '@/components/ui/smart-datetime-input';
 import { Textarea } from '@/components/ui/textarea';
+import { ErrorToast } from '@/components/Toast/ErrorToast';
+import { InfoToast } from '@/components/Toast/InfoToast';
+import { SuccessToast } from '@/components/Toast/SuccessToast';
 import { useCreateBounty } from '@/hooks/useCreateBounty';
 import { formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -101,6 +106,8 @@ const formSchema = z.object({
 });
 
 export const BountyForm = () => {
+  const router = useRouter();
+  const [isCreating, setIsCreating] = useState(false);
   const { wallets } = useWallets();
   const wallet = wallets[0]; // Replace this with your desired wallet
 
@@ -144,24 +151,56 @@ export const BountyForm = () => {
       values.endOfFunding >= values.endOfSubmissions ||
       values.endOfSubmissions >= values.endOfVoting
     ) {
-      console.log('Invalid dates');
+      ErrorToast({
+        error: 'Invalid dates sequence. Please check your timeline.',
+      });
+      return;
     }
 
-    const res = createBounty({
-      amount: values.contribution,
-      title: values.title,
-      symbol: values.symbol,
-      fundingPhaseEnd: Math.round(values.endOfFunding.getTime() / 1000),
-      submissionPhaseEnd: Math.round(values.endOfSubmissions.getTime() / 1000),
-      votingPhaseEnd: Math.round(values.endOfVoting.getTime() / 1000),
-      developerFeePercentage: values.devFees,
-      raiseCap: values.maxAmount,
-      description: values.description,
-      discord: values.discord,
-      email: values.email,
-      telegram: values.telegram,
-    });
-    console.log(res);
+    setIsCreating(true);
+
+    try {
+      createBounty(
+        {
+          amount: values.contribution,
+          title: values.title,
+          symbol: values.symbol,
+          fundingPhaseEnd: Math.round(values.endOfFunding.getTime() / 1000),
+          submissionPhaseEnd: Math.round(
+            values.endOfSubmissions.getTime() / 1000
+          ),
+          votingPhaseEnd: Math.round(values.endOfVoting.getTime() / 1000),
+          developerFeePercentage: values.devFees,
+          raiseCap: values.maxAmount,
+          description: values.description,
+          discord: values.discord,
+          email: values.email,
+          telegram: values.telegram,
+        },
+        {
+          onSuccess: () => {
+            SuccessToast({
+              message: 'Your bounty has been created successfully!',
+            });
+            setTimeout(() => {
+              router.push('/bounties');
+            }, 1500);
+          },
+          onError: (error) => {
+            ErrorToast({ error: error.message });
+          },
+          onSettled: () => {
+            setIsCreating(false);
+          },
+        }
+      );
+    } catch (error) {
+      ErrorToast({
+        error:
+          error instanceof Error ? error.message : 'An unknown error occurred',
+      });
+      setIsCreating(false);
+    }
   }
 
   return (
@@ -488,7 +527,7 @@ export const BountyForm = () => {
                 </div>
               </FormLabel>
               <FormControl>
-                <Input type="number" {...field} />
+                <Input type="number" {...field} disabled={isCreating} />
               </FormControl>
               <FormDescription>
                 <div className="flex w-full justify-between">
@@ -502,6 +541,7 @@ export const BountyForm = () => {
                       onClick={() => {
                         form.setValue('contribution', formattedBalance);
                       }}
+                      disabled={isCreating}
                     >
                       MAX
                     </Button>
@@ -514,8 +554,15 @@ export const BountyForm = () => {
         />
 
         <div className="flex w-full justify-end">
-          <Button type="submit" variant="cta-solid">
-            Create Bounty
+          <Button type="submit" variant="cta-solid" disabled={isCreating}>
+            {isCreating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              'Create Bounty'
+            )}
           </Button>
         </div>
       </form>

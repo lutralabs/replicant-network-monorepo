@@ -22,9 +22,9 @@ import { useBalance } from 'wagmi';
 export const FundBountyDialog = ({ bounty }: { bounty: Bounty }) => {
   const [amount, setAmount] = useState(0);
   const { wallets } = useWallets();
+  const wallet = wallets[0]; // Replace this with your desired wallet
 
   const { mutate: fund } = useFundBounty();
-  const wallet = wallets[0]; // Replace this with your desired wallet
 
   const balance = useBalance({
     address: (wallet?.address ?? '0x0') as `0x${string}`,
