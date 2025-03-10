@@ -24,7 +24,7 @@ export function LoginButton() {
       <div className="flex items-center gap-x-2">
         <div
           className={cn(
-            'inline-flex items-center rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-1.5 text-sm font-medium text-white shadow-md'
+            'inline-flex items-center rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-1.5 text-sm font-bold text-white shadow-md'
           )}
         >
           <div className="flex items-center gap-1.5">
