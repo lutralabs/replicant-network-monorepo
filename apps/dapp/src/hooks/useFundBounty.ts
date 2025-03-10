@@ -1,3 +1,4 @@
+import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
 import { useWallets } from '@privy-io/react-auth';
@@ -33,10 +34,16 @@ export const useFundBounty = () => {
     },
     onSuccess: (data) => {
       if (data) {
+        SuccessToast({ message: 'Bounty funded successfully' });
         console.log('Success.');
       }
     },
     onError: (error) => {
+      ErrorToast({
+        error: error.message.includes('User rejected')
+          ? 'User rejected the request'
+          : 'Error funding bounty',
+      });
       console.log('error', error);
     },
   });
