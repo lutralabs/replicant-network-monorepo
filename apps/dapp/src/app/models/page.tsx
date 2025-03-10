@@ -1,5 +1,9 @@
 import { ModelCard } from '@/components/ModelCard';
 
+export const metadata = {
+  title: 'Models',
+};
+
 export default function Page() {
   const MODELS = [
     {

@@ -1,8 +1,8 @@
-'use client';
-
-import React from 'react';
-
 import { BountyForm } from './BountyForm';
+
+export const metadata = {
+  title: 'Create a Bounty',
+};
 
 export default function Page() {
   return (

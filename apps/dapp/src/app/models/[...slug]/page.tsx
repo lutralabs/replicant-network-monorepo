@@ -1,5 +1,4 @@
 'use client';
-import Image from 'next/image';
 import { useState } from 'react';
 
 import { DynamicImage } from '@/components/DynamicImage';
@@ -7,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+
+// TODO[Martin]: Dynamic Metadata
 
 export default function Page() {
   const [images, setImages] = useState([]);

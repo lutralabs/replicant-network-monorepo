@@ -1,4 +1,5 @@
 'use client';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useWallets } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
@@ -28,7 +29,6 @@ import {
 import { SmartDatetimeInput } from '@/components/ui/smart-datetime-input';
 import { Textarea } from '@/components/ui/textarea';
 import { ErrorToast } from '@/components/Toast/ErrorToast';
-import { InfoToast } from '@/components/Toast/InfoToast';
 import { SuccessToast } from '@/components/Toast/SuccessToast';
 import { useCreateBounty } from '@/hooks/useCreateBounty';
 import { formatBalance } from '@/lib/utils';

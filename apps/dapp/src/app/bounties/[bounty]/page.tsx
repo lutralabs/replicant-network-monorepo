@@ -10,6 +10,8 @@ import { useGetBounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 
+// TODO[Martin]: Dynamic Metadata
+
 export default function Page() {
   const paths = usePathname();
   const pathNames = paths.split('/').filter((path) => path);

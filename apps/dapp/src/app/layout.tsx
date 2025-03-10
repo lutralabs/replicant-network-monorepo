@@ -14,19 +14,50 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Replicant Network',
-  description: 'Your app description',
-  metadataBase: new URL('https://google.com'),
+  metadataBase: new URL(process.env.APP_URL),
+  title: {
+    default: 'Replicant Network | Custom AI Models. At Your Fingertips.',
+    template: 'Replicant Network | %s',
+  },
+  description:
+    'Replicant Network is an upcoming platform democratizing AI model development through decentralized collaboration.',
+  authors: {
+    name: 'Lutra Labs',
+    url: 'https://lutralabs.io/',
+  },
+  keywords: [
+    'ai',
+    'agents',
+    'ethereum',
+    'decentralized',
+    'machine learning',
+    'artificial intelligence',
+  ],
   openGraph: {
-    title: 'Your App Name',
-    description: 'Your app description',
-    url: 'https://google.com',
-    siteName: 'Your App Name',
+    title: 'Replicant Network',
+    description:
+      'Replicant Network is an upcoming platform democratizing AI model development through decentralized collaboration.',
+    type: 'website',
+    locale: 'en_US',
+    url: process.env.APP_URL,
+    siteName: 'Replicant Network',
+    emails: ['info@lutralabs.io'],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@username',
-    creator: '@username',
+    images: [
+      {
+        url: '/api/og',
+        width: 1200,
+        height: 630,
+        alt: 'Replicant Network Page Image',
+      },
+    ],
+  },
+  robots: {
+    index: false,
+    follow: false,
+    'max-image-preview': 'standard',
   },
 };
 
