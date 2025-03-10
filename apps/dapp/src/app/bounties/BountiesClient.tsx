@@ -247,7 +247,6 @@ export const BountiesClient = () => {
           onClick={() => setUserIntent('fund')}
           className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
         >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-200 to-transparent opacity-30 rounded-bl-full" />
           <div className="relative z-10 flex flex-col items-center">
             <div className="p-3 bg-blue-100 rounded-xl mb-5 text-blue-600 group-hover:bg-blue-200 group-hover:text-blue-700 transition-all">
               <CreditCard size={36} />
@@ -266,7 +265,6 @@ export const BountiesClient = () => {
           onClick={() => setUserIntent('submit')}
           className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
         >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-purple-200 to-transparent opacity-30 rounded-bl-full" />
           <div className="relative z-10 flex flex-col items-center">
             <div className="p-3 bg-purple-100 rounded-xl mb-5 text-purple-600 group-hover:bg-purple-200 group-hover:text-purple-700 transition-all">
               <Code size={36} />
@@ -285,7 +283,6 @@ export const BountiesClient = () => {
           onClick={() => setUserIntent('browse')}
           className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
         >
-          <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-green-200 to-transparent opacity-30 rounded-bl-full" />
           <div className="relative z-10 flex flex-col items-center">
             <div className="p-3 bg-green-100 rounded-xl mb-5 text-green-600 group-hover:bg-green-200 group-hover:text-green-700 transition-all">
               <Compass size={36} />
