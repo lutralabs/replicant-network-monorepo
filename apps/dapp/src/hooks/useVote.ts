@@ -3,11 +3,8 @@ import { config } from '@/wagmi';
 import { useWallets } from '@privy-io/react-auth';
 import { useMutation } from '@tanstack/react-query';
 import { simulateContract, writeContract } from '@wagmi/core';
-import { toast } from 'react-toastify';
 import { ErrorToast } from '@/components/Toast/ErrorToast';
 import { SuccessToast } from '@/components/Toast/SuccessToast';
-import { InfoToast } from '@/components/Toast/InfoToast';
-import { PendingToast } from '@/components/Toast/PendingToast';
 
 export const useVote = () => {
   const { wallets } = useWallets();

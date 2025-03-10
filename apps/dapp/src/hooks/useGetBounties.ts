@@ -81,6 +81,8 @@ export function useGetBounties() {
     queryKey: ['bounties'],
     queryFn: fetchBounties,
     refetchInterval: 1000 * 60,
+    staleTime: 1000 * 5,
+    refetchOnWindowFocus: true,
   });
 
   // Return in the same format as the original hook for compatibility

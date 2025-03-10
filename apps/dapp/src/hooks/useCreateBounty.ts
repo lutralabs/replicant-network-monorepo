@@ -2,9 +2,7 @@ import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
 import { useWallets } from '@privy-io/react-auth';
 import { useMutation } from '@tanstack/react-query';
-import { readContract, simulateContract, writeContract } from '@wagmi/core';
-import { de } from 'chrono-node';
-import { RailSymbol } from 'lucide-react';
+import { simulateContract, writeContract } from '@wagmi/core';
 import { parseEther } from 'viem';
 
 export const useCreateBounty = () => {
@@ -64,7 +62,6 @@ export const useCreateBounty = () => {
         value: parseEther(amount.toString()),
         account: wallet.address,
       });
-      //console.log(result.result);
       const writeRes = await writeContract(config, result.request as any);
 
       fetch('/api/bounty', {

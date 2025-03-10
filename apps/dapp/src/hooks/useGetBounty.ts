@@ -168,6 +168,8 @@ export function useGetBounty(id: number) {
     queryFn: () => fetchBounty(id),
     enabled: id !== undefined && id !== null,
     refetchInterval: 1000 * 60, // Refetch every minute
+    staleTime: 1000 * 5,
+    refetchOnWindowFocus: true,
   });
 
   return {
