@@ -1,26 +1,42 @@
 import type { Bounty } from '@/hooks/useGetBounty';
 import React from 'react';
 import { formatEther } from 'viem';
+import { Card, CardContent } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export const Crowdfunders = ({ bounty }: { bounty: Bounty }) => {
   return (
-    <div className="bg-white max-w-[1050px] rounded-lg mt-4 p-4">
-      <div className="text-xl font-medium">Crowdfunders</div>
+    <Card className="border-0 shadow-sm overflow-hidden">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-medium">Crowdfunders</h3>
+          <span className="text-sm bg-gray-100 text-gray-700 px-3 py-1 rounded-full">
+            {bounty.funders.length} total
+          </span>
+        </div>
 
-      <ul className="w-full text-sm mt-8">
-        {bounty.funders.map((crowdfunder, index) => (
-          <li
-            key={crowdfunder.funder_id}
-            className={`flex justify-between ${index < bounty.funders.length - 1 && 'border-b-1 border-gray-200'} hover:bg-purple-50 p-4`}
-          >
-            <div className="font-medium">{crowdfunder.funder_id}</div>
-            <div className="text-end">
-              {formatEther(BigInt(crowdfunder.amount))}{' '}
-              <span className="font-semibold">MON</span>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+        <ScrollArea className="h-[400px] pr-4">
+          <div className="space-y-2">
+            {bounty.funders.map((crowdfunder) => (
+              <div
+                key={crowdfunder.funder_id}
+                className="flex items-center justify-between py-3 px-4 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div
+                  className="font-mono text-sm text-gray-900 truncate max-w-[60%]"
+                  title={crowdfunder.funder_id}
+                >
+                  {crowdfunder.funder_id}
+                </div>
+                <div className="text-right font-medium">
+                  {formatEther(BigInt(crowdfunder.amount))}{' '}
+                  <span className="text-gray-500">MON</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+      </CardContent>
+    </Card>
   );
 };

@@ -1,40 +1,41 @@
-import { ModelCard } from '@/components/ModelCard';
+'use client';
 
-export const metadata = {
-  title: 'Models',
+import { ModelCard } from '@/components/ModelCard';
+import { type BountyCard, useGetBounties } from '@/hooks/useGetBounties';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const findWinningSubmission = (bounty: BountyCard) => {
+  if (!bounty.submissions || bounty.submissions.length === 0) return '';
+
+  // Find submission with most votes
+  let winningSubmission = bounty.submissions[0];
+  let maxVotes = 0;
+
+  for (const submission of bounty.submissions) {
+    const voteCount = submission.votes ? submission.votes.length : 0;
+    if (voteCount > maxVotes) {
+      maxVotes = voteCount;
+      winningSubmission = submission;
+    }
+  }
+
+  return winningSubmission.id.split('0x')[1];
 };
 
 export default function Page() {
-  const MODELS = [
-    {
-      title: 'Crypto Logo Generator Crypto Logo Generator',
-      description:
-        'A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects. A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
-      bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
-      id: '1',
-    },
-    {
-      title: 'Crypto Logo Generator',
-      description:
-        'A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
-      bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
-      id: '2',
-    },
-    {
-      title: 'Crypto Logo Generator',
-      description:
-        'A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
-      bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
-      id: '3',
-    },
-    {
-      title: 'Crypto Logo Generator',
-      description:
-        'A model based on ChatGPT that generates images of Logos applicable to crypto projects.',
-      bountyOwnerAddress: '0x1845aa12F9CC5691a1Fb7848b063F599714ed201',
-      id: '4',
-    },
-  ];
+  const { bounties, isLoading, error } = useGetBounties();
+
+  console.log('bounties', bounties);
+
+  // Filter for finalized bounties with a winner
+  const models = bounties
+    .filter((bounty) => bounty.finalized && bounty.winner)
+    .map((bounty) => ({
+      title: bounty.title || 'Untitled Model',
+      description: bounty.description || 'No description available',
+      modelHash: findWinningSubmission(bounty),
+      id: bounty.id.toString(),
+    }));
 
   return (
     <div className="w-full">
@@ -45,11 +46,32 @@ export default function Page() {
           and Web3 developers through the crowdfunding campaigns.
         </div>
       </div>
-      <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
-        {MODELS.map((model) => (
-          <ModelCard key={model.id} {...model} />
-        ))}
-      </div>
+
+      {isLoading && (
+        <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="w-[350px]">
+              <Skeleton className="h-[200px] w-full rounded-md" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-12 text-red-500">
+          Failed to load models. Please try again later.
+        </div>
+      )}
+
+      {!isLoading && !error && (
+        <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
+          {models.length > 0 ? (
+            models.map((model) => <ModelCard key={model.id} {...model} />)
+          ) : (
+            <div className="text-gray-500">No completed models found yet.</div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

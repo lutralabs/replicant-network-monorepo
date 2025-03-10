@@ -23,14 +23,14 @@ export const GlowingStarsBackgroundCard = ({
         setMouseEnter(false);
       }}
       className={cn(
-        'bg-[linear-gradient(110deg,#ffffff_0.6%,#f8f8f8)] p-4 max-w-md h-[300px] w-[320px] rounded-xl border border-[#eaeaea]',
+        'bg-[linear-gradient(110deg,#333_0.6%,#222)] p-4 max-w-md max-h-[20rem] h-full w-full rounded-xl border border-[#eaeaea] dark:border-neutral-600',
         className
       )}
     >
       <div className="flex justify-center items-center">
         <Illustration mouseEnter={mouseEnter} />
       </div>
-      <div className="px-2 pb-6 h-[calc(100%-72px)]">{children}</div>
+      <div className="px-2 pb-6">{children}</div>
     </div>
   );
 };
@@ -43,7 +43,7 @@ export const GlowingStarsDescription = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <p className={cn('text-base text-gray-700 max-w-[16rem]', className)}>
+    <p className={cn('text-base text-white max-w-[16rem]', className)}>
       {children}
     </p>
   );
@@ -57,14 +57,14 @@ export const GlowingStarsTitle = ({
   children?: React.ReactNode;
 }) => {
   return (
-    <h2 className={cn('font-bold text-2xl text-gray-800', className)}>
+    <h2 className={cn('font-bold text-2xl text-[#eaeaea]', className)}>
       {children}
     </h2>
   );
 };
 
 export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
-  const stars = 72;
+  const stars = 108;
   const columns = 18;
 
   const [glowingStars, setGlowingStars] = useState<number[]>([]);
@@ -73,7 +73,7 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      highlightedStars.current = Array.from({ length: 3 }, () =>
+      highlightedStars.current = Array.from({ length: 5 }, () =>
         Math.floor(Math.random() * stars)
       );
       setGlowingStars([...highlightedStars.current]);
@@ -84,7 +84,7 @@ export const Illustration = ({ mouseEnter }: { mouseEnter: boolean }) => {
 
   return (
     <div
-      className="h-24 p-1 w-full"
+      className="h-48 p-1 w-full"
       style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
@@ -127,7 +127,7 @@ const Star = ({ isGlowing, delay }: { isGlowing: boolean; delay: number }) => {
       }}
       animate={{
         scale: isGlowing ? [1, 1.2, 2.5, 2.2, 1.5] : 1,
-        background: isGlowing ? '#9333ea' : '#c4c4c4',
+        background: isGlowing ? '#fff' : '#666',
       }}
       transition={{
         duration: 2,

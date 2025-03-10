@@ -1,6 +1,19 @@
 import { getCrowdfundings } from '@/lib/queries/getCrowdfundings';
 import { useQuery } from '@tanstack/react-query';
 
+type Submission = {
+  id: string;
+  creator_id: string;
+  timestamp: string;
+  totalVotesPower: string;
+  votes: {
+    id: string;
+    votePower: string;
+    voter_id: string;
+    timestamp: string;
+  }[];
+};
+
 export type BountyCard = {
   id: bigint;
   creator: string;
@@ -13,6 +26,8 @@ export type BountyCard = {
   numFunders: bigint;
   finalized: boolean;
   winner: string | null;
+  token: string;
+  submissions?: Submission[];
   // Supabase metadata
   title?: string;
   description?: string;
@@ -58,6 +73,8 @@ async function fetchBounties() {
         numFunders: BigInt(crowdfunding.numFunders || 0),
         finalized: crowdfunding.finalized,
         winner: crowdfunding.winner_id ?? null,
+        token: crowdfunding.token_id,
+        submissions: crowdfunding.submissions,
         ...(supabaseData && {
           title: supabaseData.title,
           description: supabaseData.description,
