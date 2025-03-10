@@ -72,7 +72,8 @@ const receiveTokens = [
   },
 ];
 
-export default function TokenSwap() {
+export default function TokenSwap({ mode }: { mode: 'buy' | 'sell' }) {
+  // TODO set pay and receive tokens lists based on mode
   const { authenticated } = usePrivy();
   const [payAmount, setPayAmount] = useState<string>('');
   const [receiveAmount, setReceiveAmount] = useState<string>('');

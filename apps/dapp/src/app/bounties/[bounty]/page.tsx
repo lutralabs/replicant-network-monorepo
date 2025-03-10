@@ -53,7 +53,13 @@ export default function Page() {
             <Submissions bounty={bounty.bounty} />
           </TabsContent>
         </Tabs>
-        <SwapCard />
+        {['crowdfunding', 'failed'].includes(bountyStatus(bounty.bounty)) && (
+          <SwapCard
+            mode={
+              bountyStatus(bounty.bounty) === 'crowdfunding' ? 'buy' : 'sell'
+            }
+          />
+        )}
       </div>
     </div>
   );
