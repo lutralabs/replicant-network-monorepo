@@ -335,7 +335,10 @@ export const BountyForm = () => {
       <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         {renderStepIndicator()}
 
-        <div className="relative" style={{ minHeight: '500px' }}>
+        <div
+          className="relative w-full px-4 sm:px-0"
+          style={{ minHeight: '500px' }}
+        >
           <AnimatePresence initial={false} custom={currentStep}>
             {currentStep === 0 && (
               <motion.div
@@ -346,9 +349,9 @@ export const BountyForm = () => {
                 animate="center"
                 exit="exit"
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="absolute w-full"
+                className="absolute inset-x-0"
               >
-                <Card className="border-2 shadow-md">
+                <Card className="border-2 shadow-md overflow-hidden">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-2xl font-bold">
                       Create New Bounty
@@ -358,7 +361,7 @@ export const BountyForm = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6 pb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <FormField
                         control={form.control}
                         name="title"
@@ -453,7 +456,7 @@ export const BountyForm = () => {
                       )}
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <FormItem>
                         <FormLabel>
                           <span className="text-red-500 mr-1">*</span>
@@ -520,9 +523,9 @@ export const BountyForm = () => {
                 animate="center"
                 exit="exit"
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="absolute w-full"
+                className="absolute inset-x-0"
               >
-                <Card className="border-2 shadow-md">
+                <Card className="border-2 shadow-md overflow-hidden">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
                       <Calendar className="h-5 w-5" />
@@ -534,7 +537,7 @@ export const BountyForm = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                       <FormField
                         control={form.control}
                         name="endOfFunding"
@@ -650,9 +653,9 @@ export const BountyForm = () => {
                 animate="center"
                 exit="exit"
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="absolute w-full"
+                className="absolute inset-x-0"
               >
-                <Card className="border-2 shadow-md">
+                <Card className="border-2 shadow-md overflow-hidden">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
                       <MessageSquare className="h-5 w-5" />
@@ -663,7 +666,7 @@ export const BountyForm = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6 pb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <FormField
                         control={form.control}
                         name="maxAmount"
@@ -719,9 +722,11 @@ export const BountyForm = () => {
                             />
                           </FormControl>
                           <FormDescription>
-                            <div className="flex w-full justify-between">
-                              Amount of MON you will contribute to the bounty.
-                              <div className="flex items-center gap-x-2">
+                            <div className="flex w-full flex-col sm:flex-row justify-between sm:items-center">
+                              <span>
+                                Amount of MON you will contribute to the bounty.
+                              </span>
+                              <div className="flex items-center gap-x-2 mt-2 sm:mt-0">
                                 {formattedBalance} MON
                                 <Button
                                   size="sm"
@@ -783,9 +788,9 @@ export const BountyForm = () => {
                 animate="center"
                 exit="exit"
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="absolute w-full"
+                className="absolute inset-x-0"
               >
-                <Card className="border-2 shadow-md">
+                <Card className="border-2 shadow-md overflow-hidden">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
                       <Mail className="h-5 w-5" />
@@ -796,7 +801,7 @@ export const BountyForm = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="pb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                       <FormField
                         control={form.control}
                         name="email"
