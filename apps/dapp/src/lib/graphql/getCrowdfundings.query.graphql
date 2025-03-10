@@ -11,5 +11,17 @@ query GetCrowdfundings {
     numSubmissions
     finalized
     winner_id
+    submissions {
+      creator_id
+      id
+      votes {
+        id
+        votePower
+        voter_id
+        timestamp
+      }
+      totalVotesPower
+      timestamp
+    }
   }
 }

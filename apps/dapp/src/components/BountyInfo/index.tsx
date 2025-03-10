@@ -3,139 +3,203 @@ import { bountyStatus } from '@/lib/utils';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 import { formatEther } from 'viem';
-import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import type { Bounty } from '@/hooks/useGetBounty';
 import { useWallets } from '@privy-io/react-auth';
+import { CalendarIcon, Users, Clock, FileText } from 'lucide-react';
+import { BountyPhasesStepper } from '../BountyPhasesStepper';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 export const BountyInfo = ({
   bounty,
   button,
+  showStepper = false,
 }: {
   bounty: Bounty;
   button?: boolean;
+  showStepper?: boolean;
 }) => {
   const { wallets } = useWallets();
   const wallet = wallets[0];
 
-  const variant = useMemo(() => {
-    switch (bountyStatus(bounty)) {
-      case 'submissions':
-        return 'blue';
-      case 'completed':
-        return 'secondary';
-      case 'voting':
-        return 'tertiary';
-      case 'crowdfunding':
-        return 'default';
-      case 'failed':
-        return 'destructive';
-      case 'stale':
-        return 'orange';
-    }
-  }, [bounty]);
+  // Helper function to format remaining time
+  const getTimeRemaining = (endTimestamp: number) => {
+    const now = Date.now();
+    const endTime = endTimestamp * 1000; // Convert to milliseconds
+    const remainingMs = endTime - now;
 
-  const isUserFunder = useMemo(() => {
-    if (!wallet) return false;
-    return bounty.funders.some(
-      (funder) =>
-        funder.funder_id.toLowerCase() === wallet.address.toLowerCase()
+    if (remainingMs <= 0) return 'Ended';
+
+    const days = Math.floor(remainingMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (remainingMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
     );
-  }, [bounty, wallet]);
 
-  const ctaText = useMemo(() => {
-    if (button === false) return;
-
-    switch (bountyStatus(bounty)) {
-      case 'submissions':
-        return 'Submit a Model';
-      case 'completed':
-        return 'Use Winning Model';
-      case 'voting':
-        return isUserFunder ? 'Vote' : undefined;
-      case 'crowdfunding':
-        return 'Fund Bounty';
-      case 'failed':
-        return undefined;
-      case 'stale':
-        return undefined;
+    if (days > 7) {
+      const weeks = Math.floor(days / 7);
+      return `${weeks} week${weeks !== 1 ? 's' : ''} left`;
     }
-  }, [bounty, isUserFunder]);
-
-  const ctaLink = useMemo(() => {
-    switch (bountyStatus(bounty)) {
-      case 'submissions':
-        return `/bounties/${bounty.id}/submit-model`;
-      case 'completed':
-        return `/models/${bounty.winner}`;
-      case 'voting':
-        return `/bounties/${bounty.id}/vote`;
-      case 'crowdfunding':
-        return undefined;
-      case 'failed':
-        return undefined;
-      case 'stale':
-        return undefined;
+    if (days > 0) {
+      return `${days} day${days !== 1 ? 's' : ''} left`;
     }
-  }, [bounty]);
+    return `${hours} hour${hours !== 1 ? 's' : ''} left`;
+  };
+
+  // Get the current phase end time
+  const getCurrentPhaseEndTime = () => {
+    const status = bountyStatus(bounty);
+
+    switch (status) {
+      case 'crowdfunding':
+        return bounty.fundingPhaseEnd;
+      case 'submissions':
+        return bounty.submissionPhaseEnd;
+      case 'voting':
+        return bounty.votingPhaseEnd;
+      default:
+        return 0;
+    }
+  };
+
+  const showSubmissionsCount = bountyStatus(bounty) !== 'crowdfunding';
+  const currentPhaseEndTime = getCurrentPhaseEndTime();
+  const timeRemaining = currentPhaseEndTime
+    ? getTimeRemaining(Number(currentPhaseEndTime))
+    : null;
+  const endDateFormatted = currentPhaseEndTime
+    ? new Date(Number(currentPhaseEndTime) * 1000).toLocaleString()
+    : null;
+
+  // Function to get bounty phases for the stepper
+  const getBountyPhases = (): {
+    id: string;
+    name: string;
+    description?: string;
+    status: 'complete' | 'current' | 'upcoming' | 'failed' | 'stale';
+  }[] => {
+    const status = bountyStatus(bounty);
+
+    const phases = [
+      {
+        id: 'crowdfunding',
+        name: 'Crowdfunding',
+        status:
+          status === 'crowdfunding'
+            ? ('current' as const)
+            : status === 'failed'
+              ? ('failed' as const)
+              : ('complete' as const),
+      },
+      {
+        id: 'submissions',
+        name: 'Submissions',
+        status:
+          status === 'submissions'
+            ? ('current' as const)
+            : status === 'failed'
+              ? ('upcoming' as const)
+              : status === 'crowdfunding'
+                ? ('upcoming' as const)
+                : ('complete' as const),
+      },
+      {
+        id: 'voting',
+        name: 'Voting',
+        status:
+          status === 'voting'
+            ? ('current' as const)
+            : status === 'failed' ||
+                status === 'completed' ||
+                status === 'stale'
+              ? ('complete' as const)
+              : ('upcoming' as const),
+      },
+      {
+        id: 'completed',
+        name: 'Completed',
+        status:
+          status === 'completed'
+            ? ('complete' as const)
+            : status === 'stale'
+              ? ('current' as const)
+              : status === 'failed'
+                ? ('failed' as const)
+                : ('upcoming' as const),
+      },
+    ];
+
+    return phases;
+  };
 
   return (
-    <div>
+    <div className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm">
       <div className="flex w-full items-center justify-between">
-        <div className="max-w-[500px]">
-          <div className="text-lg font-semibold">{bounty.title}</div>
-          <div className="text-md mt-2 text-gray-600">
-            Bounty for a Custom Model Created on Replicant Network
+        <div className="max-w-[70%]">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {bounty.title}
+          </h1>
+          <div className="flex items-center gap-4 mt-2 text-gray-600">
+            <div className="flex items-center gap-1 text-sm">
+              <Users className="h-4 w-4" />
+              <span>{bounty.numFunders} funders</span>
+            </div>
+            <div className="flex items-center gap-1 text-sm">
+              <CalendarIcon className="h-4 w-4" />
+              <span>
+                Created{' '}
+                {new Date(
+                  Number(bounty.created_at) * 1000
+                ).toLocaleDateString()}
+              </span>
+            </div>
+            {showSubmissionsCount && (
+              <div className="flex items-center gap-1 text-sm">
+                <FileText className="h-4 w-4" />
+                <span>{bounty.numSubmissions || 0} submissions</span>
+              </div>
+            )}
+            {timeRemaining && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-1 text-sm font-medium text-amber-600">
+                      <Clock className="h-4 w-4" />
+                      <span>{timeRemaining}</span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Ends on {endDateFormatted}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
           </div>
         </div>
-        {bountyStatus(bounty) === 'voting' && !isUserFunder ? (
-          <div className="text-gray-600">
-            You did not participate in this bounty
-          </div>
-        ) : (
-          ctaText &&
-          ctaLink &&
-          (ctaText === 'Fund Bounty' ? undefined : (
-            <Link href={ctaLink}>
-              <Button variant="cta-solid">{ctaText} &gt;</Button>
-            </Link>
-          ))
-        )}
-      </div>
-      <div className="mt-6 w-full">
-        <div className="flex justify-start gap-x-12 items-center text-gray-600">
-          <Badge className="text-md px-3 capitalize" variant={variant}>
-            {bountyStatus(bounty)}
-          </Badge>
-          <div>
-            Bounty:{' '}
-            <span className="text-md font-semibold text-black">
-              {formatEther(bounty.amountRaised)} MON
-            </span>
-          </div>
-          <div>
-            Crowdfunders:{' '}
-            <span className="text-md font-semibold text-black">
-              {bounty.numFunders}
-            </span>
-          </div>
-          <div>
-            Start Date:{' '}
-            <span className="text-md font-semibold text-black">
-              {new Date(Number(bounty.created_at) * 1000).toLocaleDateString()}
-            </span>
-          </div>
-          <div>
-            End Date:{' '}
-            <span className="text-md font-semibold text-black">
-              {new Date(
-                Number(bounty.votingPhaseEnd) * 1000
-              ).toLocaleDateString()}
-            </span>
+
+        <div className="flex items-center gap-3">
+          <div className="text-right">
+            <div className="text-sm text-gray-500">Bounty Amount</div>
+            <div className="text-2xl font-semibold text-primary">
+              {formatEther(bounty.amountRaised)}{' '}
+              <span className="text-base">MON</span>
+            </div>
           </div>
         </div>
-        <div className="w-full h-[1px] mt-1 bg-gray-300" />
       </div>
+
+      {showStepper && (
+        <div className="mt-6 pt-6 border-t border-gray-100">
+          <BountyPhasesStepper
+            currentPhase={bountyStatus(bounty)}
+            phases={getBountyPhases()}
+          />
+        </div>
+      )}
     </div>
   );
 };

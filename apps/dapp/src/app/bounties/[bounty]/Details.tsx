@@ -1,65 +1,106 @@
 import type { Bounty } from '@/hooks/useGetBounty';
 import React from 'react';
 import { formatEther } from 'viem';
+import { Calendar, Code, Clock, Users, Wallet, CoinsIcon } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 
 export const Details = ({ bounty }: { bounty: Bounty }) => {
-  return (
-    <div className="bg-white max-w-[1050px] rounded-lg mt-4 p-4">
-      <div className="text-xl font-medium">Details</div>
+  const detailItems = [
+    {
+      label: 'Type of Model',
+      value: 'Image Generation',
+      icon: <Code className="h-5 w-5 text-gray-500" />,
+    },
+    {
+      label: 'Requested Base Model',
+      value: 'Solar Eclipse',
+      icon: <Code className="h-5 w-5 text-gray-500" />,
+    },
+    {
+      label: 'Token Address',
+      value: bounty.token,
+      icon: <Wallet className="h-5 w-5 text-gray-500" />,
+      isAddress: true,
+    },
+    {
+      label: 'Max Bounty Amount',
+      value: `${bounty.raiseCap ? 'Unlimited' : formatEther(bounty.raiseCap)} MON`,
+      icon: <CoinsIcon className="h-5 w-5 text-gray-500" />,
+    },
+    {
+      label: 'Creator Deposit',
+      value: `${formatEther(
+        BigInt(
+          bounty.funders?.find((funder) => funder.funder_id === bounty.creator)
+            ?.amount
+        ) ?? BigInt(0)
+      )} MON`,
+      icon: <CoinsIcon className="h-5 w-5 text-gray-500" />,
+    },
+    {
+      label: 'Crowdfunding Ends',
+      value: new Date(Number(bounty.fundingPhaseEnd) * 1000).toLocaleDateString(
+        undefined,
+        {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }
+      ),
+      icon: <Calendar className="h-5 w-5 text-gray-500" />,
+    },
+    {
+      label: 'Submissions End',
+      value: new Date(
+        Number(bounty.submissionPhaseEnd) * 1000
+      ).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
+      icon: <Clock className="h-5 w-5 text-gray-500" />,
+    },
+    {
+      label: 'Voting Ends',
+      value: new Date(Number(bounty.votingPhaseEnd) * 1000).toLocaleDateString(
+        undefined,
+        {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }
+      ),
+      icon: <Users className="h-5 w-5 text-gray-500" />,
+    },
+  ];
 
-      <ul className="w-full text-sm mt-8">
-        <li className="flex justify-between border-b-1 hover:bg-purple-50  border-gray-200 p-4">
-          <div className="font-medium">Type of Model</div>
-          <div className="text-end">Image Generation</div>
-        </li>
-        <li className="flex justify-between border-b-1 hover:bg-purple-50  border-gray-200 p-4">
-          <div className="font-medium">Requested Base Model</div>
-          <div className="text-end">Solar Eclipse</div>
-        </li>
-        <li className="flex justify-between border-b-1 hover:bg-purple-50 border-gray-200 p-4">
-          <div className="font-medium">Token Address</div>
-          <div className="text-end text-purple-600 underline">
-            {bounty.token}
-          </div>
-        </li>
-        <li className="flex justify-between border-b-1 hover:bg-purple-50 border-gray-200 p-4">
-          <div className="font-medium">Max Bounty Amount</div>
-          <div className="text-end">
-            {formatEther(bounty.raiseCap) ?? 'Unlimited'}
-          </div>
-        </li>
-        <li className="flex justify-between border-b-1 hover:bg-purple-50 border-gray-200 p-4">
-          <div className="font-medium">Creator Deposit</div>
-          <div className="text-end">
-            {formatEther(
-              BigInt(
-                bounty.funders?.find(
-                  (funder) => funder.funder_id === bounty.creator
-                )?.amount
-              ) ?? BigInt(0)
-            )}{' '}
-            MON
-          </div>
-        </li>
-        <li className="flex justify-between border-b-1 hover:bg-purple-50 border-gray-200 p-4">
-          <div className="font-medium">Crowdfunding Period</div>
-          <div className="text-end">
-            {new Date(Number(bounty.fundingPhaseEnd) * 1000).toUTCString()}
-          </div>
-        </li>
-        <li className="flex justify-between border-b-1 hover:bg-purple-50 border-gray-200 p-4">
-          <div className="font-medium">Development Period</div>
-          <div className="text-end">
-            {new Date(Number(bounty.submissionPhaseEnd) * 1000).toUTCString()}
-          </div>
-        </li>
-        <li className="flex justify-between p-4 hover:bg-purple-50">
-          <div className="font-medium">Voting Period</div>
-          <div className="text-end">
-            {new Date(Number(bounty.votingPhaseEnd) * 1000).toUTCString()}
-          </div>
-        </li>
-      </ul>
-    </div>
+  return (
+    <Card className="border-0 shadow-sm">
+      <CardContent className="p-6">
+        <h3 className="text-xl font-medium mb-6">Details</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {detailItems.map((item, i) => (
+            <div
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+              key={i}
+              className="flex items-start space-x-4 p-4 rounded-lg bg-gray-50 transition-all hover:bg-gray-100"
+            >
+              <div className="mt-0.5">{item.icon}</div>
+              <div>
+                <div className="text-sm text-gray-500">{item.label}</div>
+                {item.isAddress ? (
+                  <div className="font-mono text-sm text-purple-600 break-all">
+                    {item.value}
+                  </div>
+                ) : (
+                  <div className="font-medium">{item.value}</div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
   );
 };

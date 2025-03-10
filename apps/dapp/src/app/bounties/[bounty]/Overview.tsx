@@ -1,28 +1,26 @@
 import type { Bounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
 import React from 'react';
+import { Trophy } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const Overview = ({ bounty }: { bounty: Bounty }) => {
+  const status = bountyStatus(bounty);
+
   return (
-    <div className="bg-white max-w-[1050px] rounded-lg mt-4 p-4">
-      {bountyStatus(bounty) === 'completed' && (
-        <div className="flex gap-x-2 items-center mb-12 w-fit p-4 rounded-md text-white bg-green-600">
-          <div className="text-xl font-medium">Winning Model: </div>
-          <div>{bounty.winner}</div>
-        </div>
-      )}
-
-      <div className="text-xl font-medium">Overview</div>
-
-      <p className="mt-4 text-gray-600">{bounty.description}</p>
-
-      {/* <div className="text-xl font-medium mt-12">Expected Inputs</div>
-
-      <p className="mt-4 text-gray-600">{bounty.expectedInputs}</p>
-
-      <div className="text-xl font-medium mt-12">Expected Outputs</div>
-
-      <p className="mt-4 text-gray-600">{bounty.expectedOutput}</p> */}
-    </div>
+    <>
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xl font-medium">Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="p-4">
+          <div className="prose max-w-none">
+            <p className="text-gray-700 leading-relaxed">
+              {bounty.description}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
 };
