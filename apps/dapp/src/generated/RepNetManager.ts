@@ -609,6 +609,14 @@ export const repNetManagerAbi = [
   {
     type: 'error',
     inputs: [
+      { name: 'available', internalType: 'uint256', type: 'uint256' },
+      { name: 'required', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'InsufficientTokenBalance',
+  },
+  {
+    type: 'error',
+    inputs: [
       { name: 'duration', internalType: 'uint256', type: 'uint256' },
       { name: 'minDuration', internalType: 'uint256', type: 'uint256' },
     ],
