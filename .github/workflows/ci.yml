@@ -14,6 +14,8 @@ permissions:
 
 env:
   FOUNDRY_PROFILE: ci
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  SUPABASE_API_KEY: ${{ secrets.SUPABASE_API_KEY }}
 jobs:
   main:
     name: Main CI
