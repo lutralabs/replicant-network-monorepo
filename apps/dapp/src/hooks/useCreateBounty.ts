@@ -24,6 +24,7 @@ export const useCreateBounty = () => {
       discord: string | null;
       email: string | null;
       telegram: string | null;
+      token_image_url?: string | null;
     }) => {
       const {
         amount,
@@ -38,6 +39,7 @@ export const useCreateBounty = () => {
         email,
         discord,
         telegram,
+        token_image_url,
       } = variables;
 
       if (!wallet || !wallet.address) return null;
@@ -73,6 +75,7 @@ export const useCreateBounty = () => {
           discord,
           email,
           telegram,
+          token_image_url,
         }),
       });
 

@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useWallets } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBalance } from 'wagmi';
 import { z } from 'zod';
@@ -51,9 +51,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useImageUpload } from '@/hooks/useImageUpload';
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -70,6 +69,7 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.',
   }),
+  tokenImageUrl: z.string().optional(),
   email: z
     .string()
     .min(2, {
@@ -139,6 +139,15 @@ export const BountyForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const { wallets } = useWallets();
   const wallet = wallets[0]; // Replace this with your desired wallet
+  const [tokenImageUrl, setTokenImageUrl] = useState<string | null>(null);
+  const {
+    previewUrl,
+    fileInputRef,
+    selectedFile,
+    handleThumbnailClick,
+    handleFileChange,
+    handleRemove,
+  } = useImageUpload();
 
   const balance = useBalance({
     address: (wallet?.address ?? '0x0') as `0x${string}`,
@@ -158,6 +167,7 @@ export const BountyForm = () => {
       title: '',
       symbol: '',
       description: '',
+      tokenImageUrl: undefined,
       email: undefined,
       discord: undefined,
       telegram: undefined,
@@ -169,6 +179,15 @@ export const BountyForm = () => {
       contribution: 0.001,
     },
   });
+
+  // Add a hidden form field for the token image URL
+  useEffect(() => {
+    if (previewUrl) {
+      form.setValue('tokenImageUrl', previewUrl);
+    } else {
+      form.setValue('tokenImageUrl', undefined);
+    }
+  }, [previewUrl, form]);
 
   // Function to go to the next step
   const nextStep = async () => {
@@ -224,6 +243,49 @@ export const BountyForm = () => {
     }
   };
 
+  // Function to upload image to Supabase
+  const uploadImageToSupabase = async (file: File): Promise<string | null> => {
+    try {
+      console.log('Preparing to upload image to Supabase', {
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+      });
+
+      const formData = new FormData();
+      formData.append('file', file);
+      console.log('FormData created with file');
+
+      console.log('Sending request to /api/uploadImage');
+      const response = await fetch('/api/uploadImage', {
+        method: 'POST',
+        body: formData,
+      });
+
+      console.log('Response received', {
+        status: response.status,
+        ok: response.ok,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Upload failed with response:', errorText);
+        throw new Error(`Failed to upload image: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Upload successful, received URL:', data.url);
+      return data.url;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      ErrorToast({
+        error:
+          error instanceof Error ? error.message : 'Failed to upload image',
+      });
+      return null;
+    }
+  };
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -243,6 +305,28 @@ export const BountyForm = () => {
     setIsCreating(true);
 
     try {
+      // Upload image if available
+      let imageUrl = values.tokenImageUrl;
+
+      console.log('Selected file in form submission:', selectedFile);
+
+      // Use selectedFile from the hook instead of accessing through fileInputRef
+      if (selectedFile) {
+        console.log('Uploading image to Supabase');
+        const uploadedUrl = await uploadImageToSupabase(selectedFile);
+        console.log('Uploaded image URL:', uploadedUrl);
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl;
+          console.log('Setting image URL to:', imageUrl);
+        } else {
+          console.error('Failed to get URL from upload');
+        }
+      } else {
+        console.log('No file selected for upload');
+      }
+
+      console.log('Creating bounty with image URL:', imageUrl);
+
       createBounty(
         {
           amount: values.contribution,
@@ -259,6 +343,7 @@ export const BountyForm = () => {
           discord: values.discord,
           email: values.email,
           telegram: values.telegram,
+          token_image_url: imageUrl,
         },
         {
           onSuccess: () => {
@@ -427,6 +512,67 @@ export const BountyForm = () => {
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
+
+                    <FormField
+                      control={form.control}
+                      name="tokenImageUrl"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel className="block mb-2">
+                            Token Image
+                          </FormLabel>
+                          <div className="flex items-center gap-4">
+                            <div
+                              onClick={handleThumbnailClick}
+                              className="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:border-purple-500 transition-colors"
+                            >
+                              {previewUrl ? (
+                                <img
+                                  src={previewUrl}
+                                  alt="Token preview"
+                                  className="w-full h-full object-cover rounded-lg"
+                                />
+                              ) : (
+                                <span className="text-gray-500 text-center">
+                                  + Add Image
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex flex-col">
+                              <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={(e) => {
+                                  handleFileChange(e);
+                                  field.onChange(previewUrl);
+                                }}
+                                accept="image/*"
+                                className="hidden"
+                              />
+                              <FormDescription>
+                                Upload an image for your token (optional).
+                                Recommended size: 512x512px.
+                              </FormDescription>
+                              {previewUrl && (
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    handleRemove();
+                                    field.onChange(undefined);
+                                  }}
+                                  className="mt-2 w-fit"
+                                >
+                                  Remove
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
                     <FormField
                       control={form.control}
