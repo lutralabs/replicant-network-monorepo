@@ -31,5 +31,8 @@
   "git.detectSubmodules": false,
   "[dockerfile]": {
     "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
   }
 }
