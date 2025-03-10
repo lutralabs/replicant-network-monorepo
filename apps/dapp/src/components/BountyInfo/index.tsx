@@ -94,9 +94,8 @@ export const BountyInfo = ({
           </div>
         ) : (
           ctaText &&
-          (ctaText === 'Fund Bounty' ? (
-            <FundBountyDialog bounty={bounty} />
-          ) : (
+          ctaLink &&
+          (ctaText === 'Fund Bounty' ? undefined : (
             <Link href={ctaLink}>
               <Button variant="cta-solid">{ctaText} &gt;</Button>
             </Link>

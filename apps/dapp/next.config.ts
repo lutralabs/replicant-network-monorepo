@@ -1,3 +1,5 @@
+// @ts-check
+
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
@@ -28,8 +30,16 @@ const nextConfig: NextConfig = {
     // Modify the file loader rule to ignore *.svg, since we have it handled now.
     fileLoaderRule.exclude = /\.svg$/i;
 
+    config.resolve.fallback = {
+      url: false,
+      http: false,
+      https: false,
+      crypto: false,
+    };
+
     return config;
   },
+  // transpilePackages: ['@uniswap/widgets'],
   reactStrictMode: true,
   env: {
     PRIVY_APPID: 'cm7j352q103r4wwk6v2liowrm',
@@ -48,6 +58,18 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: '*.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.ipfs.io',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cryptologos.cc',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.monad.xyz',
       },
     ],
   },
