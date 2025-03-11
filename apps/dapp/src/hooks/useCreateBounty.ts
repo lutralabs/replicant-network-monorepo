@@ -81,13 +81,8 @@ export const useCreateBounty = () => {
 
       return writeRes;
     },
-    onSuccess: (data) => {
-      if (data) {
-        console.log('Success. Storing Metadata...');
-      }
-    },
     onError: (error) => {
-      console.log('error', error);
+      console.error('error', error);
     },
   });
 };

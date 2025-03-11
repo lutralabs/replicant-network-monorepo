@@ -32,7 +32,7 @@ export default function Page() {
   const params = useParams();
 
   const modelHash = params?.slug[0] || '';
-  console.log('modelHash:', modelHash);
+
   // Use the dedicated hook for fetching a single bounty if we have an ID
   const {
     bounties,

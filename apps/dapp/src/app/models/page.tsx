@@ -25,8 +25,6 @@ const findWinningSubmission = (bounty: BountyCard) => {
 export default function Page() {
   const { bounties, isLoading, error } = useGetBounties();
 
-  console.log('bounties', bounties);
-
   // Filter for finalized bounties with a winner
   const models = bounties
     .filter((bounty) => bounty.finalized && bounty.winner)

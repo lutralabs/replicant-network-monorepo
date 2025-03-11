@@ -38,8 +38,6 @@ export async function POST(request: NextRequest) {
   const bountyId = requestBody.bountyId;
   const models = requestBody.models;
 
-  console.log(prompt, signedMessage, address, bountyId, models);
-
   // 2. Contract call -> isVotingPhase
   try {
     const phase = await publicClient.readContract({
@@ -69,8 +67,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  console.log('valid phase');
-
   // 3. Verify SIWE -> Get verified Address?
   const isValidSignature = await verifyMessage(config, {
     address,
@@ -87,7 +83,6 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  console.log('valid signature');
   // 4. Contract call (Address, crowdfund ID) -> canTest
   try {
     // Using hasDeposited function to directly check if the address has funded this bounty
@@ -117,8 +112,6 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-
-  console.log('valid tester');
 
   // 5. DB Call (Address, crowdfund ID) -> Has already tested?
   try {

@@ -6,7 +6,6 @@ const supabase = supabaseServiceRoleClient();
 
 export async function POST(request: NextRequest) {
   try {
-    console.log('Received image upload request');
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
@@ -15,22 +14,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    console.log(
-      `File received: ${file.name}, type: ${file.type}, size: ${file.size} bytes`
-    );
-
     // Generate a unique filename
     const fileExtension = file.name.split('.').pop();
     const fileName = `${uuidv4()}.${fileExtension}`;
-    console.log(`Generated filename: ${fileName}`);
 
     // Convert file to ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
-    console.log(`Converted file to buffer of length: ${buffer.length}`);
 
     // Upload to Supabase
-    console.log('Uploading to Supabase bucket: token-images');
     const { data, error } = await supabase.storage
       .from('token-images')
       .upload(fileName, buffer, {
@@ -43,14 +35,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    console.log('File uploaded successfully to Supabase');
-
     // Get the public URL
     const {
       data: { publicUrl },
     } = supabase.storage.from('token-images').getPublicUrl(fileName);
-
-    console.log(`Generated public URL: ${publicUrl}`);
 
     return NextResponse.json({ url: publicUrl });
   } catch (error) {

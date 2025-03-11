@@ -82,7 +82,6 @@ export const VoteClient = () => {
   }, [bounty, bountyLoading]);
 
   async function fetchTestImages(bountyId: string) {
-    console.log('fetching test images');
     setLoading(true);
     setError(null);
     try {

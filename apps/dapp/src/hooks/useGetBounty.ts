@@ -64,7 +64,6 @@ async function fetchBounty(id: number): Promise<Bounty | null> {
     throw new Error('Bounty ID is required');
   }
 
-  console.log(`Fetching bounty with ID: ${id}`);
   const bountyId = BigInt(id).toString();
 
   try {

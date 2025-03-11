@@ -15,7 +15,7 @@ export function DynamicImage({ src, alt, width, height }) {
           setLoading(false);
         }
       } catch (error) {
-        console.log('Waiting for image generation...');
+        console.error('Waiting for image generation...');
       }
     };
     setLoading(true);

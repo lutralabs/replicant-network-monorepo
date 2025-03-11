@@ -28,14 +28,12 @@ export const useFundBounty = () => {
         value: parseEther(amount.toString()),
         account: wallet.address,
       });
-      //console.log(result.result);
       const writeRes = await writeContract(config, result.request as any);
       return writeRes;
     },
     onSuccess: (data) => {
       if (data) {
         SuccessToast({ message: 'Bounty funded successfully' });
-        console.log('Success.');
       }
     },
     onError: (error) => {
@@ -44,7 +42,7 @@ export const useFundBounty = () => {
           ? 'User rejected the request'
           : 'Error funding bounty',
       });
-      console.log('error', error);
+      console.error('error', error);
     },
   });
 };

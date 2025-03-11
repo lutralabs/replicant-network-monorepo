@@ -97,8 +97,6 @@ export async function POST(request: NextRequest) {
       submitted_at: new Date().toISOString(),
     };
 
-    console.log('Storing model submission in DB:', modelData);
-
     // Insert new model submission into the database
     const { data, error } = await supabase
       .from('submitted_models')

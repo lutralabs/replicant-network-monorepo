@@ -38,7 +38,11 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     const requiredFields = ['id', 'title', 'description'];
     for (const field of requiredFields) {
-      if (!requestBody[field]) {
+      if (
+        requestBody[field] === null ||
+        requestBody[field] === undefined ||
+        requestBody[field] === ''
+      ) {
         return Response.json(
           { error: `Field '${field}' is required` },
           { status: 400 }
@@ -59,8 +63,6 @@ export async function POST(request: NextRequest) {
       telegram: requestBody.telegram || null,
       token_image_url: requestBody.token_image_url || null,
     };
-
-    console.log('storing in DB', bountyData);
 
     // Insert new bounty into the database
     const { data, error } = await supabase

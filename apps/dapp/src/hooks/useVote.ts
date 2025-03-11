@@ -46,7 +46,6 @@ export const useVote = () => {
       if (data) {
         // Show success toast
         SuccessToast({ message: 'Your vote has been submitted successfully!' });
-        console.log('Vote submitted successfully:', data);
       }
     },
     onError: (error: Error) => {

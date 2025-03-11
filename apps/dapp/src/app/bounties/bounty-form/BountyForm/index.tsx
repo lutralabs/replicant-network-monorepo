@@ -246,25 +246,12 @@ export const BountyForm = () => {
   // Function to upload image to Supabase
   const uploadImageToSupabase = async (file: File): Promise<string | null> => {
     try {
-      console.log('Preparing to upload image to Supabase', {
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-      });
-
       const formData = new FormData();
       formData.append('file', file);
-      console.log('FormData created with file');
 
-      console.log('Sending request to /api/uploadImage');
       const response = await fetch('/api/uploadImage', {
         method: 'POST',
         body: formData,
-      });
-
-      console.log('Response received', {
-        status: response.status,
-        ok: response.ok,
       });
 
       if (!response.ok) {
@@ -274,7 +261,7 @@ export const BountyForm = () => {
       }
 
       const data = await response.json();
-      console.log('Upload successful, received URL:', data.url);
+
       return data.url;
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -290,7 +277,6 @@ export const BountyForm = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
 
     if (
       values.endOfFunding >= values.endOfSubmissions ||
@@ -308,24 +294,15 @@ export const BountyForm = () => {
       // Upload image if available
       let imageUrl = values.tokenImageUrl;
 
-      console.log('Selected file in form submission:', selectedFile);
-
       // Use selectedFile from the hook instead of accessing through fileInputRef
       if (selectedFile) {
-        console.log('Uploading image to Supabase');
         const uploadedUrl = await uploadImageToSupabase(selectedFile);
-        console.log('Uploaded image URL:', uploadedUrl);
         if (uploadedUrl) {
           imageUrl = uploadedUrl;
-          console.log('Setting image URL to:', imageUrl);
         } else {
           console.error('Failed to get URL from upload');
         }
-      } else {
-        console.log('No file selected for upload');
       }
-
-      console.log('Creating bounty with image URL:', imageUrl);
 
       createBounty(
         {

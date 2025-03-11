@@ -24,17 +24,11 @@ export const useWithdrawFunding = () => {
         args: [id],
         account: wallet.address,
       });
-      //console.log(result.result);
       const writeRes = await writeContract(config, result.request as any);
       return writeRes;
     },
-    onSuccess: (data) => {
-      if (data) {
-        console.log('Success.');
-      }
-    },
     onError: (error) => {
-      console.log('error', error);
+      console.error('error', error);
     },
   });
 };

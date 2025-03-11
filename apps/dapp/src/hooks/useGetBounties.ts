@@ -41,7 +41,6 @@ export type BountyCard = {
 async function fetchBounties() {
   // Get crowdfundings from GraphQL
   const crowdfundings = await getCrowdfundings();
-  console.log(`Fetched ${crowdfundings.length} bounties from GraphQL`);
 
   // Transform GraphQL data to match BountyCard type
   const bountiesData = await Promise.all(

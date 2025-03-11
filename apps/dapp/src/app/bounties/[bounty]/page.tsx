@@ -22,7 +22,6 @@ export default function Page() {
   const slug = pathNames[pathNames.length - 1];
 
   const { bounty, isLoading } = useGetBounty(Number(slug));
-  console.log('BNTY', bounty);
   const { wallets } = useWallets();
   const wallet = wallets?.[0];
 
