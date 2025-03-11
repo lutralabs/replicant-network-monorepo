@@ -256,6 +256,7 @@ export const BountiesClient = () => {
       <div className="absolute -top-10 -right-10 w-64 h-64 bg-green-100/20 rounded-full blur-3xl -z-10" />
       <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-100/20 rounded-full blur-3xl -z-10" />
 
+
       <motion.h2
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -349,6 +350,7 @@ export const BountiesClient = () => {
             Create Your Own Bounty
           </Button>
         </Link>
+
       </motion.div>
     </motion.div>
   );
