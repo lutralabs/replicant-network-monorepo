@@ -3,6 +3,7 @@ import React from 'react';
 import { formatEther } from 'viem';
 import { Calendar, Code, Clock, Users, Wallet, CoinsIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import Link from 'next/link';
 
 export const Details = ({ bounty }: { bounty: Bounty }) => {
   const detailItems = [
@@ -18,7 +19,15 @@ export const Details = ({ bounty }: { bounty: Bounty }) => {
     },
     {
       label: 'Token Address',
-      value: bounty.token,
+      value: (
+        <Link
+          href={`https://testnet.monadexplorer.com/token/${bounty.token}`}
+          target="_blank"
+          className="text-purple-600 hover:underline font-semibold"
+        >
+          {bounty.token}
+        </Link>
+      ),
       icon: <Wallet className="h-5 w-5 text-gray-500" />,
       isAddress: true,
     },
@@ -35,6 +44,23 @@ export const Details = ({ bounty }: { bounty: Bounty }) => {
             ?.amount
         ) ?? BigInt(0)
       )} MON`,
+      icon: <CoinsIcon className="h-5 w-5 text-gray-500" />,
+    },
+    {
+      label: 'Date of Creation',
+      value: new Date(Number(bounty.created_at) * 1000).toLocaleDateString(
+        undefined,
+        {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }
+      ),
+      icon: <Calendar className="h-5 w-5 text-gray-500" />,
+    },
+    {
+      label: 'Developer Token Share',
+      value: `${bounty.developerFeePercentage.toString() ?? 0}%`,
       icon: <CoinsIcon className="h-5 w-5 text-gray-500" />,
     },
     {

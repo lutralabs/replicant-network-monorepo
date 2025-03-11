@@ -211,11 +211,11 @@ export default function SwapCard({
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto h-fit bg-white shadow-lg">
+    <Card className="w-full max-w-md mx-auto h-fit bg-white border-0 shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between p-4 pb-0">
         <div className="flex items-center gap-4">
-          <Repeat className="h-6 w-6 text-purple-500" />
-          <h2 className="text-xl font-semibold">Buy model token</h2>
+          <Repeat className="h-5 w-5 text-purple-500" />
+          <h2 className="text-md font-semibold">Buy Model Tokens</h2>
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-0">
@@ -524,7 +524,7 @@ export default function SwapCard({
 
         {/* Connect wallet button */}
         <Button
-          className="w-full mt-4 bg-purple-500 hover:bg-purple-400 text-white py-6 rounded-xl text-lg font-medium"
+          className="w-full mt-4 bg-purple-600 hover:bg-purple-500 text-white py-6 rounded-xl text-lg font-medium"
           onClick={handleActionButtonClick}
           disabled={
             !ready ||

@@ -137,7 +137,7 @@ export const BountyInfo = ({
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm">
+    <div className="bg-white rounded-lg p-6 shadow-sm">
       <div className="flex w-full items-center justify-between">
         <div className="max-w-[70%]">
           <h1 className="text-2xl font-semibold tracking-tight">
@@ -193,7 +193,7 @@ export const BountyInfo = ({
       </div>
 
       {showStepper && (
-        <div className="mt-6 pt-6 border-t border-gray-100">
+        <div className="mt-6 pt-6 border-t-2 border-gray-200/80">
           <BountyPhasesStepper
             currentPhase={bountyStatus(bounty)}
             phases={getBountyPhases()}

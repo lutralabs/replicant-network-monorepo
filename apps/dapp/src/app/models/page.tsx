@@ -3,6 +3,7 @@
 import { ModelCard } from '@/components/ModelCard';
 import { type BountyCard, useGetBounties } from '@/hooks/useGetBounties';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 
 const findWinningSubmission = (bounty: BountyCard) => {
   if (!bounty.submissions || bounty.submissions.length === 0) return '';
@@ -66,7 +67,19 @@ export default function Page() {
           {models.length > 0 ? (
             models.map((model) => <ModelCard key={model.id} {...model} />)
           ) : (
-            <div className="text-gray-500">No completed models found yet.</div>
+            <div className="w-full text-center p-12 border border-dashed rounded-lg">
+              <p className="text-gray-500">No completed models found yet.</p>
+              <p className="text-gray-400 mt-2">
+                Models will appear here once bounties have been finalized with
+                winning submissions.
+              </p>
+              <Link
+                href="/bounties"
+                className="text-purple-600 hover:text-purple-800 underline mt-6 inline-block"
+              >
+                Browse active bounties
+              </Link>
+            </div>
           )}
         </div>
       )}
