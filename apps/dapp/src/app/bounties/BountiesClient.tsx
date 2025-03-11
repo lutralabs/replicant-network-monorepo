@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import { BountyCard } from '@/components/BountyCard';
 import { Button } from '@/components/ui/button';
@@ -32,9 +33,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-// Skeleton component for loading state using UI Skeleton component
+// Skeleton component with Framer Motion
 const BountyCardSkeleton = () => (
-  <div className="w-[350px] h-[300px] rounded-lg border border-gray-200 p-6">
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="w-[350px] h-[300px] rounded-lg border border-gray-200 p-6"
+  >
     <Skeleton className="w-3/4 h-5 mb-4" />
     <Skeleton className="w-1/2 h-4 mb-6" />
     <Skeleton className="w-full h-24 mb-4" />
@@ -42,11 +48,11 @@ const BountyCardSkeleton = () => (
       <Skeleton className="w-1/3 h-8" />
       <Skeleton className="w-1/4 h-8" />
     </div>
-  </div>
+  </motion.div>
 );
 
 export const BountiesClient = () => {
-  const bounties = useGetBounties();
+  const { bounties, isLoading, error } = useGetBounties();
   const [showBadgeInfo, setShowBadgeInfo] = useState(false);
   const [userIntent, setUserIntent] = useState<
     'none' | 'fund' | 'submit' | 'browse'
@@ -57,11 +63,16 @@ export const BountiesClient = () => {
   const [activeTab, setActiveTab] = useState<string>('active');
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
 
-  // Filter bounties for each tab
-  const activeBounties =
-    bounties.bounties?.filter((bounty) => bounty.finalized === false) || [];
-  const pastBounties =
-    bounties.bounties?.filter((bounty) => bounty.finalized === true) || [];
+  // Filter bounties for each tab - using useMemo to prevent unnecessary recalculations
+  const activeBounties = useMemo(
+    () => bounties?.filter((bounty) => bounty.finalized === false) || [],
+    [bounties]
+  );
+
+  const pastBounties = useMemo(
+    () => bounties?.filter((bounty) => bounty.finalized === true) || [],
+    [bounties]
+  );
 
   // Get available status filters based on active tab
   const getAvailableFilters = () => {
@@ -234,94 +245,188 @@ export const BountiesClient = () => {
 
   // Intent selection UI
   const IntentSelectionUI = () => (
-    <div className="flex flex-col items-center justify-center py-16 relative">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col items-center justify-center py-16 relative"
+    >
       {/* Decorative background elements */}
       <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-blue-50/50 to-transparent -z-10" />
       <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-purple-50/30 to-transparent -z-10" />
       <div className="absolute -top-10 -right-10 w-64 h-64 bg-green-100/20 rounded-full blur-3xl -z-10" />
       <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-100/20 rounded-full blur-3xl -z-10" />
 
-      <h2 className="text-4xl font-bold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-purple-700 animate-in fade-in slide-in-from-bottom-3 duration-700">
+
+      <motion.h2
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="text-4xl font-bold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-purple-700"
+      >
         What would you like to do?
-      </h2>
-      <p className="text-gray-600 text-center mb-16 max-w-2xl text-lg animate-in fade-in slide-in-from-bottom-3 duration-700 delay-150">
+      </motion.h2>
+
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="text-gray-600 text-center mb-16 max-w-2xl text-lg"
+      >
         Select an option below to find the most relevant bounties for your needs
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl animate-in fade-in slide-in-from-bottom-3 duration-700 delay-300">
-        <button
-          type="button"
-          onClick={() => setUserIntent('fund')}
-          className="group hover:cursor-pointer p-0 rounded-2xl transition-all flex flex-col items-center overflow-hidden"
-        >
-          <div className="w-full h-full p-8 bg-white border border-blue-100 rounded-2xl relative overflow-hidden group-hover:shadow-xl group-hover:shadow-blue-100/50 group-hover:-translate-y-1 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-6 text-white shadow-lg shadow-blue-200 group-hover:shadow-blue-300 group-hover:scale-110 transition-all duration-300">
-                <Wallet size={32} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-xl font-semibold mb-4 text-blue-900 group-hover:text-blue-700 transition-colors">
-                Fund Model Bounties
-              </h3>
-              <p className="text-gray-600 text-center leading-relaxed">
-                Contribute to exciting bounties, help bring innovative ideas to
-                life and earn rewards in return
-              </p>
-            </div>
-          </div>
-        </button>
+      </motion.p>
 
-        <button
-          type="button"
-          onClick={() => setUserIntent('submit')}
-          className="group hover:cursor-pointer p-0 rounded-2xl transition-all flex flex-col items-center overflow-hidden"
-        >
-          <div className="w-full h-full p-8 bg-white border border-purple-100 rounded-2xl relative overflow-hidden group-hover:shadow-xl group-hover:shadow-purple-100/50 group-hover:-translate-y-1 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-purple-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl mb-6 text-white shadow-lg shadow-purple-200 group-hover:shadow-purple-300 group-hover:scale-110 transition-all duration-300">
-                <Brain size={32} strokeWidth={1.5} />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl">
+        {[
+          {
+            intent: 'fund',
+            icon: <Wallet size={32} strokeWidth={1.5} />,
+            title: 'Fund Model Bounties',
+            description:
+              'Contribute to exciting bounties, help bring innovative ideas to life and earn rewards in return',
+            color: 'blue',
+          },
+          {
+            intent: 'submit',
+            icon: <Brain size={32} strokeWidth={1.5} />,
+            title: 'Submit a Model',
+            description:
+              'Showcase your expertise by submitting models to open bounties and earn rewards',
+            color: 'purple',
+          },
+          {
+            intent: 'browse',
+            icon: <LayoutGrid size={32} strokeWidth={1.5} />,
+            title: 'Browse All Bounties',
+            description:
+              'Explore the full marketplace of active and past bounties',
+            color: 'green',
+          },
+        ].map((option, index) => (
+          <motion.button
+            key={option.intent}
+            type="button"
+            onClick={() => setUserIntent(option.intent as any)}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 + index * 0.1 }}
+            className={
+              'group hover:cursor-pointer p-0 rounded-2xl transition-all flex flex-col items-center overflow-hidden'
+            }
+          >
+            <div
+              className={`w-full h-full p-8 bg-white border border-${option.color}-100 rounded-2xl relative overflow-hidden group-hover:shadow-xl group-hover:shadow-${option.color}-100/50 group-hover:-translate-y-1 transition-all duration-300`}
+            >
+              <div
+                className={`absolute inset-0 bg-gradient-to-br from-${option.color}-50 to-${option.color}-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+              />
+              <div className="relative z-10 flex flex-col items-center">
+                <div
+                  className={`p-4 bg-gradient-to-br from-${option.color}-500 to-${option.color}-600 rounded-2xl mb-6 text-white shadow-lg shadow-${option.color}-200 group-hover:shadow-${option.color}-300 group-hover:scale-110 transition-all duration-300`}
+                >
+                  {option.icon}
+                </div>
+                <h3
+                  className={`text-xl font-semibold mb-4 text-${option.color}-900 group-hover:text-${option.color}-700 transition-colors`}
+                >
+                  {option.title}
+                </h3>
+                <p className="text-gray-600 text-center leading-relaxed">
+                  {option.description}
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-purple-900 group-hover:text-purple-700 transition-colors">
-                Submit a Model
-              </h3>
-              <p className="text-gray-600 text-center leading-relaxed">
-                Showcase your expertise by submitting models to open bounties
-                and earn rewards
-              </p>
             </div>
-          </div>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setUserIntent('browse')}
-          className="group hover:cursor-pointer p-0 rounded-2xl transition-all flex flex-col items-center overflow-hidden"
-        >
-          <div className="w-full h-full p-8 bg-white border border-green-100 rounded-2xl relative overflow-hidden group-hover:shadow-xl group-hover:shadow-green-100/50 group-hover:-translate-y-1 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-green-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative z-10 flex flex-col items-center">
-              <div className="p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl mb-6 text-white shadow-lg shadow-green-200 group-hover:shadow-green-300 group-hover:scale-110 transition-all duration-300">
-                <LayoutGrid size={32} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-xl font-semibold mb-4 text-green-900 group-hover:text-green-700 transition-colors">
-                Browse All Bounties
-              </h3>
-              <p className="text-gray-600 text-center leading-relaxed">
-                Explore the full marketplace of active and past bounties
-              </p>
-            </div>
-          </div>
-        </button>
+          </motion.button>
+        ))}
       </div>
 
-      <div className="mt-12 animate-in fade-in slide-in-from-bottom-3 duration-700 delay-500">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="mt-12"
+      >
         <Link href={'/bounties/bounty-form'}>
           <Button variant="outline" className="px-6 py-2 text-base font-medium">
             Create Your Own Bounty
           </Button>
         </Link>
-      </div>
-    </div>
+
+      </motion.div>
+    </motion.div>
+  );
+
+  // Main content with bounties
+  const MainContent = () => (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="mt-12 pb-12"
+    >
+      {userIntent === 'browse' ? (
+        <div className="flex flex-wrap gap-x-12 gap-y-12">
+          {getCurrentBounties().length > 0 ? (
+            getCurrentBounties().map((bounty, i) => (
+              <motion.div
+                key={bounty.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+              >
+                <BountyCard status={bountyStatus(bounty)} bounty={bounty} />
+              </motion.div>
+            ))
+          ) : (
+            <div className="w-full text-center p-12 border border-dashed rounded-lg">
+              <p className="text-gray-500">
+                No {activeTab === 'active' ? 'active' : 'past'} bounties found
+                {statusFilters.length > 0 ? ' with selected filters' : ''}.
+              </p>
+              <p className="text-gray-400 mt-2">
+                {statusFilters.length > 0
+                  ? 'Try adjusting your filters.'
+                  : activeTab === 'active'
+                    ? 'Be the first to create one!'
+                    : 'Completed and Failed bounties will appear here.'}
+              </p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <>
+          <h3 className="text-xl font-medium mb-6">
+            {userIntent === 'fund'
+              ? 'Bounties Ready for Funding'
+              : 'Bounties Open for Submissions'}
+          </h3>
+          <div className="flex flex-wrap gap-x-12 gap-y-12">
+            {getIntentBounties().length > 0 ? (
+              getIntentBounties().map((bounty, i) => (
+                <motion.div
+                  key={bounty.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <BountyCard status={bountyStatus(bounty)} bounty={bounty} />
+                </motion.div>
+              ))
+            ) : (
+              <div className="w-full text-center p-12 border border-dashed rounded-lg">
+                <p className="text-gray-500">
+                  No{' '}
+                  {userIntent === 'fund' ? 'crowdfunding' : 'submission-ready'}{' '}
+                  bounties available.
+                </p>
+                <p className="text-gray-400 mt-2">
+                  Check back later or browse all bounties.
+                </p>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </motion.div>
   );
 
   return (
@@ -329,7 +434,7 @@ export const BountiesClient = () => {
       {userIntent === 'none' ? (
         <IntentSelectionUI />
       ) : (
-        <>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="flex w-full items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
@@ -441,7 +546,7 @@ export const BountiesClient = () => {
           {userIntent === 'browse' && <FilterInterface />}
 
           {/* Error handling */}
-          {bounties.error && (
+          {error && (
             <Alert variant="destructive" className="mt-4">
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Error</AlertTitle>
@@ -451,84 +556,32 @@ export const BountiesClient = () => {
             </Alert>
           )}
 
-          {/* Loading state with skeletons */}
-          {bounties.isLoading && (
-            <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
-              {[1, 2, 3].map((i) => (
-                <BountyCardSkeleton key={i} />
-              ))}
-            </div>
-          )}
-
-          {/* Content when not loading */}
-          {!bounties.isLoading &&
-            !bounties.error &&
-            (userIntent === 'browse' ? (
-              <div className="mt-8 pb-12">
-                <div className="flex flex-wrap gap-x-12 gap-y-12">
-                  {getCurrentBounties().length > 0 ? (
-                    getCurrentBounties().map((bounty) => (
-                      <BountyCard
-                        key={bounty.id}
-                        status={bountyStatus(bounty)}
-                        bounty={bounty}
-                      />
-                    ))
-                  ) : (
-                    <div className="w-full text-center p-12 border border-dashed rounded-lg">
-                      <p className="text-gray-500">
-                        No {activeTab === 'active' ? 'active' : 'past'} bounties
-                        found
-                        {statusFilters.length > 0
-                          ? ' with selected filters'
-                          : ''}
-                        .
-                      </p>
-                      <p className="text-gray-400 mt-2">
-                        {statusFilters.length > 0
-                          ? 'Try adjusting your filters.'
-                          : activeTab === 'active'
-                            ? 'Be the first to create one!'
-                            : 'Completed and Failed bounties will appear here.'}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
+          {/* Use AnimatePresence for smooth transitions between loading states */}
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12"
+              >
+                {[1, 2, 3].map((i) => (
+                  <BountyCardSkeleton key={i} />
+                ))}
+              </motion.div>
             ) : (
-              <div className="mt-8">
-                <h3 className="text-xl font-medium mb-6">
-                  {userIntent === 'fund'
-                    ? 'Bounties Ready for Funding'
-                    : 'Bounties Open for Submissions'}
-                </h3>
-                <div className="flex flex-wrap gap-x-12 gap-y-12">
-                  {getIntentBounties().length > 0 ? (
-                    getIntentBounties().map((bounty) => (
-                      <BountyCard
-                        key={bounty.id}
-                        status={bountyStatus(bounty)}
-                        bounty={bounty}
-                      />
-                    ))
-                  ) : (
-                    <div className="w-full text-center p-12 border border-dashed rounded-lg">
-                      <p className="text-gray-500">
-                        No{' '}
-                        {userIntent === 'fund'
-                          ? 'crowdfunding'
-                          : 'submission-ready'}{' '}
-                        bounties available.
-                      </p>
-                      <p className="text-gray-400 mt-2">
-                        Check back later or browse all bounties.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-        </>
+              <motion.div
+                key="content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <MainContent />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       )}
     </div>
   );
