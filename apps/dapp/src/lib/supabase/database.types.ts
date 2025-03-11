@@ -7,6 +7,31 @@ export type Json =
   | Json[];
 
 export type Database = {
+  graphql_public: {
+    Tables: {
+      [_ in never]: never;
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      graphql: {
+        Args: {
+          operationName?: string;
+          query?: string;
+          variables?: Json;
+          extensions?: Json;
+        };
+        Returns: Json;
+      };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
   public: {
     Tables: {
       crowdfund: {
@@ -18,6 +43,7 @@ export type Database = {
           telegram: string | null;
           testers: string[] | null;
           title: string;
+          token_image_url: string | null;
           type: string | null;
         };
         Insert: {
@@ -28,6 +54,7 @@ export type Database = {
           telegram?: string | null;
           testers?: string[] | null;
           title?: string;
+          token_image_url?: string | null;
           type?: string | null;
         };
         Update: {
@@ -38,6 +65,7 @@ export type Database = {
           telegram?: string | null;
           testers?: string[] | null;
           title?: string;
+          token_image_url?: string | null;
           type?: string | null;
         };
         Relationships: [];
