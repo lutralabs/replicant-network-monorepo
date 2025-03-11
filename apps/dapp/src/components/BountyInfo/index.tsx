@@ -7,7 +7,7 @@ import { Button } from '../ui/button';
 import type { Bounty } from '@/hooks/useGetBounty';
 import { useWallets } from '@privy-io/react-auth';
 import { CalendarIcon, Users, Clock, FileText } from 'lucide-react';
-import { BountyPhasesStepper } from '../BountyPhasesStepper';
+import { BountyPhasesStepper } from '../BountyPhaseStepper';
 import {
   Tooltip,
   TooltipContent,

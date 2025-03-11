@@ -5,9 +5,9 @@ import { Providers } from '@/app/providers';
 import { CoreLayout } from '@/components/CoreLayout';
 import { Toaster } from '@/components/ui/sonner';
 import { inter } from '@/fonts';
-import { cn } from '@/functions/cn';
 
 import '@/styles/main.css';
+import { cn } from '@/lib/utils';
 
 export const viewport: Viewport = {
   themeColor: 'black',
