@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
   const promises = models.map(async (model) => {
     const body = {
       id: randomUUID(),
-      model_id: model.hash.split('_')[1],
+      model_id: model.hash.split('_')[1].replace(/^0x/, ''),
       prompt,
       negative_prompt: 'blurry, low quality',
       num_inference_steps: 15,
