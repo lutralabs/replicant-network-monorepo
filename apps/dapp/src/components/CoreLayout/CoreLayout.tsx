@@ -7,7 +7,7 @@ import {
   SidebarInset,
   SidebarLink,
 } from '@/components/ui/sidebar';
-import { Cpu, Award } from 'lucide-react';
+import { Image as ImageIcon, LayoutGrid } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -19,17 +19,17 @@ import { SiDiscord, SiGithub, SiX } from '@icons-pack/react-simple-icons';
 
 const LINKS = [
   {
-    label: 'Models',
+    label: 'Use Models',
     href: '/models',
     icon: (
-      <Cpu className="dark:text-neutral-700 text-neutral-200 h-5 w-5 flex-shrink-0" />
+      <ImageIcon className="dark:text-neutral-700 text-neutral-200 h-6 w-6 flex-shrink-0" />
     ),
   },
   {
     label: 'Bounties',
     href: '/bounties',
     icon: (
-      <Award className="dark:text-neutral-700 text-neutral-200 h-5 w-5 flex-shrink-0" />
+      <LayoutGrid className="dark:text-neutral-700 text-neutral-200 h-6 w-6 flex-shrink-0" />
     ),
   },
 ];

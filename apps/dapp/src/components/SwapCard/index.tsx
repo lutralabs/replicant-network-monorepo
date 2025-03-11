@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { useMemo, useState } from 'react';
-import { Check, ChevronDown, Info, Repeat } from 'lucide-react';
+import { Check, ChevronDown, Info, Loader2, Repeat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -33,6 +33,7 @@ import {
   AccordionTrigger,
 } from '../ui/accordion';
 import { useGetSymbol } from '@/hooks/useGetSymbol';
+import { circIn } from 'framer-motion';
 
 // Token list for paying
 const base = [
@@ -102,9 +103,16 @@ export default function SwapCard({
 
   const [payAmount, setPayAmount] = useState<string>('');
   const [receiveAmount, setReceiveAmount] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSwitchingChain, setIsSwitchingChain] = useState<boolean>(false);
 
   const switchChain = async (wallet: ConnectedWallet) => {
-    await wallet.switchChain(10143);
+    try {
+      setIsSwitchingChain(true);
+      await wallet.switchChain(10143);
+    } finally {
+      setIsSwitchingChain(false);
+    }
   };
 
   const { mutate: fund } = useFundBounty();
@@ -115,10 +123,21 @@ export default function SwapCard({
     config,
   });
 
+  const tokenBalance = useBalance({
+    address: (wallet?.address ?? '0x0') as `0x${string}`,
+    token: bounty.token as `0x${string}`,
+    config,
+  });
+
   const formattedBalance = useMemo(() => {
     if (!balance || !balance.data) return 0;
     return formatBalance(balance.data.value);
   }, [balance.data]);
+
+  const formattedTokenBalance = useMemo(() => {
+    if (!tokenBalance || !tokenBalance.data) return 0;
+    return formatBalance(tokenBalance.data.value);
+  }, [tokenBalance.data]);
 
   const handlePayAmountChange = (value: string) => {
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
@@ -154,17 +173,20 @@ export default function SwapCard({
   }, [dynamicTokenLoading, ready, authenticated, mode]);
 
   const handleSwap = async () => {
+    setIsLoading(true);
     try {
       if (mode === 'buy') {
         if (!payAmount) {
           ErrorToast({ error: 'Please enter an amount' });
+
           return;
         }
-        await fund({ amount: Number(payAmount), id: bounty.id });
+        fund({ amount: Number(payAmount), id: bounty.id });
       }
       if (mode === 'sell') {
         if (!payAmount) {
           ErrorToast({ error: 'Please enter an amount' });
+
           return;
         }
         await withdraw({ id: bounty.id });
@@ -173,6 +195,7 @@ export default function SwapCard({
       console.error('Swap failed', error);
       ErrorToast({ error: 'Swap failed' });
     }
+    setIsLoading(false);
   };
 
   const handleActionButtonClick = async () => {
@@ -188,11 +211,11 @@ export default function SwapCard({
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto h-fit bg-white shadow-lg">
+    <Card className="w-full max-w-md mx-auto h-fit bg-white border-0 shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between p-4 pb-0">
         <div className="flex items-center gap-4">
-          <Repeat className="h-6 w-6 text-purple-500" />
-          <h2 className="text-xl font-semibold">Buy model token</h2>
+          <Repeat className="h-5 w-5 text-purple-500" />
+          <h2 className="text-md font-semibold">Buy Model Tokens</h2>
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-0">
@@ -206,20 +229,9 @@ export default function SwapCard({
               onChange={(e) => {
                 handlePayAmountChange(e.target.value);
               }}
-              className="text-3xl md:text-2xl font-light border-none bg-transparent p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="text-3xl md:text-2xl shadow-none border-none bg-transparent p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="0"
             />
-            <Button
-              className="px-0 text-purple-400 hover:text-purple-500"
-              size="xs"
-              type="button"
-              variant="link"
-              onClick={() => {
-                handlePayAmountChange(formattedBalance.toString());
-              }}
-            >
-              MAX
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -296,6 +308,24 @@ export default function SwapCard({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          {/* Only show balance and MAX button for MON token when buying */}
+          {mode === 'buy' && (
+            <div className="flex justify-end items-center mt-2 text-sm">
+              <span className="text-gray-500 mr-1">
+                {formattedBalance.toFixed(4)} MON
+              </span>
+              <Button
+                className="px-2 text-purple-400 hover:text-purple-500 py-0"
+                size="max"
+                variant="max"
+                onClick={() => {
+                  handlePayAmountChange(formattedBalance.toString());
+                }}
+              >
+                MAX
+              </Button>
+            </div>
+          )}
         </div>
         <div className="flex justify-center -my-3 relative z-10">
           <div className="bg-white rounded-full p-2 shadow-sm border border-gray-100">
@@ -328,20 +358,9 @@ export default function SwapCard({
               onChange={(e) => {
                 handleReceiveAmountChange(e.target.value);
               }}
-              className="text-3xl md:text-2xl  font-light border-none bg-transparent p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="text-3xl md:text-2xl shadow-none border-none bg-transparent p-0 h-auto focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="0"
             />
-            <Button
-              className="px-0 text-purple-400 hover:text-purple-500"
-              size="xs"
-              type="button"
-              variant="link"
-              onClick={() => {
-                handleReceiveAmountChange(formattedBalance.toString());
-              }}
-            >
-              MAX
-            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -426,6 +445,31 @@ export default function SwapCard({
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+          {/* Only show balance and MAX button for MON token when selling */}
+          {mode === 'sell' && (
+            <div className="flex justify-end items-center mt-2 text-sm">
+              <span className="text-gray-500 mr-1">{formattedBalance}</span>
+              <Button
+                className="px-2 text-purple-400 hover:text-purple-500 h-auto py-0"
+                size="xs"
+                type="button"
+                variant="link"
+                onClick={() => {
+                  handleReceiveAmountChange(formattedBalance.toString());
+                }}
+              >
+                MAX
+              </Button>
+            </div>
+          )}
+          {/* Show token balance without MAX button when buying */}
+          {mode === 'buy' && !dynamicTokenLoading && (
+            <div className="flex justify-end items-center mt-2 text-sm">
+              <span className="text-gray-500">
+                {formattedTokenBalance} {receiveToken.symbol}
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Fees section */}
@@ -480,11 +524,21 @@ export default function SwapCard({
 
         {/* Connect wallet button */}
         <Button
-          className="w-full mt-4 bg-purple-500 hover:bg-purple-400 text-white py-6 rounded-xl text-lg font-medium"
+          className="w-full mt-4 bg-purple-600 hover:bg-purple-500 text-white py-6 rounded-xl text-lg font-medium"
           onClick={handleActionButtonClick}
-          disabled={!ready || (mode === 'buy' ? false : dynamicTokenLoading)}
+          disabled={
+            !ready ||
+            (mode === 'buy' ? false : dynamicTokenLoading) ||
+            isLoading ||
+            isSwitchingChain
+          }
         >
-          {widgetStatus}
+          <div className="flex items-center justify-center gap-x-2">
+            {widgetStatus}
+            {isLoading && (
+              <Loader2 className="h-6 w-6 ml-2 text-white animate-spin" />
+            )}
+          </div>
         </Button>
       </CardContent>
     </Card>

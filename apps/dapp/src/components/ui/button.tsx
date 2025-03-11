@@ -18,6 +18,7 @@ const buttonVariants = tv({
 				"bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
 			ghost: "hover:bg-accent hover:text-accent-foreground",
 			link: "text-primary underline-offset-4 hover:underline",
+			max: "text-purple-500 bg-purple-100 hover:bg-purple-200",
 			"cta-solid":
 				"bg-purple-600 border border-purple-400 text-background dark:text-white shadow-sm hover:bg-purple-400",
 			"cta-gradient":
@@ -28,6 +29,7 @@ const buttonVariants = tv({
 			sm: "h-8 px-3 has-[>svg]:px-2.5",
 			lg: "h-10 px-6 has-[>svg]:px-4",
 			xs: "h-6 px-2.5 has-[>svg]:px-2.5 text-xs",
+			max: "h-6 px-2.5 text-xs",
 		},
 		icon: {
 			true: "size-9 border border-input text-foreground bg-background rounded-md hover:bg-secondary",

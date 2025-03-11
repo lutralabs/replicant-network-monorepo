@@ -15,9 +15,9 @@ import {
   ChevronUp,
   HelpCircle,
   ArrowLeft,
-  CreditCard,
-  Code,
-  Compass,
+  Wallet,
+  Brain,
+  LayoutGrid,
   Filter,
   X,
 } from 'lucide-react';
@@ -234,77 +234,93 @@ export const BountiesClient = () => {
 
   // Intent selection UI
   const IntentSelectionUI = () => (
-    <div className="flex flex-col items-center justify-center py-16">
-      <h2 className="text-3xl font-bold mb-4 text-center">
+    <div className="flex flex-col items-center justify-center py-16 relative">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-blue-50/50 to-transparent -z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-purple-50/30 to-transparent -z-10" />
+      <div className="absolute -top-10 -right-10 w-64 h-64 bg-green-100/20 rounded-full blur-3xl -z-10" />
+      <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-100/20 rounded-full blur-3xl -z-10" />
+
+      <h2 className="text-4xl font-bold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-purple-700 animate-in fade-in slide-in-from-bottom-3 duration-700">
         What would you like to do?
       </h2>
-      <p className="text-gray-600 text-center mb-12 max-w-2xl">
+      <p className="text-gray-600 text-center mb-16 max-w-2xl text-lg animate-in fade-in slide-in-from-bottom-3 duration-700 delay-150">
         Select an option below to find the most relevant bounties for your needs
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl animate-in fade-in slide-in-from-bottom-3 duration-700 delay-300">
         <button
           type="button"
           onClick={() => setUserIntent('fund')}
-          className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group hover:cursor-pointer p-0 rounded-2xl transition-all flex flex-col items-center overflow-hidden"
         >
-          <div className="relative z-10 flex flex-col items-center">
-            <div className="p-3 bg-blue-100 rounded-xl mb-5 text-blue-600 group-hover:bg-blue-200 group-hover:text-blue-700 transition-all">
-              <CreditCard size={36} />
+          <div className="w-full h-full p-8 bg-white border border-blue-100 rounded-2xl relative overflow-hidden group-hover:shadow-xl group-hover:shadow-blue-100/50 group-hover:-translate-y-1 transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl mb-6 text-white shadow-lg shadow-blue-200 group-hover:shadow-blue-300 group-hover:scale-110 transition-all duration-300">
+                <Wallet size={32} strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-blue-900 group-hover:text-blue-700 transition-colors">
+                Fund Model Bounties
+              </h3>
+              <p className="text-gray-600 text-center leading-relaxed">
+                Contribute to exciting bounties, help bring innovative ideas to
+                life and earn rewards in return
+              </p>
             </div>
-            <div className="text-xl font-semibold mb-3 text-blue-900">
-              Fund Model Bounties
-            </div>
-            <p className="text-gray-600 text-center">
-              Contribute MON to exciting AI model projects
-            </p>
           </div>
         </button>
 
         <button
           type="button"
           onClick={() => setUserIntent('submit')}
-          className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group hover:cursor-pointer p-0 rounded-2xl transition-all flex flex-col items-center overflow-hidden"
         >
-          <div className="relative z-10 flex flex-col items-center">
-            <div className="p-3 bg-purple-100 rounded-xl mb-5 text-purple-600 group-hover:bg-purple-200 group-hover:text-purple-700 transition-all">
-              <Code size={36} />
+          <div className="w-full h-full p-8 bg-white border border-purple-100 rounded-2xl relative overflow-hidden group-hover:shadow-xl group-hover:shadow-purple-100/50 group-hover:-translate-y-1 transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-purple-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="p-4 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl mb-6 text-white shadow-lg shadow-purple-200 group-hover:shadow-purple-300 group-hover:scale-110 transition-all duration-300">
+                <Brain size={32} strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-purple-900 group-hover:text-purple-700 transition-colors">
+                Submit a Model
+              </h3>
+              <p className="text-gray-600 text-center leading-relaxed">
+                Showcase your expertise by submitting models to open bounties
+                and earn rewards
+              </p>
             </div>
-            <div className="text-xl font-semibold mb-3 text-purple-900">
-              Submit a Model
-            </div>
-            <p className="text-gray-600 text-center">
-              For developers to submit models to open bounties
-            </p>
           </div>
         </button>
 
         <button
           type="button"
           onClick={() => setUserIntent('browse')}
-          className="hover:cursor-pointer p-8 border rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex flex-col items-center shadow-sm hover:shadow-md"
+          className="group hover:cursor-pointer p-0 rounded-2xl transition-all flex flex-col items-center overflow-hidden"
         >
-          <div className="relative z-10 flex flex-col items-center">
-            <div className="p-3 bg-green-100 rounded-xl mb-5 text-green-600 group-hover:bg-green-200 group-hover:text-green-700 transition-all">
-              <Compass size={36} />
+          <div className="w-full h-full p-8 bg-white border border-green-100 rounded-2xl relative overflow-hidden group-hover:shadow-xl group-hover:shadow-green-100/50 group-hover:-translate-y-1 transition-all duration-300">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-50 to-green-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl mb-6 text-white shadow-lg shadow-green-200 group-hover:shadow-green-300 group-hover:scale-110 transition-all duration-300">
+                <LayoutGrid size={32} strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-green-900 group-hover:text-green-700 transition-colors">
+                Browse All Bounties
+              </h3>
+              <p className="text-gray-600 text-center leading-relaxed">
+                Explore the full marketplace of active and past bounties
+              </p>
             </div>
-            <div className="text-xl font-semibold mb-3 text-green-900">
-              Browse All Bounties
-            </div>
-            <p className="text-gray-600 text-center">
-              Explore all active and past bounty projects
-            </p>
           </div>
         </button>
       </div>
 
-      <Link href={'/bounties/bounty-form'} className="mt-12">
-        <Button
-          variant="outline"
-          className="hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
-        >
-          Or Create Your Own Bounty
-        </Button>
-      </Link>
+      <div className="mt-12 animate-in fade-in slide-in-from-bottom-3 duration-700 delay-500">
+        <Link href={'/bounties/bounty-form'}>
+          <Button variant="outline" className="px-6 py-2 text-base font-medium">
+            Create Your Own Bounty
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 
@@ -336,7 +352,7 @@ export const BountiesClient = () => {
               </div>
               <div className="text-md mt-2 text-gray-600 ml-10">
                 {userIntent === 'fund'
-                  ? 'Contribute to these bounties currently in the crowdfunding phase.'
+                  ? 'Earn rewards as you contribute to open bounties.'
                   : userIntent === 'submit'
                     ? 'Bounties currently accepting model submissions from developers.'
                     : 'A list of existing bounties for custom AI models.'}
