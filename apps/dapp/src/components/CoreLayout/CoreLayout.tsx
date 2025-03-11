@@ -12,7 +12,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import DynamicBreadcrumb from '@/components/DynamicBreadcrumb';
-import { LoginButton } from '@/components/CoreLayout/LoginButton';
+import { LoginButton } from '@/components/LoginButton';
 import { Separator } from '@/components/ui/separator';
 import Logo from '../../../public/RN_logo.svg?url';
 import { SiDiscord, SiGithub, SiX } from '@icons-pack/react-simple-icons';
@@ -63,7 +63,7 @@ export const CoreLayout = ({ children }) => {
   return (
     <div
       className={cn(
-        'flex flex-col md:flex-row bg-neutral-800 dark:bg-gray-100 flex-1 w-screen mx-auto border border-neutral-700 dark:border-neutral-200 overflow-x-hidden',
+        'flex flex-col md:flex-row bg-neutral-800 dark:bg-gray-100 flex-1 w-screen mx-auto dark:border-neutral-200 overflow-x-hidden',
         'h-full'
       )}
     >
