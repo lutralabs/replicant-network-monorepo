@@ -63,12 +63,12 @@ export const CoreLayout = ({ children }) => {
   return (
     <div
       className={cn(
-        'flex flex-col md:flex-row bg-neutral-800 dark:bg-gray-100 flex-1 w-screen mx-auto border border-neutral-700 dark:border-neutral-200 overflow-hidden',
-        'h-screen'
+        'flex flex-col md:flex-row bg-neutral-800 dark:bg-gray-100 flex-1 w-screen mx-auto border border-neutral-700 dark:border-neutral-200 overflow-x-hidden',
+        'h-full'
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10 overflow-y-auto md:overflow-visible">
+        <SidebarBody className="justify-between sticky top-0 gap-10 overflow-y-auto md:overflow-visible">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
             <LogoIcon />
             <div className="mt-8 flex flex-col">

@@ -13,7 +13,7 @@ export const Details = ({ bounty }: { bounty: Bounty }) => {
     },
     {
       label: 'Requested Base Model',
-      value: 'Solar Eclipse',
+      value: 'Stable Difusion',
       icon: <Code className="h-5 w-5 text-gray-500" />,
     },
     {

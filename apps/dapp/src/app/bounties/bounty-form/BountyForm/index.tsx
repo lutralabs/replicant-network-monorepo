@@ -436,7 +436,7 @@ export const BountyForm = () => {
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 className="absolute inset-x-0"
               >
-                <Card className="border-2 shadow-md overflow-hidden">
+                <Card className="border-2 shadow-md overflow-hidden mb-4">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-2xl font-bold">
                       Create New Bounty
@@ -636,7 +636,9 @@ export const BountyForm = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="image">Solar Eclipse</SelectItem>
+                            <SelectItem value="image">
+                              Stable Difusion
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>

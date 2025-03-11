@@ -10,7 +10,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from './ui/breadcrumb';
+} from '../ui/breadcrumb';
 
 // Helper function to format path segments
 const formatPathSegment = (segment: string): string => {
