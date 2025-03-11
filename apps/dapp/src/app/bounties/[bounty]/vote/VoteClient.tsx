@@ -136,7 +136,7 @@ export const VoteClient = () => {
     setVotingInProgress(true);
 
     vote({
-      model: selectedModel,
+      model: selectedModel.split('_')[1],
       id: BigInt(bountyId),
     });
 
