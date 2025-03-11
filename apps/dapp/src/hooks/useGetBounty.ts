@@ -57,6 +57,7 @@ export type Bounty = {
   telegram?: string | null;
   github?: string | null;
   additionalLinks?: string[] | null;
+  token_img_url?: string | null;
 };
 
 async function fetchBounty(id: number): Promise<Bounty | null> {
@@ -135,6 +136,7 @@ async function fetchBounty(id: number): Promise<Bounty | null> {
         telegram: supabaseData.telegram,
         github: supabaseData.github,
         additionalLinks: supabaseData.additionalLinks,
+        token_img_url: supabaseData.token_image_url,
       }),
     };
 

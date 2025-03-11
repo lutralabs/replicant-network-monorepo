@@ -68,7 +68,7 @@ const base = [
   // },
 ];
 
-export default function TokenSwap({
+export default function SwapCard({
   bounty,
   mode,
 }: { bounty: Bounty; mode: 'buy' | 'sell' }) {
@@ -88,7 +88,7 @@ export default function TokenSwap({
       id: bounty.token,
       name: tokenInfo?.name || 'Token',
       symbol: tokenInfo?.symbol.toUpperCase() || '--',
-      icon: undefined,
+      icon: bounty.token_img_url || undefined,
     }),
     [bounty.token, tokenInfo]
   );
