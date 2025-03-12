@@ -308,10 +308,9 @@ export const BountyForm = () => {
           console.error('Failed to get URL from upload');
         }
       }
-
       createBounty(
         {
-          amount: values.contribution,
+          amount: Number(values.contribution),
           title: values.title,
           symbol: values.symbol,
           fundingPhaseEnd: Math.round(values.endOfFunding.getTime() / 1000),
@@ -319,7 +318,7 @@ export const BountyForm = () => {
             values.endOfSubmissions.getTime() / 1000
           ),
           votingPhaseEnd: Math.round(values.endOfVoting.getTime() / 1000),
-          developerFeePercentage: values.devFees,
+          developerFeePercentage: Number(values.devFees),
           raiseCap: values.maxAmount,
           description: values.description,
           discord: values.discord,
