@@ -55,9 +55,14 @@ import {
 } from 'lucide-react';
 
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: 'Title must be at least 2 characters.',
-  }),
+  title: z
+    .string()
+    .min(2, {
+      message: 'Title must be at least 2 characters.',
+    })
+    .max(32, {
+      message: 'Title must be at most 32 characters.',
+    }),
   symbol: z
     .string()
     .min(2, {
