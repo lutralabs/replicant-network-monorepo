@@ -42,9 +42,17 @@ const DynamicBreadcrumb = () => {
             <React.Fragment key={link}>
               <BreadcrumbItem>
                 {isLastItem ? (
-                  <BreadcrumbPage>{formattedLink}</BreadcrumbPage>
+                  <BreadcrumbPage>
+                    {formattedLink.length > 20
+                      ? `${formattedLink.slice(0, 4)}...${formattedLink.slice(-4)}`
+                      : formattedLink}
+                  </BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink href={href}>{formattedLink}</BreadcrumbLink>
+                  <BreadcrumbLink href={href}>
+                    {formattedLink.length > 20
+                      ? `${formattedLink.slice(0, 4)}...${formattedLink.slice(-4)}`
+                      : formattedLink}
+                  </BreadcrumbLink>
                 )}
               </BreadcrumbItem>
               {!isLastItem && <BreadcrumbSeparator />}

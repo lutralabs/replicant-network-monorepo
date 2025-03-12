@@ -80,10 +80,13 @@ export default function HomeLayout({ children }) {
                 ))}
               </div>
             </div>
-            <div>
+            <div className="flex flex-col gap-4">
               {SOCIAL.map((link) => (
                 <SidebarLink key={link.label} link={link} />
               ))}
+              <div className="md:hidden mt-2 pl-2">
+                <LoginButton />
+              </div>
             </div>
           </SidebarBody>
         </Sidebar>
@@ -92,7 +95,9 @@ export default function HomeLayout({ children }) {
             <div className="flex w-full items-center gap-2 px-4">
               <div className="flex w-full items-center justify-between pl-4">
                 <DynamicBreadcrumb />
-                <LoginButton />
+                <div className="md:block hidden">
+                  <LoginButton />
+                </div>
               </div>
             </div>
           </header>

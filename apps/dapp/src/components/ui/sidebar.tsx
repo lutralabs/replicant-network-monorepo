@@ -112,44 +112,48 @@ export const MobileSidebar = ({
   const { open, setOpen } = useSidebar();
   return (
     <>
-      <div
-        className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-sidebar text-sidebar-foreground w-full"
-        )}
-        {...props}
+      {/* Mobile menu button positioned in the layout */}
+      <button
+        className="fixed top-4 right-4 z-30 md:hidden flex items-center justify-center bg-sidebar rounded-full p-2"
+        onClick={() => setOpen(!open)}
+        aria-label="Toggle menu"
       >
-        <div className="flex justify-end z-20 w-full">
-          <Menu
-            className="text-sidebar-foreground cursor-pointer"
-            onClick={() => setOpen(!open)}
+        <Menu className="text-sidebar-foreground" size={24} />
+      </button>
+      
+      {/* Full screen mobile sidebar */}
+
+        <div className={`fixed transition-all transform duration-500 -translate-x-full ${open && 'translate-x-0'} inset-0 z-50 md:hidden flex overflow-hidden`}>
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/50" 
+            onClick={() => setOpen(false)}
           />
-        </div>
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ x: "-100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
-              transition={{
-                duration: 0.3,
-                ease: "easeInOut",
-              }}
-              className={cn(
-                "fixed h-full w-full inset-0 bg-sidebar text-sidebar-foreground p-10 z-[100] flex flex-col justify-between",
-                className
-              )}
+          
+          {/* Sidebar content */}
+          <div 
+            className={cn(
+              "absolute inset-y-0 left-0 w-screen bg-sidebar text-sidebar-foreground flex flex-col overflow-y-auto",
+              className
+            )}
+            {...props}
+          >
+            {/* Close button */}
+            <button
+              className={`absolute top-4 right-4 text-sidebar-foreground ${!open && 'hidden'}`}
+              onClick={() => setOpen(false)}
+              aria-label="Close menu"
             >
-              <div
-                className="absolute right-10 top-10 z-50 text-sidebar-foreground cursor-pointer"
-                onClick={() => setOpen(!open)}
-              >
-                <X />
-              </div>
+              <X size={24} />
+            </button>
+            
+            {/* Content with padding */}
+            <div className="pt-16 px-6 pb-6 flex flex-col h-full">
               {children}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+            </div>
+          </div>
+        </div>
+
     </>
   );
 };
@@ -163,7 +167,7 @@ export const SidebarLink = ({
   className?: string;
   props?: LinkProps;
 }) => {
-  const { open, animate } = useSidebar();
+  const { open, animate, setOpen } = useSidebar();
   return (
     <Link
       href={link.href}
@@ -171,6 +175,7 @@ export const SidebarLink = ({
         "flex items-center gap-2 group/sidebar py-2",
         className
       )}
+      onClick={() => setOpen(false)}
       {...props}
     >
       {link.icon}
@@ -179,7 +184,7 @@ export const SidebarLink = ({
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-neutral-700 dark:text-black text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        className="text-neutral-700 max-md:text-xl max-md:font-medium dark:text-black text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >
         {link.label}
       </motion.span>

@@ -121,30 +121,34 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full h-full pb-12 flex flex-col justify-between">
+    <div className="w-full min-h-[calc(100vh-80px)] pb-12 flex flex-col">
       <div className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm">
-        <div className="flex w-full items-center justify-between">
-          <div className="max-w-[70%]">
-            <h1 className="text-2xl font-semibold tracking-tight">
+        <div className="flex flex-col md:flex-row w-full items-start md:items-center justify-between gap-4 md:gap-0">
+          <div className="max-w-full md:max-w-[70%]">
+            <h1 className="text-xl md:text-2xl font-semibold tracking-tight">
               {modelBounty.title || 'Untitled Model'}
             </h1>
-            <div className="flex items-center gap-4 mt-2 text-gray-600">
+            <div className="flex items-center gap-4 mt-2 text-gray-600 text-sm md:text-base max-md:line-clamp-3">
               {modelBounty.description || 'No description available'}
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-full md:w-auto">
             <Link
               href={`https://testnet.monadexplorer.com/token/${modelBounty.token}`}
               target="_blank"
+              className="w-full md:w-auto"
             >
-              <Button variant="cta-solid">
+              <Button variant="cta-solid" className="w-full md:w-auto">
                 Token
                 <ArrowUpRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Link href={`/bounties/${modelBounty.id}`}>
-              <Button variant="outline">
+            <Link
+              href={`/bounties/${modelBounty.id}`}
+              className="w-full md:w-auto"
+            >
+              <Button variant="outline" className="w-full md:w-auto">
                 View Completed Bounty
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -153,26 +157,32 @@ export default function Page() {
         </div>
       </div>
 
-      <div className="mt-12 flex justify-center">
+      <div className="mt-8 md:mt-12 flex-grow flex flex-col items-center justify-center min-h-[300px] md:min-h-[512px] border-2 border-dashed border-gray-200 rounded-lg p-4">
         {loading ? (
-          <Skeleton className="w-[512px] h-[512px] rounded-lg" />
+          <Skeleton className="w-full max-w-[512px] h-[300px] md:h-[512px] rounded-lg" />
         ) : (
           <>
-            {images.length > 0 && (
+            {images.length > 0 ? (
               <DynamicImage
                 alt="generated image"
                 height={images[0].height}
                 width={images[0].width}
                 src={images[0].url}
               />
+            ) : (
+              <div className="text-gray-500 text-center flex flex-col items-center justify-center h-full">
+                <p>Your generated image will appear here</p>
+                <p className="text-sm mt-2">Try entering a prompt below</p>
+              </div>
             )}
           </>
         )}
       </div>
-      <div className="flex flex-col gap-y-2">
-        <div className="flex items-center justify-between rounded-full bg-white border-2 border-sidebar-border pr-2 pl-2">
+
+      <div className="flex flex-col gap-y-2 mt-auto pt-8">
+        <div className="flex items-center justify-between rounded-full bg-white border-2 border-sidebar-border pr-2 pl-4">
           <input
-            className="grow outline-none border-0 field-sizing-fixed h-[50px]"
+            className="grow outline-none border-0 field-sizing-fixed h-[50px] text-sm md:text-base"
             placeholder="What can I generate for you?"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
@@ -181,7 +191,7 @@ export default function Page() {
           <button
             type="button"
             className={cn(
-              'rounded-full py-2 px-2',
+              'rounded-full py-2 px-3 md:px-4',
               loading ? 'bg-none' : 'bg-purple-500 hover:bg-purple-400',
               !prompt.trim() ? 'opacity-50 hover:bg-purple-500' : 'opacity-100'
             )}

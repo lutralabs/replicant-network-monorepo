@@ -38,7 +38,7 @@ export default function Page() {
 
   return (
     <div className="w-full">
-      <div className="w-[500px]">
+      <div className="w-full px-4 md:px-0 md:w-[500px]">
         <div className="text-lg font-semibold">Models</div>
         <div className="text-md mt-2 text-gray-600">
           A list of comprehensive models developed by global community of Web2
@@ -47,7 +47,7 @@ export default function Page() {
       </div>
 
       {isLoading && (
-        <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
+        <div className="mt-12 pb-12 flex flex-wrap justify-center md:justify-start gap-x-6 md:gap-x-12 gap-y-12">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="w-[350px]">
               <Skeleton className="h-[200px] w-full rounded-md" />
@@ -63,7 +63,7 @@ export default function Page() {
       )}
 
       {!isLoading && !error && (
-        <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
+        <div className="mt-12 pb-12 flex flex-wrap justify-center md:justify-start gap-x-6 md:gap-x-12 gap-y-12">
           {models.length > 0 ? (
             models.map((model) => <ModelCard key={model.id} {...model} />)
           ) : (

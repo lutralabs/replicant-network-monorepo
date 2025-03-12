@@ -241,7 +241,7 @@ function BountiesContent() {
   return (
     <div className="w-full">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <div className="flex w-full items-center justify-between">
+        <div className="flex flex-col w-full items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <div className="flex items-center gap-2">
               <Button
@@ -258,8 +258,10 @@ function BountiesContent() {
               A list of existing bounties for custom AI models.
             </div>
           </div>
-          <Link href={'/create-bounty'}>
-            <Button variant="cta-gradient">Create a Bounty</Button>
+          <Link href={'/create-bounty'} className="w-full sm:w-auto">
+            <Button variant="cta-gradient" className="w-full sm:w-auto">
+              Create a Bounty
+            </Button>
           </Link>
         </div>
 
@@ -357,7 +359,7 @@ function BountiesContent() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12"
+              className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12 justify-center sm:justify-start"
             >
               {[1, 2, 3].map((i) => (
                 <BountyCardSkeleton key={i} />
@@ -376,7 +378,7 @@ function BountiesContent() {
                 exit={{ opacity: 0 }}
                 className="mt-12 pb-12"
               >
-                <div className="flex flex-wrap gap-x-12 gap-y-12">
+                <div className="flex flex-wrap gap-x-12 gap-y-12 justify-center sm:justify-start">
                   {getCurrentBounties().length > 0 ? (
                     getCurrentBounties().map((bounty, i) => (
                       <motion.div
@@ -384,6 +386,7 @@ function BountiesContent() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
+                        className="w-full sm:w-auto flex justify-center"
                       >
                         <BountyCard
                           status={bountyStatus(bounty)}

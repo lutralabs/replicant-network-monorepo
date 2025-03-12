@@ -110,23 +110,146 @@ export default function Page() {
     <div className="w-full h-full pb-12">
       <BountyInfo bounty={bounty} showStepper={true} />
 
+      {/* Mobile layout: Show cards above tabs */}
+      <div className="block lg:hidden my-6">
+        <TokenBalanceCard bounty={bounty} walletAddress={wallet?.address} />
+
+        {/* Conditional action cards based on status */}
+        {['crowdfunding', 'failed'].includes(status) ? (
+          <div id="swap-section">
+            <SwapCard
+              bounty={bounty}
+              mode={status === 'crowdfunding' ? 'buy' : 'sell'}
+            />
+          </div>
+        ) : status === 'submissions' ? (
+          <div className="bg-gradient-to-r from-blue-100 to-green-100 border border-blue-200 rounded-lg p-5">
+            <h3 className="text-lg font-medium mb-2">Developers Wanted!</h3>
+            <p className="text-gray-600 mb-4">
+              This bounty is open for model submissions. Submit your model to
+              earn the bounty reward plus{' '}
+              <span className="font-bold text-purple-500 text-lg">
+                {bounty.developerFeePercentage.toString() || 'a percentage'}
+              </span>
+              % of Model Token.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Link
+                href={`/bounties/${bounty.id}/submit-model`}
+                className="w-full"
+              >
+                <Button variant="cta-gradient" className="w-full">
+                  Submit Your Model
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ) : status === 'stale' ? (
+          <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border border-yellow-200 rounded-lg p-5">
+            <h3 className="text-lg font-medium mb-2">Action Required</h3>
+            <p className="text-gray-600 mb-4">
+              This bounty has passed its deadline and needs to be finalized. A
+              transaction is required to update its status to completed or
+              failed.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Link href={`/bounties/${bounty.id}/finalize`} className="w-full">
+                <Button variant="cta-gradient" className="w-full">
+                  Finalize Bounty
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ) : status === 'voting' && isUserFunder ? (
+          <div className="bg-gradient-to-r from-purple-100 to-blue-100 border border-purple-200 rounded-lg p-5">
+            <h3 className="text-lg font-medium mb-2">Your input is needed!</h3>
+            <p className="text-gray-600 mb-4">
+              As a funder of this bounty, you can now test and vote for the best
+              model submission.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Link
+                href={`/bounties/${bounty.id}/test-models`}
+                className="w-full"
+              >
+                <Button
+                  variant="outline"
+                  className="w-full border-purple-200 hover:border-purple-300 hover:bg-purple-50"
+                >
+                  Try Models
+                </Button>
+              </Link>
+              <Link href={`/bounties/${bounty.id}/vote`} className="w-full">
+                <Button variant="cta-gradient" className="w-full">
+                  Cast Your Vote
+                </Button>
+              </Link>
+            </div>
+          </div>
+        ) : status === 'completed' ? (
+          <div className="bg-gradient-to-r from-green-100 to-blue-100 border border-green-200 rounded-lg p-5">
+            <h3 className="text-lg font-medium mb-2">Winning Model</h3>
+            <p className="text-gray-600 mb-4">
+              This bounty has been successfully completed with a winning model.
+              Try out the model now to see how it responds to your queries!
+            </p>
+            <Link
+              href={`/models/${(() => {
+                if (!bounty.submissions || bounty.submissions.length === 0)
+                  return '';
+
+                // Find submission with most votes
+                let winningSubmission = bounty.submissions[0];
+                let maxVotes = 0;
+
+                for (const submission of bounty.submissions) {
+                  const voteCount = submission.votes
+                    ? submission.votes.length
+                    : 0;
+                  if (voteCount > maxVotes) {
+                    maxVotes = voteCount;
+                    winningSubmission = submission;
+                  }
+                }
+
+                return winningSubmission.id.split('0x')[1];
+              })()}`}
+              className="w-full"
+            >
+              <Button variant="cta-gradient" className="w-full">
+                Use Winning Model
+              </Button>
+            </Link>
+          </div>
+        ) : null}
+      </div>
+
       <div className="flex flex-col lg:flex-row justify-between gap-6 mt-8">
-        <div className="flex-1">
+        <div className="flex-1 order-2 lg:order-1">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="w-full h-[40px] shadow-sm justify-start mb-6 bg-white">
-              <TabsTrigger value="overview" className="flex-1 sm:flex-none">
+            <TabsList className="w-full h-[40px] shadow-sm justify-start mb-6 bg-white overflow-x-auto scrollbar-none">
+              <TabsTrigger
+                value="overview"
+                className="flex-1 sm:flex-none whitespace-nowrap"
+              >
                 Overview
               </TabsTrigger>
-              <TabsTrigger value="details" className="flex-1 sm:flex-none">
+              <TabsTrigger
+                value="details"
+                className="flex-1 sm:flex-none whitespace-nowrap"
+              >
                 Details
               </TabsTrigger>
-              <TabsTrigger value="crowdfunders" className="flex-1 sm:flex-none">
+              <TabsTrigger
+                value="crowdfunders"
+                className="flex-1 sm:flex-none whitespace-nowrap"
+              >
                 Crowdfunders
               </TabsTrigger>
               <TabsTrigger
                 value="submissions"
                 disabled={status === 'crowdfunding'}
-                className="flex-1 sm:flex-none"
+                className="flex-1 sm:flex-none whitespace-nowrap"
               >
                 Submissions
               </TabsTrigger>
@@ -150,8 +273,8 @@ export default function Page() {
           </Tabs>
         </div>
 
-        <div className="w-full lg:w-[350px]">
-          {/* Token Balance Card - Always visible */}
+        {/* Desktop layout: Keep cards on right side */}
+        <div className="w-full lg:w-[350px] hidden lg:block order-1 lg:order-2">
           <TokenBalanceCard bounty={bounty} walletAddress={wallet?.address} />
 
           {/* Conditional action cards based on status */}
