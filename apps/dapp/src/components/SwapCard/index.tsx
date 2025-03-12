@@ -166,7 +166,10 @@ export default function SwapCard({
     if (authenticated) {
       return 'Swap';
     }
-    if (wallet.chainId !== 'eip155:10143') {
+    if (!wallet) {
+      return 'Connect wallet';
+    }
+    if (wallet && wallet.chainId !== 'eip155:10143') {
       return 'Wrong chain';
     }
     return 'Connect wallet';

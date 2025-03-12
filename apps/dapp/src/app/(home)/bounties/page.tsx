@@ -58,30 +58,6 @@ const IntentStatus = {
 // Array of featured bounty IDs - you can hardcode this
 const FEATURED_BOUNTY_IDS = [9, 4];
 
-// Featured Bounty Card component
-const FeaturedBountyCard = ({ bounty }) => {
-  if (!bounty) return null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="relative group w-full"
-    >
-      <div className="absolute -inset-1.5 bg-gradient-to-r from-amber-100 to-amber-200 rounded-2xl opacity-70 group-hover:opacity-100 blur transition duration-300" />
-      <div className="relative w-full">
-        <div className="absolute -top-2 -right-2 z-10">
-          <div className="bg-amber-400 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
-            <Sparkles size={10} />
-            <span>Featured</span>
-          </div>
-        </div>
-        <BountyCard status={bountyStatus(bounty)} bounty={bounty} />
-      </div>
-    </motion.div>
-  );
-};
-
 function BountiesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -101,32 +77,17 @@ function BountiesContent() {
     IntentStatus[intent] ? ['Status'] : []
   );
 
-  // Find featured bounties
-  const featuredBounties = useMemo(
-    () =>
-      bounties?.filter((bounty) =>
-        FEATURED_BOUNTY_IDS.includes(Number(bounty.id))
-      ) || [],
-    [bounties]
-  );
+  // Check if a bounty is featured
+  const isFeatured = (bountyId: number) =>
+    FEATURED_BOUNTY_IDS.includes(bountyId);
 
   // Filter bounties for each tab - using useMemo to prevent unnecessary recalculations
   const activeBounties = useMemo(() => {
-    const filtered =
-      bounties?.filter((bounty) => bounty.finalized === false) || [];
-    // Remove featured bounties from the regular list if they're in active bounties
-    return filtered.filter(
-      (bounty) => !FEATURED_BOUNTY_IDS.includes(Number(bounty.id))
-    );
+    return bounties?.filter((bounty) => bounty.finalized === false) || [];
   }, [bounties]);
 
   const pastBounties = useMemo(() => {
-    const filtered =
-      bounties?.filter((bounty) => bounty.finalized === true) || [];
-    // Remove featured bounties from the regular list if they're in past bounties
-    return filtered.filter(
-      (bounty) => !FEATURED_BOUNTY_IDS.includes(Number(bounty.id))
-    );
+    return bounties?.filter((bounty) => bounty.finalized === true) || [];
   }, [bounties]);
 
   // Get available status filters based on active tab
@@ -173,15 +134,16 @@ function BountiesContent() {
   // Get the current list of bounties based on active/past toggle and filters
   const getCurrentBounties = () => {
     const currentList = activeTab === 'active' ? activeBounties : pastBounties;
-    return applyStatusFilters(currentList);
-  };
+    const filteredList = applyStatusFilters(currentList);
 
-  // Get featured bounties for the current tab
-  const getCurrentFeaturedBounties = () => {
-    const isActive = activeTab === 'active';
-    return featuredBounties.filter((bounty) =>
-      isActive ? !bounty.finalized : bounty.finalized
-    );
+    // Sort to put featured bounties at the top
+    return filteredList.sort((a, b) => {
+      // If both are featured or both are not featured, maintain original order
+      if (isFeatured(Number(a.id)) && isFeatured(Number(b.id))) return 0;
+      if (!isFeatured(Number(a.id)) && !isFeatured(Number(b.id))) return 0;
+      // If only a is featured, it should come first
+      return isFeatured(Number(a.id)) ? -1 : 1;
+    });
   };
 
   // Simplified filter interface component
@@ -425,52 +387,13 @@ function BountiesContent() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
             >
-              {/* Featured Bounties Section */}
-              {getCurrentFeaturedBounties().length > 0 && (
-                <div className="mb-8">
-                  <div className="flex items-center gap-2 mb-6">
-                    <Sparkles className="h-5 w-5 text-amber-500" />
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      Featured Bounties
-                    </h3>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {getCurrentFeaturedBounties().map((bounty, i) => (
-                      <motion.div
-                        key={bounty.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="flex justify-center"
-                      >
-                        <FeaturedBountyCard bounty={bounty} />
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Gentle separator - only show if there are featured bounties */}
-              {getCurrentFeaturedBounties().length > 0 && (
-                <div className="mb-8 relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200" />
-                  </div>
-                  <div className="relative flex justify-center">
-                    <span className="bg-white px-4 text-sm text-gray-500">
-                      All Bounties
-                    </span>
-                  </div>
-                </div>
-              )}
-
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="mt-6 pb-12"
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="flex flex-wrap gap-6">
                   {getCurrentBounties().length > 0 ? (
                     getCurrentBounties().map((bounty, i) => (
                       <motion.div
@@ -483,6 +406,7 @@ function BountiesContent() {
                         <BountyCard
                           status={bountyStatus(bounty)}
                           bounty={bounty}
+                          featured={isFeatured(Number(bounty.id))}
                         />
                       </motion.div>
                     ))
