@@ -19,7 +19,6 @@ export default function HomeProviders({ children }) {
         appearance: {
           theme: 'light',
           accentColor: '#676FFF',
-          logo: 'https://lutralabs.io/ll-logo.svg',
         },
         defaultChain: monad,
         supportedChains: [monad],

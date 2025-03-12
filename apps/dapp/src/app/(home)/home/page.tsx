@@ -126,7 +126,7 @@ export default function BountiesClient() {
         transition={{ delay: 0.3 }}
         className="mt-12"
       >
-        <Link href={'/bounties/bounty-form'}>
+        <Link href={'/create-bounty'}>
           <Button variant="outline" className="px-6 py-2 text-base font-medium">
             Create Your Own Bounty
           </Button>

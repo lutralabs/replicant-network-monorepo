@@ -232,7 +232,11 @@ export const BountyForm = () => {
       }
     } else if (currentStep === 2) {
       // Validate funding
-      const result = await form.trigger(['devFees', 'contribution']);
+      const result = await form.trigger([
+        'devFees',
+        'contribution',
+        'maxAmount',
+      ]);
       canProceed = result;
     }
 
@@ -331,9 +335,7 @@ export const BountyForm = () => {
             SuccessToast({
               message: 'Your bounty has been created successfully!',
             });
-            setTimeout(() => {
-              router.push(`/bounties/${id}`);
-            }, 3000);
+            router.push('/bounties');
           },
           onError: (error) => {
             ErrorToast({ error: error.message });
@@ -803,7 +805,20 @@ export const BountyForm = () => {
                           <FormItem>
                             <FormLabel>Maximum Amount</FormLabel>
                             <FormControl>
-                              <Input type="number" {...field} />
+                              <Input
+                                type="number"
+                                {...field}
+                                value={
+                                  field.value === undefined ? '' : field.value
+                                }
+                                onChange={(e) => {
+                                  const value =
+                                    e.target.value === ''
+                                      ? undefined
+                                      : Number(e.target.value);
+                                  field.onChange(value);
+                                }}
+                              />
                             </FormControl>
                             <FormDescription>
                               Maximum amount of MON collected for this bounty.
@@ -942,6 +957,16 @@ export const BountyForm = () => {
                                 placeholder="Email Address"
                                 required={false}
                                 {...field}
+                                value={
+                                  field.value === undefined ? '' : field.value
+                                }
+                                onChange={(e) => {
+                                  const value =
+                                    e.target.value === ''
+                                      ? undefined
+                                      : e.target.value;
+                                  field.onChange(value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -959,6 +984,16 @@ export const BountyForm = () => {
                                 placeholder="Discord Handle"
                                 required={false}
                                 {...field}
+                                value={
+                                  field.value === undefined ? '' : field.value
+                                }
+                                onChange={(e) => {
+                                  const value =
+                                    e.target.value === ''
+                                      ? undefined
+                                      : e.target.value;
+                                  field.onChange(value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
@@ -976,6 +1011,16 @@ export const BountyForm = () => {
                                 placeholder="Telegram Handle"
                                 required={false}
                                 {...field}
+                                value={
+                                  field.value === undefined ? '' : field.value
+                                }
+                                onChange={(e) => {
+                                  const value =
+                                    e.target.value === ''
+                                      ? undefined
+                                      : e.target.value;
+                                  field.onChange(value);
+                                }}
                               />
                             </FormControl>
                             <FormMessage />
