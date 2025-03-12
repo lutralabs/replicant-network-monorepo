@@ -12,6 +12,7 @@
 
 This project is still under heavy development.
 Current limitations:
+* Please use external wallets (e.g. MetaMask) instead of embedded wallets.
 * Due to limited resources on our servers, the model inference can:
     - Be slower than expected.
     - Yield poor results.
