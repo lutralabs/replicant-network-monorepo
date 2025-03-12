@@ -115,9 +115,9 @@ const LogoIcon = () => {
   return (
     <Link
       href="/home"
-      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
+      className="font-normal space-x-2 items-center text-sm text-white py-1 relative z-20"
     >
-      <Image height={64} width={48} src={Logo} alt="RN Logo" />
+      <Image src={Logo} width={28} alt="RN Logo" />
     </Link>
   );
 };
