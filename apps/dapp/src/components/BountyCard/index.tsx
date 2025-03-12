@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 import {
@@ -258,7 +259,7 @@ const BaseBountyCard: React.FC<
       href={`/bounties/${bounty.id}`}
       className="group block cursor-pointer"
     >
-      <div className="flex h-[240px] w-[320px] flex-col rounded-2xl bg-white p-5 shadow-sm transition-all duration-200 group-hover:shadow-md">
+      <div className="flex h-[320px] w-[320px] flex-col rounded-2xl bg-white p-5 shadow-sm transition-all duration-200 group-hover:shadow-md">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div
@@ -272,6 +273,23 @@ const BaseBountyCard: React.FC<
           <div className="text-xs text-gray-400">
             {`${bounty.creator.slice(0, 4)}...${bounty.creator.slice(-4)}`}
           </div>
+        </div>
+
+        {/* Image container */}
+        <div className="mt-3 h-32 w-full overflow-hidden rounded-lg bg-gray-100">
+          {bounty.token_image_url ? (
+            <Image
+              src={bounty.token_image_url}
+              alt={bounty.title || 'Bounty image'}
+              width={320}
+              height={128}
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gray-100">
+              <span className="text-sm text-gray-400">No image available</span>
+            </div>
+          )}
         </div>
 
         <div className="mt-3">

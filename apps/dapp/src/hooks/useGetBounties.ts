@@ -36,6 +36,7 @@ export type BountyCard = {
   discord?: string | null;
   email?: string | null;
   telegram?: string | null;
+  token_image_url?: string | null;
 };
 
 async function fetchBounties() {
@@ -82,6 +83,7 @@ async function fetchBounties() {
           discord: supabaseData.discord,
           email: supabaseData.email,
           telegram: supabaseData.telegram,
+          token_image_url: supabaseData.token_image_url,
         }),
       };
 
