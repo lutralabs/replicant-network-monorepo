@@ -137,13 +137,13 @@ export const BountyInfo = ({
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm">
-      <div className="flex w-full items-center justify-between">
-        <div className="max-w-[70%]">
-          <h1 className="text-2xl font-semibold tracking-tight">
+    <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+      <div className="flex flex-col sm:flex-row w-full items-start sm:items-center justify-between gap-4 sm:gap-0">
+        <div className="max-w-full sm:max-w-[70%]">
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">
             {bounty.title}
           </h1>
-          <div className="flex items-center gap-4 mt-2 text-gray-600">
+          <div className="flex flex-wrap items-center gap-3 mt-2 text-gray-600">
             <div className="flex items-center gap-1 text-sm">
               <Users className="h-4 w-4" />
               <span>{bounty.numFunders} funders</span>
@@ -181,10 +181,10 @@ export const BountyInfo = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-right">
+        <div className="flex items-center gap-3 mt-2 sm:mt-0">
+          <div className="text-left sm:text-right">
             <div className="text-sm text-gray-500">Bounty Amount</div>
-            <div className="text-2xl font-semibold text-primary">
+            <div className="text-xl sm:text-2xl font-semibold text-primary">
               {formatEther(bounty.amountRaised)}{' '}
               <span className="text-base">MON</span>
             </div>

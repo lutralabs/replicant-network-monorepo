@@ -43,13 +43,13 @@ const DynamicBreadcrumb = () => {
               <BreadcrumbItem>
                 {isLastItem ? (
                   <BreadcrumbPage>
-                    {formattedLink.length > 10
+                    {formattedLink.length > 20
                       ? `${formattedLink.slice(0, 4)}...${formattedLink.slice(-4)}`
                       : formattedLink}
                   </BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink href={href}>
-                    {formattedLink.length > 10
+                    {formattedLink.length > 20
                       ? `${formattedLink.slice(0, 4)}...${formattedLink.slice(-4)}`
                       : formattedLink}
                   </BreadcrumbLink>

@@ -24,8 +24,8 @@ export function BountyPhasesStepper({ currentPhase, phases }: StepperProps) {
   const activeStep = currentPhaseIndex !== -1 ? currentPhaseIndex + 1 : 1;
 
   return (
-    <div className="space-y-8 text-center w-full p-4">
-      <Stepper defaultValue={activeStep}>
+    <div className="space-y-4 sm:space-y-8 text-center w-full p-2 sm:p-4 overflow-x-auto">
+      <Stepper defaultValue={activeStep} className="min-w-[500px] sm:min-w-0">
         {phases.map((phase, index) => (
           <StepperItem
             key={phase.id}
@@ -35,12 +35,14 @@ export function BountyPhasesStepper({ currentPhase, phases }: StepperProps) {
             stale={phase.status === 'stale'}
             className="max-md:items-start [&:not(:last-child)]:flex-1"
           >
-            <div className="flex items-center gap-4 max-md:flex-col">
+            <div className="flex items-center gap-2 sm:gap-4 max-md:flex-col">
               <StepperIndicator />
               <div className="text-center md:-order-1 md:text-left">
-                <StepperTitle>{phase.name}</StepperTitle>
+                <StepperTitle className="text-xs sm:text-sm">
+                  {phase.name}
+                </StepperTitle>
                 {phase.description && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs text-muted-foreground hidden sm:block">
                     {phase.description}
                   </p>
                 )}

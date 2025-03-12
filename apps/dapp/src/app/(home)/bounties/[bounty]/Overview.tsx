@@ -30,10 +30,12 @@ export const Overview = ({ bounty }: { bounty: Bounty }) => {
         <CardHeader className="pb-2">
           <CardTitle className="text-xl font-medium">Overview</CardTitle>
           {status === 'completed' && winningSubmission && (
-            <div className="mt-2 mb-2 gap-x-4 flex items-center p-3 bg-gradient-to-r from-green-50 to-blue-50 border border-green-100 rounded-md">
-              <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
-              <div>
-                <span className="text-smd">Bounty Winner: </span>
+            <div className="mt-2 mb-2 flex flex-col sm:flex-row items-start sm:items-center p-3 bg-gradient-to-r from-green-50 to-blue-50 border border-green-100 rounded-md">
+              <div className="flex items-center mb-2 sm:mb-0">
+                <Trophy className="h-5 w-5 mr-2 text-yellow-500 flex-shrink-0" />
+                <span className="text-sm font-medium">Bounty Winner:</span>
+              </div>
+              <div className="sm:ml-2 break-all">
                 <span className="font-medium text-md">{bounty.winner}</span>
               </div>
             </div>
