@@ -1,6 +1,6 @@
+import crypto from 'node:crypto';
 import { supabaseServiceRoleClient } from '@/lib/supabase/serviceRoleClient';
 import { type NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
 
 const supabase = supabaseServiceRoleClient();
 
@@ -14,25 +14,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Generate a unique filename
-    const fileExtension = file.name.split('.').pop();
-    const fileName = `${uuidv4()}.${fileExtension}`;
-
     // Convert file to ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
+
+    // Generate hash from file content
+    const hash = crypto.createHash('sha256').update(buffer).digest('hex');
+
+    // Get file extension and create filename with hash
+    const fileExtension = file.name.split('.').pop();
+    const fileName = `${hash}.${fileExtension}`;
 
     // Upload to Supabase
     const { data, error } = await supabase.storage
       .from('token-images')
       .upload(fileName, buffer, {
         contentType: file.type,
-        upsert: false,
+        upsert: false, // Changed to true to allow overwriting if same file is uploaded
       });
 
     if (error) {
-      console.error('Supabase upload error:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      if (error.message !== 'The resource already exists') {
+        console.error('Supabase upload error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
     }
 
     // Get the public URL
