@@ -12,7 +12,7 @@ A Next.js-based decentralized application for the Replicant Network.
 
 ## Prerequisites
 
-* Node.js (v18 or later recommended)
+* Node.js (v20 or later recommended)
 * pnpm package manager
 
 ## Getting Started
