@@ -86,7 +86,7 @@ export default function Page() {
                   Try Winning Models
                 </Button>
               </Link>
-              <Link href="/bounties">
+              <Link href="/home">
                 <Button variant="cta-gradient" size="lg" className="gap-4">
                   Check out Bounties <MoveRight className="w-4 h-4" />
                 </Button>

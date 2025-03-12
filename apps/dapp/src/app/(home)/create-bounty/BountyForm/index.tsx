@@ -63,8 +63,8 @@ const formSchema = z.object({
     .min(2, {
       message: 'Symbol must be at least 2 characters.',
     })
-    .max(3, {
-      message: 'Symbol must be at most 3 characters.',
+    .max(10, {
+      message: 'Symbol must be at most 10 characters.',
     }),
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.',
