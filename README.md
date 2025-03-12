@@ -8,6 +8,18 @@
   AI Models. Made for You.
 </p>
 
+## ⚠️ Disclaimer
+
+This project is still under heavy development.
+Current limitations:
+* Due to limited resources on our servers, the model inference can:
+    - Be slower than expected.
+    - Yield poor results.
+    - May not complete at all.
+* We are currently running two image generator models, again due to limited resources.
+* Error handling on the platform can sometimes be lacking.
+* The platform is not yet fully optimized for mobile devices.
+
 ## 🌟 Project Overview
 
 Replicant Network is a decentralized platform that revolutionizes AI model development by creating a transparent and efficient ecosystem for crowdfunding, building, and deploying AI models. Built on Monad's accelerated EVM, it enables:
