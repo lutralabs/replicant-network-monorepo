@@ -1,8 +1,8 @@
+import { Card, CardContent } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Bounty } from '@/hooks/useGetBounty';
 import React from 'react';
 import { formatEther } from 'viem';
-import { Card, CardContent } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 export const Crowdfunders = ({ bounty }: { bounty: Bounty }) => {
   return (

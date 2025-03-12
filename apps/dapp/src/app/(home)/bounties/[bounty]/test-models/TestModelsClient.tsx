@@ -4,15 +4,15 @@ import { useState } from 'react';
 
 import { BountyInfo } from '@/components/BountyInfo';
 import { DynamicImage } from '@/components/DynamicImage';
+import { ErrorToast } from '@/components/Toast/ErrorToast';
+import { SuccessToast } from '@/components/Toast/SuccessToast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useGetBounty } from '@/hooks/useGetBounty';
+import { bountyStatus, cn } from '@/lib/utils';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { AlertCircle, CornerRightUp } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { useGetBounty } from '@/hooks/useGetBounty';
-import { bountyStatus, cn } from '@/lib/utils';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { ErrorToast } from '@/components/Toast/ErrorToast';
-import { SuccessToast } from '@/components/Toast/SuccessToast';
 
 export const TestModelsClient = () => {
   const [images, setImages] = useState([]);

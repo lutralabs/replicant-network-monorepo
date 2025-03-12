@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { AlertCircle } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { BountyInfo } from '@/components/BountyInfo';
 import { DynamicImage } from '@/components/DynamicImage';
+import { ErrorToast } from '@/components/Toast';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Carousel,
@@ -23,13 +25,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useGetBounty } from '@/hooks/useGetBounty';
-import { useVote } from '@/hooks/useVote';
 import { useHasVoted } from '@/hooks/useHasVoted';
+import { useVote } from '@/hooks/useVote';
 import { bountyStatus } from '@/lib/utils';
-import { ErrorToast } from '@/components/Toast';
 
 type TestImage = {
   url: string;

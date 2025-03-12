@@ -1,14 +1,14 @@
 'use client';
-import { useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
 import { DynamicImage } from '@/components/DynamicImage';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { type BountyCard, useGetBounties } from '@/hooks/useGetBounties';
+import { cn } from '@/lib/utils';
 import { ArrowRight, ArrowUpRight, CornerRightUp } from 'lucide-react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import { useGetBounties, type BountyCard } from '@/hooks/useGetBounties';
 
 const findWinningBounty = (bounties: BountyCard[], modelHash: string) => {
   if (!bounties) return undefined;

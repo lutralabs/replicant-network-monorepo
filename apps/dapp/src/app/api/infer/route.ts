@@ -1,10 +1,10 @@
 import { randomUUID } from 'node:crypto';
+import { repNetManagerAbi } from '@/generated/RepNetManager';
+import { supabaseServiceRoleClient } from '@/lib/supabase/serviceRoleClient';
 import { config } from '@/wagmi';
 import { verifyMessage } from '@wagmi/core';
 import type { NextRequest } from 'next/server';
-import { createPublicClient, http } from 'viem';
-import { repNetManagerAbi } from '@/generated/RepNetManager';
-import { supabaseServiceRoleClient } from '@/lib/supabase/serviceRoleClient';
+import { http, createPublicClient } from 'viem';
 
 // Initialize Viem client for contract interactions
 const publicClient = createPublicClient({

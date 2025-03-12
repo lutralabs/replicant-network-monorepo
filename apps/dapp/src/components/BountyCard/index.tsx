@@ -1,16 +1,16 @@
 import Link from 'next/link';
 
-import type { BountyCard as BountyCardType } from '@/hooks/useGetBounties';
-import { bountyStatus, getTimeRemaining } from '@/lib/utils';
-import { formatEther } from 'viem';
-import { Badge } from '../ui/badge';
-import { ArrowRight, Clock, Users, FileCheck } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import type { BountyCard as BountyCardType } from '@/hooks/useGetBounties';
+import { bountyStatus, getTimeRemaining } from '@/lib/utils';
+import { ArrowRight, Clock, FileCheck, Users } from 'lucide-react';
+import { formatEther } from 'viem';
+import { Badge } from '../ui/badge';
 
 type BaseBountyCardProps = {
   bounty: BountyCardType;

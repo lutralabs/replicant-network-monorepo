@@ -1,9 +1,9 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { MoveRight, PhoneCall } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 
 function Hero() {
   const [titleNumber, setTitleNumber] = useState(0);

@@ -33,10 +33,6 @@ const DynamicBreadcrumb = () => {
   return (
     <Breadcrumb>
       <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-
         {pathNames.map((link, index) => {
           const href = `/${pathNames.slice(0, index + 1).join('/')}`;
           const formattedLink = formatPathSegment(link);
@@ -44,7 +40,6 @@ const DynamicBreadcrumb = () => {
 
           return (
             <React.Fragment key={link}>
-              <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {isLastItem ? (
                   <BreadcrumbPage>{formattedLink}</BreadcrumbPage>
@@ -52,6 +47,7 @@ const DynamicBreadcrumb = () => {
                   <BreadcrumbLink href={href}>{formattedLink}</BreadcrumbLink>
                 )}
               </BreadcrumbItem>
+              {!isLastItem && <BreadcrumbSeparator />}
             </React.Fragment>
           );
         })}

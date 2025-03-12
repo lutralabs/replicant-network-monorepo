@@ -1,9 +1,9 @@
+import { Card, CardContent } from '@/components/ui/card';
 import type { Bounty } from '@/hooks/useGetBounty';
+import { Calendar, Clock, Code, CoinsIcon, Users, Wallet } from 'lucide-react';
+import Link from 'next/link';
 import React from 'react';
 import { formatEther } from 'viem';
-import { Calendar, Code, Clock, Users, Wallet, CoinsIcon } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import Link from 'next/link';
 
 export const Details = ({ bounty }: { bounty: Bounty }) => {
   const detailItems = [

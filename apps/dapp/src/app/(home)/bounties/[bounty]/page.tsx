@@ -1,23 +1,23 @@
 'use client';
 
-import { Crowdfunders } from '@/app/bounties/[bounty]/Crowdfunders';
-import { Details } from '@/app/bounties/[bounty]/Details';
-import { Overview } from '@/app/bounties/[bounty]/Overview';
-import { Submissions } from '@/app/bounties/[bounty]/Submissions';
+import { Crowdfunders } from '@/app/(home)/bounties/[bounty]/Crowdfunders';
+import { Details } from '@/app/(home)/bounties/[bounty]/Details';
+import { Overview } from '@/app/(home)/bounties/[bounty]/Overview';
+import { Submissions } from '@/app/(home)/bounties/[bounty]/Submissions';
 import { BountyInfo } from '@/components/BountyInfo';
+import SwapCard from '@/components/SwapCard';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useGetBounty } from '@/hooks/useGetBounty';
 import { bountyStatus, formatBalance } from '@/lib/utils';
-import { usePathname } from 'next/navigation';
-import SwapCard from '@/components/SwapCard';
-import { CircleDashed, Trophy, Wallet } from 'lucide-react';
-import { useWallets } from '@privy-io/react-auth';
-import { useMemo, useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { useBalance } from 'wagmi';
 import { config } from '@/wagmi';
-import { Card } from '@/components/ui/card';
+import { useWallets } from '@privy-io/react-auth';
+import { CircleDashed, Trophy, Wallet } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { useBalance } from 'wagmi';
 
 // Token Balance Card Component
 function TokenBalanceCard({

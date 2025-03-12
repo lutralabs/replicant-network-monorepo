@@ -1,13 +1,13 @@
-import { FundBountyDialog } from '@/app/bounties/[bounty]/FundBountyDialog';
+import { FundBountyDialog } from '@/app/(home)/bounties/[bounty]/FundBountyDialog';
+import type { Bounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
+import { useWallets } from '@privy-io/react-auth';
+import { CalendarIcon, Clock, FileText, Users } from 'lucide-react';
 import Link from 'next/link';
 import React, { useMemo } from 'react';
 import { formatEther } from 'viem';
-import { Button } from '../ui/button';
-import type { Bounty } from '@/hooks/useGetBounty';
-import { useWallets } from '@privy-io/react-auth';
-import { CalendarIcon, Users, Clock, FileText } from 'lucide-react';
 import { BountyPhasesStepper } from '../BountyPhaseStepper';
+import { Button } from '../ui/button';
 import {
   Tooltip,
   TooltipContent,

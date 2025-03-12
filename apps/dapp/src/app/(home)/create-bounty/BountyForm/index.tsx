@@ -3,12 +3,22 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useWallets } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBalance } from 'wagmi';
 import { z } from 'zod';
 
+import { ErrorToast } from '@/components/Toast/ErrorToast';
+import { SuccessToast } from '@/components/Toast/SuccessToast';
 import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -28,31 +38,21 @@ import {
 } from '@/components/ui/select';
 import { SmartDatetimeInput } from '@/components/ui/smart-datetime-input';
 import { Textarea } from '@/components/ui/textarea';
-import { ErrorToast } from '@/components/Toast/ErrorToast';
-import { SuccessToast } from '@/components/Toast/SuccessToast';
 import { useCreateBounty } from '@/hooks/useCreateBounty';
+import { useImageUpload } from '@/hooks/useImageUpload';
 import { formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Loader2,
+  ArrowLeft,
+  ArrowRight,
   Calendar,
+  CheckCircle2,
+  Loader2,
   Mail,
   MessageSquare,
   Send,
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle2,
 } from 'lucide-react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useImageUpload } from '@/hooks/useImageUpload';
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -323,13 +323,13 @@ export const BountyForm = () => {
           token_image_url: imageUrl,
         },
         {
-          onSuccess: () => {
+          onSuccess: (id) => {
             SuccessToast({
               message: 'Your bounty has been created successfully!',
             });
             setTimeout(() => {
-              router.push('/bounties');
-            }, 5000);
+              router.push(`/bounties/${id}`);
+            }, 3000);
           },
           onError: (error) => {
             ErrorToast({ error: error.message });

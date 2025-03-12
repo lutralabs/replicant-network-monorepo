@@ -1,17 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import type { PropsWithChildren } from 'react';
 
-import { Providers } from '@/app/providers';
-import { CoreLayout } from '@/components/CoreLayout';
-import { Toaster } from '@/components/ui/sonner';
 import { inter } from '@/fonts';
 
 import '@/styles/main.css';
 import { cn } from '@/lib/utils';
+import { RootProviders } from '@/providers/RootProviders';
 
-export const viewport: Viewport = {
-  themeColor: 'black',
-};
+// export const viewport: Viewport = {
+//   themeColor: 'black',
+// };
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? 'http://localhost:3000'),
@@ -69,23 +67,15 @@ export const metadata: Metadata = {
   },
 };
 
-const GlobalLayout = ({ children }: PropsWithChildren) => {
+const RootLayout = ({ children }: PropsWithChildren) => {
   return (
     <html suppressHydrationWarning className={cn(inter.variable)} lang="en">
       <meta content="app" name="apple-mobile-web-app-title" />
       <body>
-        <Providers
-          disableTransitionOnChange
-          enableSystem
-          attribute="class"
-          defaultTheme="system"
-        >
-          <CoreLayout>{children}</CoreLayout>
-          <Toaster />
-        </Providers>
+        <RootProviders>{children}</RootProviders>
       </body>
     </html>
   );
 };
 
-export default GlobalLayout;
+export default RootLayout;

@@ -1,10 +1,10 @@
+import { ErrorToast } from '@/components/Toast/ErrorToast';
+import { SuccessToast } from '@/components/Toast/SuccessToast';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
 import { useWallets } from '@privy-io/react-auth';
 import { useMutation } from '@tanstack/react-query';
 import { simulateContract, writeContract } from '@wagmi/core';
-import { ErrorToast } from '@/components/Toast/ErrorToast';
-import { SuccessToast } from '@/components/Toast/SuccessToast';
 
 export const useVote = () => {
   const { wallets } = useWallets();

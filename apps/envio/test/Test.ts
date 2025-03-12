@@ -1,14 +1,14 @@
 import assert from 'node:assert';
 import {
-  TestHelpers,
   type RepNetManager_CrowdfundingCreated,
   type RepNetManager_CrowdfundingFinalized,
   type RepNetManager_CrowdfundingFinalizedWithoutWinner,
   type RepNetManager_CrowdfundingFunded,
   type RepNetManager_OwnershipTransferred,
   type RepNetManager_SolutionSubmitted,
-  type RepNetManager_Withdrawal,
   type RepNetManager_Vote,
+  type RepNetManager_Withdrawal,
+  TestHelpers,
 } from 'generated';
 const { MockDb, RepNetManager } = TestHelpers;
 

@@ -2,18 +2,18 @@
  * Please refer to https://docs.envio.dev for a thorough guide on all Envio indexer features
  */
 import {
+  type Crowdfunding,
   RepNetManager,
-  type RepNetManager_Vote,
   type RepNetManager_CrowdfundingCreated,
   type RepNetManager_CrowdfundingFinalized,
   type RepNetManager_CrowdfundingFinalizedWithoutWinner,
   type RepNetManager_CrowdfundingFunded,
+  type RepNetManager_DebugPhaseChanged,
   type RepNetManager_OwnershipTransferred,
   type RepNetManager_SolutionSubmitted,
+  type RepNetManager_Vote,
   type RepNetManager_Withdrawal,
   type User,
-  type Crowdfunding,
-  type RepNetManager_DebugPhaseChanged,
 } from 'generated';
 
 async function ensureUserExists(

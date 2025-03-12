@@ -64,7 +64,7 @@ export const useCreateBounty = () => {
         value: parseEther(amount.toString()),
         account: wallet.address,
       });
-      const writeRes = await writeContract(config, result.request as any);
+      const _ = await writeContract(config, result.request as any);
 
       fetch('/api/bounty', {
         method: 'POST',
@@ -79,7 +79,7 @@ export const useCreateBounty = () => {
         }),
       });
 
-      return writeRes;
+      return Number(result.result);
     },
     onError: (error) => {
       console.error('error', error);

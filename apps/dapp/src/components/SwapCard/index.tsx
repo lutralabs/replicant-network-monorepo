@@ -2,29 +2,31 @@
 
 import type React from 'react';
 
-import { useMemo, useState } from 'react';
-import { Check, ChevronDown, Info, Loader2, Repeat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import Image from 'next/image';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { useFundBounty } from '@/hooks/useFundBounty';
+import type { Bounty } from '@/hooks/useGetBounty';
+import { useGetSymbol } from '@/hooks/useGetSymbol';
+import { useWithdrawFunding } from '@/hooks/useWithdrawFunding';
+import { formatBalance } from '@/lib/utils';
+import { config } from '@/wagmi';
 import {
   type ConnectedWallet,
   usePrivy,
   useWallets,
 } from '@privy-io/react-auth';
-import { useFundBounty } from '@/hooks/useFundBounty';
-import type { Bounty } from '@/hooks/useGetBounty';
-import { formatBalance } from '@/lib/utils';
-import { config } from '@/wagmi';
+import { circIn } from 'framer-motion';
+import { Check, ChevronDown, Info, Loader2, Repeat } from 'lucide-react';
+import Image from 'next/image';
+import { useMemo, useState } from 'react';
 import { useBalance } from 'wagmi';
-import { useWithdrawFunding } from '@/hooks/useWithdrawFunding';
 import { ErrorToast } from '../Toast';
 import {
   Accordion,
@@ -32,8 +34,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '../ui/accordion';
-import { useGetSymbol } from '@/hooks/useGetSymbol';
-import { circIn } from 'framer-motion';
 
 // Token list for paying
 const base = [

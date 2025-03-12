@@ -1,12 +1,12 @@
+import { ArrowRightIcon, BlocksIcon, User } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { Badge } from '../ui/badge';
-import { ArrowRightIcon, BlocksIcon, User } from 'lucide-react';
 import {
   GlowingStarsBackgroundCard,
   GlowingStarsDescription,
   GlowingStarsTitle,
 } from '../GlowingStarCard';
+import { Badge } from '../ui/badge';
 
 type ModelCardProps = {
   title: string;

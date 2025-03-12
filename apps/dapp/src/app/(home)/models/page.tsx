@@ -1,8 +1,8 @@
 'use client';
 
 import { ModelCard } from '@/components/ModelCard';
-import { type BountyCard, useGetBounties } from '@/hooks/useGetBounties';
 import { Skeleton } from '@/components/ui/skeleton';
+import { type BountyCard, useGetBounties } from '@/hooks/useGetBounties';
 import Link from 'next/link';
 
 const findWinningSubmission = (bounty: BountyCard) => {

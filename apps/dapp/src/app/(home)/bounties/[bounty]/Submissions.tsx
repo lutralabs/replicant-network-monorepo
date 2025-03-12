@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Table,
   TableBody,
@@ -15,9 +16,8 @@ import {
 } from '@/components/ui/tooltip';
 import type { Bounty } from '@/hooks/useGetBounty';
 import { useWallets } from '@privy-io/react-auth';
-import { VoteIcon, Eye } from 'lucide-react';
+import { Eye, VoteIcon } from 'lucide-react';
 import React, { useMemo } from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 export const Submissions = ({ bounty }: { bounty: Bounty }) => {
   const winningSubmission = useMemo(() => {

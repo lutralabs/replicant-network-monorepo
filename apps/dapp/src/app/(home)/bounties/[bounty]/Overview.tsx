@@ -1,8 +1,8 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Bounty } from '@/hooks/useGetBounty';
 import { bountyStatus } from '@/lib/utils';
-import React, { useMemo } from 'react';
 import { Trophy } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useMemo } from 'react';
 
 export const Overview = ({ bounty }: { bounty: Bounty }) => {
   const status = bountyStatus(bounty);
