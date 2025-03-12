@@ -12,52 +12,54 @@
 
 This project is still under heavy development.
 Current limitations:
-* Please use external wallets (e.g. MetaMask) instead of embedded wallets.
 * Due to limited resources on our servers, the model inference can:
     - Be slower than expected.
     - Yield poor results.
     - May not complete at all.
 * We are currently running two image generator models, again due to limited resources.
-* Error handling on the platform can sometimes be lacking.
-* The platform is not yet fully optimized for mobile devices.
+* If Privy Embedded Wallets do not work (due to network congestion), please use external wallets (e.g. MetaMask).
 
 ## 🌟 Project Overview
 
 Replicant Network is a decentralized platform that revolutionizes AI model development by creating a transparent and efficient ecosystem for crowdfunding, building, and deploying AI models. Built on Monad's accelerated EVM, it enables:
 
-* **Transparent Crowdfunding**: Anyone can create or contribute to AI model development campaigns
-* **Decentralized Governance**: Token holders vote on model submissions
-* **Efficient Deployment**: Seamless deployment of AI models for inference
+* **Transparent Crowdfunding**: Anyone can create or contribute to AI model development bounties
+* **Submission Testing & Decentralized Voting**: Token holders can test submitted models & vote for the best submission
+* **Winning Model Hosting**: Seamless deployment of AI models for inference
 * **Tokenization & Shared Ownership**: Models are tokenized, enabling shared ownership and revenue sharing among contributors
+
+Replicant Network leverages Monad's scalability to build a democratized, transparent and permissionless Custom AI Model marketplace. By utilizing Monad's high throughput and near-zero gas fees, our platform will enable seamless transactions for AI model usage while ensuring creators receive fair compensation through revenue sharing. As AI agents become the new websites in the evolving digital landscape, Replicant Network will contribute significantly to Monad's ecosystem expansion, attracting developers and users from both AI and crypto communities, thereby accelerating adoption of the Monad blockchain.
 
 ## 🏗️ Architecture
 
-Replicant Network consists of three main components:
+Replicant Network consists of five main components:
 
 1. **Smart Contracts**: Solidity contracts deployed on Monad for crowdfunding, model submission, and token management
 2. **Dapp**: Next.js frontend application for interacting with the platform
 3. **AI Manager**: FastAPI-based service for managing and running AI inference tasks
-4. **Model/Crowdfunding Metadata Storage**: IPFS-based storage for model and campaign metadata
+4. **Model/Crowdfunding Metadata Storage**: Storage for model and campaign metadata
 5. **Model Storage**: Secure storage for AI model files and weights
 
 <p align="center">
   <img src="assets/architecture.svg" alt="Replicant Network Architecture" width="800"/>
 </p>
 
-## 🚀 Key Features
+## 🚀 How Replicant Network works?
 
-* **Crowdfunding Campaigns**: Create and fund AI model development campaigns
-* **Token-Based Governance & Ownership**: Each campaign creates its own ERC20 token for voting, ownership, and revenue sharing
-* **Model Submission**: Developers can submit AI models to campaigns
-* **Voting System**: Token holders vote on the best model submissions
-* **Reward Distribution**: Automatic distribution of rewards to winning developers
-* **Model Monetization**: Users can use models via our platform for small fees, with revenue shared among token holders
 
-Take a look at the diagram below for a visual representation of the Crowdfunding phases.
+1. **Publish Phase**: A Bounty is created. Bounty Creator provides all the details such as title, detailed description, timelines for each phase, token details, rewards & makes an initial deposit.
+2. **Funding Phase**: Contributors fund campaigns and receive model tokens in return. 
+3. **Submission Phase**: Developers develop & submit AI solutions. If approved by the team (later decentralized), the model will be added to the list of submissions and will be made available for testing & voting in the next phase.
+4. **Voting Phase**: Model Token holders test all models & vote on the best submission. Every eligible voter is allowed to make a single prompt to all of the submitted models.Prompts and generated images are stored in the DB. All of the prompts and generated images are displayed to every eligible voter allowing them to make thoroughly compare both models through his prompts and prompts made by other participants.
+5. **Deployment Phase**: Once voting phase finishes (It becomes either Completed or Failed) it becomes "Stale". A transaction is then needed for the Bounty to finalize. Developer of the submission with the most votes gets the bounty & his share of model tokens and the winning model gets deployed for public use by the community.
+
+Take a look at the diagram below for a visual representation of the Custom AI Model lifecycle phases.
 
 <p align="center">
   <img src="assets/flows.svg" alt="Crowdfunding Phases" width="800"/>
 </p>
+
+If the bounty fails (there arent any submissions) AI model tokens can be burnt to withdraw MON funded.
 
 ## 📁 Repository Structure
 
@@ -81,7 +83,7 @@ replicant-network-monorepo/
 
 * **Blockchain**: Monad (EVM-compatible)
 * **Smart Contracts**: Solidity, Foundry
-* **Frontend**: Next.js, TypeScript, TailwindCSS, wagmi
+* **Frontend**: Next.js, TypeScript, TailwindCSS, wagmi, Privy
 * **Backend**: FastAPI, Python
 * **AI**: PyTorch
 * **DevOps**: Docker, GitHub Actions
