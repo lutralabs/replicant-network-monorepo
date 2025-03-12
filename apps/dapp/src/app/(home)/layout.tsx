@@ -84,7 +84,7 @@ export default function HomeLayout({ children }) {
               {SOCIAL.map((link) => (
                 <SidebarLink key={link.label} link={link} />
               ))}
-              <div className="mt-2 pl-2">
+              <div className="md:hidden mt-2 pl-2">
                 <LoginButton />
               </div>
             </div>
