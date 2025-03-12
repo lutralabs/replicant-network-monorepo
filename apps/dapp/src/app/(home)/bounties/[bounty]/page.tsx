@@ -34,7 +34,8 @@ function TokenBalanceCard({
   // Format the token balance
   const formattedTokenBalance = useMemo(() => {
     if (!tokenBalance || !tokenBalance.data) return '0';
-    return formatBalance(tokenBalance.data.value);
+    const formattedBalance = formatBalance(tokenBalance.data.value);
+    return formattedBalance.toFixed(2);
   }, [tokenBalance.data]);
 
   const isLoading = tokenBalance.isLoading;
