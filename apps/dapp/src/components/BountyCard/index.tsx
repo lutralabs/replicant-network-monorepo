@@ -257,9 +257,9 @@ const BaseBountyCard: React.FC<
   return (
     <Link
       href={`/bounties/${bounty.id}`}
-      className="group block cursor-pointer"
+      className="group block cursor-pointer w-full"
     >
-      <div className="flex h-[320px] w-[320px] flex-col rounded-2xl bg-white p-5 shadow-sm transition-all duration-200 group-hover:shadow-md">
+      <div className="flex h-[320px] w-full max-w-[320px] mx-auto flex-col rounded-2xl bg-white p-5 shadow-sm transition-all duration-200 group-hover:shadow-md">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div

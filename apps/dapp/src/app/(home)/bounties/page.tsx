@@ -66,10 +66,10 @@ const FeaturedBountyCard = ({ bounty }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative group"
+      className="relative group w-full"
     >
       <div className="absolute -inset-1.5 bg-gradient-to-r from-amber-100 to-amber-200 rounded-2xl opacity-70 group-hover:opacity-100 blur transition duration-300" />
-      <div className="relative">
+      <div className="relative w-full">
         <div className="absolute -top-2 -right-2 z-10">
           <div className="bg-amber-400 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
             <Sparkles size={10} />
@@ -434,13 +434,14 @@ function BountiesContent() {
                       Featured Bounties
                     </h3>
                   </div>
-                  <div className="flex flex-wrap gap-x-12 gap-y-12 justify-center sm:justify-start">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {getCurrentFeaturedBounties().map((bounty, i) => (
                       <motion.div
                         key={bounty.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
+                        className="flex justify-center"
                       >
                         <FeaturedBountyCard bounty={bounty} />
                       </motion.div>
@@ -469,7 +470,7 @@ function BountiesContent() {
                 exit={{ opacity: 0 }}
                 className="mt-6 pb-12"
               >
-                <div className="flex flex-wrap gap-x-12 gap-y-12 justify-center sm:justify-start">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {getCurrentBounties().length > 0 ? (
                     getCurrentBounties().map((bounty, i) => (
                       <motion.div
@@ -477,7 +478,7 @@ function BountiesContent() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="w-full sm:w-auto flex justify-center"
+                        className="flex justify-center"
                       >
                         <BountyCard
                           status={bountyStatus(bounty)}
@@ -486,7 +487,7 @@ function BountiesContent() {
                       </motion.div>
                     ))
                   ) : (
-                    <div className="w-full text-center p-12 border border-dashed rounded-lg">
+                    <div className="col-span-full text-center p-12 border border-dashed rounded-lg">
                       <p className="text-gray-500">
                         No {activeTab === 'active' ? 'active' : 'past'} bounties
                         found
