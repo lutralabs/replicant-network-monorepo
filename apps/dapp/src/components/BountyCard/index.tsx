@@ -9,12 +9,13 @@ import {
 } from '@/components/ui/tooltip';
 import type { BountyCard as BountyCardType } from '@/hooks/useGetBounties';
 import { bountyStatus, getTimeRemaining } from '@/lib/utils';
-import { ArrowRight, Clock, FileCheck, Users } from 'lucide-react';
+import { ArrowRight, Clock, FileCheck, Sparkles, Users } from 'lucide-react';
 import { formatEther } from 'viem';
 import { Badge } from '../ui/badge';
 
 type BaseBountyCardProps = {
   bounty: BountyCardType;
+  featured?: boolean;
 };
 
 type ActiveBountyProps = BaseBountyCardProps & {
@@ -234,7 +235,7 @@ const BaseBountyCard: React.FC<
     children?: React.ReactNode;
     statusColor: 'blue' | 'orange' | 'amber' | 'green' | 'red' | 'purple';
   }
-> = ({ bounty, children, statusColor }) => {
+> = ({ bounty, children, statusColor, featured }) => {
   const statusLabels = {
     blue: 'Submissions',
     orange: 'Voting',
@@ -259,7 +260,9 @@ const BaseBountyCard: React.FC<
       href={`/bounties/${bounty.id}`}
       className="group block cursor-pointer w-full"
     >
-      <div className="flex h-[320px] w-full max-w-[320px] mx-auto flex-col rounded-2xl bg-white p-5 shadow-sm transition-all duration-200 group-hover:shadow-md">
+      <div
+        className={`flex h-[320px] w-full max-w-[320px] mx-auto flex-col rounded-2xl bg-white p-5 shadow-sm transition-all duration-200 group-hover:shadow-md ${featured ? 'ring-1 ring-amber-200' : ''}`}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div
@@ -270,9 +273,18 @@ const BaseBountyCard: React.FC<
             </span>
           </div>
 
-          <div className="text-xs text-gray-400">
-            {`${bounty.creator.slice(0, 4)}...${bounty.creator.slice(-4)}`}
-          </div>
+          {featured ? (
+            <div className="flex items-center space-x-1">
+              <Sparkles className="h-3 w-3 text-amber-500" />
+              <span className="text-xs font-medium text-amber-500">
+                Featured
+              </span>
+            </div>
+          ) : (
+            <div className="text-xs text-gray-400">
+              {`${bounty.creator.slice(0, 4)}...${bounty.creator.slice(-4)}`}
+            </div>
+          )}
         </div>
 
         {/* Image container */}
@@ -283,7 +295,7 @@ const BaseBountyCard: React.FC<
               alt={bounty.title || 'Bounty image'}
               width={320}
               height={128}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+              className="h-full w-full object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center bg-gray-100">
