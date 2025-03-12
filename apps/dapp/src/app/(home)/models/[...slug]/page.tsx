@@ -123,32 +123,32 @@ export default function Page() {
   return (
     <div className="w-full min-h-[calc(100vh-80px)] pb-12 flex flex-col">
       <div className="bg-white rounded-lg p-6 border border-gray-100 shadow-sm">
-        <div className="flex flex-col md:flex-row w-full items-start md:items-center justify-between gap-4 md:gap-0">
-          <div className="max-w-full md:max-w-[70%]">
-            <h1 className="text-xl md:text-2xl font-semibold tracking-tight">
+        <div className="flex flex-col lg:flex-row w-full items-start lg:items-center justify-between gap-4 lg:gap-0">
+          <div className="max-w-full lg:max-w-[70%]">
+            <h1 className="text-xl lg:text-2xl font-semibold tracking-tight">
               {modelBounty.title || 'Untitled Model'}
             </h1>
-            <div className="flex items-center gap-4 mt-2 text-gray-600 text-sm md:text-base max-md:line-clamp-3">
+            <div className="flex items-center gap-4 mt-2 text-gray-600 text-sm lg:text-base max-md:line-clamp-3 md:line-clamp-4">
               {modelBounty.description || 'No description available'}
             </div>
           </div>
 
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-3 w-full md:w-auto">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center gap-3 w-full lg:w-auto">
             <Link
               href={`https://testnet.monadexplorer.com/token/${modelBounty.token}`}
               target="_blank"
-              className="w-full md:w-auto"
+              className="w-full lg:w-auto"
             >
-              <Button variant="cta-solid" className="w-full md:w-auto">
+              <Button variant="cta-solid" className="w-full lg:w-auto">
                 Token
                 <ArrowUpRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
             <Link
               href={`/bounties/${modelBounty.id}`}
-              className="w-full md:w-auto"
+              className="w-full lg:w-auto"
             >
-              <Button variant="outline" className="w-full md:w-auto">
+              <Button variant="outline" className="w-full lg:w-auto">
                 View Completed Bounty
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
