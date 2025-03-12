@@ -32,7 +32,7 @@ For more detailed information about the smart contracts and their functions, ple
 
 The crowdfunding process consists of four distinct phases:
 
-1. **Funding Phase**: Users contribute ETH to the campaign and receive governance tokens
+1. **Funding Phase**: Users contribute MON to the campaign and receive governance tokens
 2. **Submission Phase**: Developers submit their AI model solutions
 3. **Voting Phase**: Token holders vote on the best model submission
 4. **Ended Phase**: The winning model is selected and rewards are distributed

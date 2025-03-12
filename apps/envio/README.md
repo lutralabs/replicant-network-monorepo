@@ -13,7 +13,7 @@ This indexer tracks events from the Replicant Network smart contracts, including
 
 ## Prerequisites
 
-* Node.js (v18 or later recommended)
+* Node.js (v20 or later recommended)
 * pnpm package manager
 * Envio API token (obtain from [Envio Dashboard](https://envio.dev/app/api-tokens))
 

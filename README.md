@@ -70,6 +70,13 @@ replicant-network-monorepo/
 └── contracts/            # Solidity smart contracts
 ```
 
+## 📚 Documentation Structure
+* [Overview](#-project-overview)
+* [Technical Documentation](TECHNICAL.md)
+* [Smart Contracts](contracts/README.md)
+* [Frontend Application](apps/dapp/README.md)
+* [AI Manager Service](apps/ai-manager/README.md)
+
 ## 🛠️ Technologies Used
 
 * **Blockchain**: Monad (EVM-compatible)
@@ -155,7 +162,3 @@ pnpm test
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📚 Additional Documentation
-
-* [Technical Documentation](TECHNICAL.md) - Detailed technical architecture and implementation details
