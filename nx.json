@@ -13,7 +13,12 @@
       ]
     },
     "lint": {
-      "cache": true
+      "cache": true,
+      "options": {
+        "command": "pnpm run lint",
+        "cwd": "{projectRoot}",
+        "escapeQuotes": false
+      }
     },
     "test": {
       "cache": true

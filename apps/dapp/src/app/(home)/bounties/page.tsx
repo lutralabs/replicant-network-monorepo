@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { BountyCard } from '@/components/BountyCard';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -29,7 +29,7 @@ import {
   HelpCircle,
   X,
 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 
 // Skeleton component with Framer Motion
 const BountyCardSkeleton = () => (
@@ -54,9 +54,10 @@ const IntentStatus = {
   submit: 'submissions',
 };
 
-export default function Page() {
+function BountiesContent() {
   const router = useRouter();
-  const intent = useSearchParams().get('intent');
+  const searchParams = useSearchParams();
+  const intent = searchParams.get('intent');
 
   const { bounties, isLoading, error } = useGetBounties();
 
@@ -416,5 +417,38 @@ export default function Page() {
         </AnimatePresence>
       </motion.div>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full">
+          <div className="flex w-full items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="mr-2 h-8 w-8 p-0" />
+                <div className="text-lg font-semibold">Model Bounties</div>
+              </div>
+              <div className="text-md mt-2 text-gray-600 ml-10">
+                A list of existing bounties for custom AI models.
+              </div>
+            </div>
+            <div>
+              <Skeleton className="h-10 w-32" />
+            </div>
+          </div>
+          <div className="mt-12 pb-12 flex flex-wrap gap-x-12 gap-y-12">
+            {[1, 2, 3].map((i) => (
+              <BountyCardSkeleton key={i} />
+            ))}
+          </div>
+        </div>
+      }
+    >
+      <BountiesContent />
+    </Suspense>
   );
 }
