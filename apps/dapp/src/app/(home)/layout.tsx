@@ -2,6 +2,7 @@
 
 import DynamicBreadcrumb from '@/components/DynamicBreadcrumb';
 import { LoginButton } from '@/components/LoginButton';
+import { IntroductionModal } from '@/components/IntroductionModal';
 import {
   Sidebar,
   SidebarBody,
@@ -104,6 +105,7 @@ export default function HomeLayout({ children }) {
           <div className="pt-4 px-4 h-full">
             {children}
             <Toaster />
+            <IntroductionModal />
           </div>
         </SidebarInset>
       </div>

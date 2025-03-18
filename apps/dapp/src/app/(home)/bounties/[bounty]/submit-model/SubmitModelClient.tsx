@@ -6,9 +6,30 @@ import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { ArrowRight, Check, Loader2 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+// Predefined model options with random hashes
+const MODEL_OPTIONS = [
+  {
+    id: '0x8a24eb2a8b8ead2963af28186e6625de8b5c89c263ca1c6756bfb351615d2437',
+    name: 'GPT-4 Large Model',
+    url: 'https://storage.replicant.network/models/gpt4-large',
+  },
+  {
+    id: '0x3f6c2e0b6deed94ed4bc76a42f5c30b2c7c879352df9a7b503317a7c3fe90cd7',
+    name: 'Stable Diffusion XL',
+    url: 'https://storage.replicant.network/models/sdxl',
+  },
+];
 
 export const SubmitModelClient = () => {
-  const [modelUrl, setModelUrl] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -25,8 +46,8 @@ export const SubmitModelClient = () => {
 
   // Handle personal sign and submission
   const handleSubmitModel = async () => {
-    if (!modelUrl) {
-      setError('Please enter a model URL');
+    if (!selectedModel) {
+      setError('Please select a model');
       return;
     }
 
@@ -37,8 +58,17 @@ export const SubmitModelClient = () => {
       const wallet = wallets[0];
       const address = wallet.address;
 
-      // Message to sign - include the model URL in the message
-      const message = `I'm submitting this model URL: ${modelUrl} for bounty ID: ${bountyId}`;
+      // Find the selected model details
+      const modelDetails = MODEL_OPTIONS.find(
+        (model) => model.id === selectedModel
+      );
+
+      if (!modelDetails) {
+        throw new Error('Selected model not found');
+      }
+
+      // Message to sign - include the model ID and URL in the message
+      const message = `I'm submitting model ${modelDetails.name} (${selectedModel}) for bounty ID: ${bountyId}`;
 
       // Get provider and sign message
       const provider = await wallet.getEthereumProvider();
@@ -47,7 +77,7 @@ export const SubmitModelClient = () => {
         params: [message, address],
       });
 
-      // Submit to API with the full signature and message for verification
+      // Submit to API with the signature and model ID
       const response = await fetch('/api/submitModel', {
         method: 'POST',
         headers: {
@@ -55,7 +85,7 @@ export const SubmitModelClient = () => {
         },
         body: JSON.stringify({
           owner_address: address,
-          model_url: modelUrl,
+          model_hash: selectedModel,
           signature: signature,
           message: message,
           bounty_id: bountyId,
@@ -65,7 +95,7 @@ export const SubmitModelClient = () => {
       const result = await response.json();
 
       if (result.success) {
-        setModelUrl('');
+        setSelectedModel('');
         setIsSuccess(true);
 
         // Refetch the bounty data to update submission count
@@ -112,9 +142,8 @@ export const SubmitModelClient = () => {
           </div>
           <h2 className="text-2xl font-medium mb-4">Submission Successful!</h2>
           <p className="text-gray-600 mb-8">
-            Your model has been submitted successfully and will be reviewed for
-            this bounty. If the model is accepted it will be added to the
-            contract and become eligible for voting.
+            Your model has been submitted successfully and will be added to the
+            contract. It is now eligible for voting.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -143,36 +172,37 @@ export const SubmitModelClient = () => {
           <div className="mb-8">
             <h3 className="text-lg font-medium mb-2">Submission Guidelines</h3>
             <p className="text-gray-600">
-              Please provide a URL to your model. The URL should point to a
-              publicly accessible location where reviewers can download and test
-              your model. If the valuation is successful, your model will be
-              added to the contract and become eligible for voting.
+              Please select one of the available models to submit for this
+              bounty. Your submission will be directly added to the contract and
+              become eligible for voting.
             </p>
           </div>
         </>
       )}
 
       <div className="mb-8">
-        {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Model URL
-        </label>
-        <div className="flex items-center justify-between rounded-lg border-2 border-sidebar-border pr-2">
-          <input
-            className="grow outline-none border-0 p-3 rounded-lg w-full"
-            placeholder="https://your-model-url.com/model"
-            value={modelUrl}
-            onChange={(e) => setModelUrl(e.target.value)}
-            disabled={isSubmitting}
-          />
+        <div className="block text-sm font-medium text-gray-700 mb-2">
+          Select Model
         </div>
+        <Select value={selectedModel} onValueChange={setSelectedModel}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a model to submit" />
+          </SelectTrigger>
+          <SelectContent>
+            {MODEL_OPTIONS.map((model) => (
+              <SelectItem key={model.id} value={model.id}>
+                {model.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
 
       <Button
         className="w-full md:w-auto"
         onClick={handleSubmitModel}
-        disabled={isSubmitting || !modelUrl}
+        disabled={isSubmitting || !selectedModel}
       >
         {isSubmitting ? (
           <>
