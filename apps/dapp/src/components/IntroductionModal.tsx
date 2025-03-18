@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
-import { Dialog, DialogPortal, DialogOverlay } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Rocket, Sparkles, Zap } from 'lucide-react';
-import { SiDiscord } from '@icons-pack/react-simple-icons';
-import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { Dialog, DialogOverlay, DialogPortal } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { SiDiscord } from '@icons-pack/react-simple-icons';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { AnimatePresence, motion } from 'framer-motion';
+import { LayoutDashboard, Rocket, Sparkles, Zap } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const STORAGE_KEY = 'replicant-intro-seen';
 const MAIN_ROUTES = ['/home', '/models', '/bounties'];

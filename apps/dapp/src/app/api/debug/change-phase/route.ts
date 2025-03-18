@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
-import { createWalletClient, http } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
 import { repNetManagerAbi } from '@/generated/RepNetManager';
-import { defineChain } from 'viem';
 import { config } from '@/wagmi';
+import { NextResponse } from 'next/server';
+import { http, createWalletClient } from 'viem';
+import { defineChain } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 
 // Contract address for RepNetManager
 const REP_NET_MANAGER_ADDRESS = '0x123456789abcdef123456789abcdef123456789a'; // Replace with actual contract address

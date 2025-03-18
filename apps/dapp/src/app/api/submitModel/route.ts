@@ -1,9 +1,9 @@
+import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
 import { verifyMessage } from '@wagmi/core';
-import { createWalletClient, http } from 'viem';
-import { privateKeyToAccount } from 'viem/accounts';
-import { repNetManagerAbi } from '@/generated/RepNetManager';
 import type { NextRequest } from 'next/server';
+import { http, createWalletClient } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 
 // Contract address for RepNetManager
 const REP_NET_MANAGER_ADDRESS = '0x123456789abcdef123456789abcdef123456789a'; // Replace with actual contract address

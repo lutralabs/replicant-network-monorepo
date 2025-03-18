@@ -1,11 +1,6 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { useGetBounty } from '@/hooks/useGetBounty';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
-import { ArrowRight, Check, Loader2 } from 'lucide-react';
-import { usePathname, useRouter } from 'next/navigation';
-import React, { useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -13,6 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useGetBounty } from '@/hooks/useGetBounty';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { ArrowRight, Check, Loader2 } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 // Predefined model options with random hashes
 const MODEL_OPTIONS = [

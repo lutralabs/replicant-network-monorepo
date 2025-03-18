@@ -7,6 +7,7 @@ import Link from 'next/link';
 import React, { useMemo, useState } from 'react';
 import { formatEther } from 'viem';
 import { BountyPhasesStepper } from '../BountyPhaseStepper';
+import { ErrorToast, SuccessToast } from '../Toast';
 import { Button } from '../ui/button';
 import {
   Tooltip,
@@ -14,7 +15,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { ErrorToast, SuccessToast } from '../Toast';
 
 export const BountyInfo = ({
   bounty,

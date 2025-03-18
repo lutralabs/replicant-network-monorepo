@@ -1,8 +1,8 @@
 'use client';
 
 import DynamicBreadcrumb from '@/components/DynamicBreadcrumb';
-import { LoginButton } from '@/components/LoginButton';
 import { IntroductionModal } from '@/components/IntroductionModal';
+import { LoginButton } from '@/components/LoginButton';
 import {
   Sidebar,
   SidebarBody,
