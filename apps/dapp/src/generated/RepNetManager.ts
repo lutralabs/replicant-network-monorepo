@@ -602,6 +602,12 @@ export const repNetManagerAbi = [
         type: 'uint256',
         indexed: false,
       },
+      {
+        name: 'developerFeePercentage',
+        internalType: 'uint256',
+        type: 'uint256',
+        indexed: false,
+      },
     ],
     name: 'CrowdfundingCreated',
   },

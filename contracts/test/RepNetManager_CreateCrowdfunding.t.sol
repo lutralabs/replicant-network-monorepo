@@ -29,7 +29,8 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
             params.fundingPhaseEnd,
             params.submissionPhaseEnd,
             params.votingPhaseEnd,
-            params.raiseCap
+            params.raiseCap,
+            params.developerFeePercentage
         );
 
         uint256 crowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
@@ -210,7 +211,8 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
             params.fundingPhaseEnd,
             params.submissionPhaseEnd,
             params.votingPhaseEnd,
-            params.raiseCap
+            params.raiseCap,
+            params.developerFeePercentage
         );
 
         uint256 crowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
@@ -233,7 +235,8 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
             params.fundingPhaseEnd,
             params.submissionPhaseEnd,
             params.votingPhaseEnd,
-            params.raiseCap
+            params.raiseCap,
+            params.developerFeePercentage
         );
 
         uint256 firstCrowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);
@@ -255,7 +258,8 @@ contract RepNetManager_CreateCrowdfundingTest is TestHelpers {
             params.fundingPhaseEnd,
             params.submissionPhaseEnd,
             params.votingPhaseEnd,
-            params.raiseCap
+            params.raiseCap,
+            params.developerFeePercentage
         );
 
         uint256 secondCrowdfundingId = repNetManager.createCrowdfunding{value: ONE_ETH}(params);

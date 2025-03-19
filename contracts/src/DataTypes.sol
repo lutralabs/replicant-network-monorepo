@@ -78,7 +78,8 @@ event CrowdfundingCreated(
     uint256 fundingPhaseEnd,
     uint256 submissionPhaseEnd,
     uint256 votingPhaseEnd,
-    uint256 raiseCap
+    uint256 raiseCap,
+    uint256 developerFeePercentage
 );
 
 event SolutionSubmitted(uint256 indexed crowdfundingId, bytes32 indexed submissionId, address indexed creator);
