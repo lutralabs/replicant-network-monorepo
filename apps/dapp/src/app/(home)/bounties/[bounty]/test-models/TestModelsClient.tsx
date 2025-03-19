@@ -17,7 +17,7 @@ import { usePathname } from 'next/navigation';
 export const TestModelsClient = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [prompt, setPrompt] = useState('');
+  const [prompt, setPrompt] = useState('A house on a field next to a river');
   const [error, setError] = useState<string | null>(null);
   const { wallets, ready: walletsLoading } = useWallets();
   const { authenticated } = usePrivy();
@@ -264,9 +264,8 @@ export const TestModelsClient = () => {
         <div className="flex items-center justify-between rounded-full bg-white border-2 border-sidebar-border pr-2 pl-2">
           <input
             className="grow outline-none border-0 field-sizing-fixed h-[50px]"
-            placeholder="What can I generate for you?"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            value="A house on a field next to a river"
+            onChange={() => {}}
             disabled={loading}
           />
           <button
@@ -294,10 +293,10 @@ export const TestModelsClient = () => {
             )}
           </button>
         </div>
-        <p className="text-xs text-gray-500 px-2">
+        <p className="text-xs text-red-500 px-2">
           {loading
             ? 'Generating images...'
-            : 'Enter a prompt to test the models and help evaluate their performance.'}
+            : 'Prompts are fixed for testing purposes.'}
         </p>
       </div>
     </div>

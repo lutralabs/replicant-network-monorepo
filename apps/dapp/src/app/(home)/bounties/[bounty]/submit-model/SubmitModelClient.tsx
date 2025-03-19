@@ -94,6 +94,20 @@ export const SubmitModelClient = () => {
 
       const result = await response.json();
 
+      // Check if the response was successful
+      if (!response.ok) {
+        // Handle specific error cases
+        if (response.status === 409) {
+          throw new Error(
+            'This model has already been submitted for this bounty'
+          );
+        }
+        // Extract meaningful error message from the API response
+        throw new Error(
+          result.message || result.error || 'Failed to submit model'
+        );
+      }
+
       if (result.success) {
         setSelectedModel('');
         setIsSuccess(true);
@@ -101,7 +115,9 @@ export const SubmitModelClient = () => {
         // Refetch the bounty data to update submission count
         refetch?.();
       } else {
-        throw new Error(result.error || 'Failed to submit model');
+        throw new Error(
+          result.message || result.error || 'Failed to submit model'
+        );
       }
     } catch (error) {
       console.error('Error submitting model:', error);

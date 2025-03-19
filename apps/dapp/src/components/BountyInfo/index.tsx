@@ -234,24 +234,27 @@ export const BountyInfo = ({
         </div>
       </div>
 
-      {isCreator && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-amber-600">
-              TESTNET TOOLS
-            </span>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={advancePhase}
-              disabled={isChangingPhase}
-              className="bg-amber-100 text-amber-800 hover:bg-amber-200"
-            >
-              {isChangingPhase ? 'Changing Phase...' : 'Next Phase'}
-            </Button>
+      {isCreator &&
+        (bountyStatus(bounty) === 'crowdfunding' ||
+          bountyStatus(bounty) === 'submissions' ||
+          bountyStatus(bounty) === 'voting') && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-amber-600">
+                TESTNET TOOLS
+              </span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={advancePhase}
+                disabled={isChangingPhase}
+                className="bg-amber-100 text-amber-800 hover:bg-amber-200"
+              >
+                {isChangingPhase ? 'Changing Phase...' : 'Next Phase'}
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {showStepper && (
         <div className="mt-6 pt-6 border-t-2 border-gray-200/80">

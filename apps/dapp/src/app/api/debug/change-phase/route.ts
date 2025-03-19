@@ -2,8 +2,7 @@ import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
 import { simulateContract, writeContract } from '@wagmi/core';
 import { NextResponse } from 'next/server';
-import { http, createWalletClient } from 'viem';
-import { defineChain } from 'viem';
+import { http, createPublicClient, createWalletClient, parseEther } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
 const PRIVATE_KEY = process.env.OWNER_PRIVATE_KEY;
@@ -13,7 +12,6 @@ enum CrowdfundingPhase {
   Submission = 1,
   Voting = 2,
   Completed = 3,
-  Failed = 4,
 }
 
 // Helper function to get the next phase
@@ -44,30 +42,35 @@ export async function POST(request: Request) {
 
     // Step 4: Setup wallet with private key for contract interaction
     const account = privateKeyToAccount(`0x${PRIVATE_KEY}` as `0x${string}`);
+
     const client = createWalletClient({
       account,
-      chain: config.chains[0], // Use the first chain from config
+      chain: config.chains[0],
+      transport: http(),
+    });
+
+    const publicClient = createPublicClient({
+      chain: config.chains[0],
       transport: http(),
     });
 
     console.log('ACCOUNT ADDRESS', account.address.toString());
-    console.log('config', config.chains[0]);
+    console.log('PK', PRIVATE_KEY);
+    console.log('CAddr', process.env.CONTRACT_ADDRESS);
 
     // Get next phase from current phase
     const nextPhase = getNextPhase(currentPhase);
 
     // Call the _changePhase function
-    const result = await simulateContract(config, {
+    const result = await publicClient.simulateContract({
       address: process.env.CONTRACT_ADDRESS as `0x${string}`,
       abi: repNetManagerAbi,
       functionName: '_changePhase',
-      args: [Number(bountyId), Number(nextPhase)],
-      account,
+      args: [BigInt(bountyId), Number(nextPhase)],
+      account: account,
     });
 
-    console.log(result);
-
-    const transactionHash = await writeContract(config, result.request as any);
+    const transactionHash = await client.writeContract(result.request as any);
 
     return NextResponse.json({
       success: true,

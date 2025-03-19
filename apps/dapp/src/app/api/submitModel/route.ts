@@ -1,11 +1,14 @@
 import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
-import { verifyMessage } from '@wagmi/core';
+import {
+  readContract,
+  simulateContract,
+  verifyMessage,
+  writeContract,
+} from '@wagmi/core';
 import type { NextRequest } from 'next/server';
-import { http, createWalletClient } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
-const REP_NET_MANAGER_ADDRESS = process.env.CONTRACT_ADDRESS;
 const PRIVATE_KEY = process.env.OWNER_PRIVATE_KEY;
 
 /**
@@ -63,20 +66,48 @@ export async function POST(request: NextRequest) {
     }
 
     // Step 4: Setup wallet with private key for contract interaction
-    const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
-    const client = createWalletClient({
-      account,
-      chain: config.chains[0], // Use the first chain from config
-      transport: http(),
-    });
+    const account = privateKeyToAccount(`0x${PRIVATE_KEY}`);
 
     // Step 5: Submit the model directly to the contract
     // Convert model_hash to proper bytes32 if needed
     const modelHashBytes32 = model_hash as `0x${string}`;
 
     try {
-      const hash = await client.writeContract({
-        address: REP_NET_MANAGER_ADDRESS as `0x${string}`,
+      // Check if the model is already submitted
+      try {
+        const submission = await readContract(config, {
+          address: process.env.CONTRACT_ADDRESS as `0x${string}`,
+          abi: repNetManagerAbi,
+          functionName: 'submission',
+          args: [BigInt(bounty_id), modelHashBytes32],
+        });
+
+        // If we can fetch the submission and it has a timestamp > 0, it already exists
+        if (submission && submission.timestamp > 0) {
+          return Response.json(
+            {
+              success: false,
+              message: 'Model has already been submitted for this bounty',
+              data: {
+                bounty_id: bounty_id,
+                model_hash: model_hash,
+                owner_address: owner_address,
+              },
+            },
+            { status: 409 }
+          ); // 409 Conflict for duplicate resource
+        }
+      } catch (checkError) {
+        // If there's an error reading the submission (like if it doesn't exist),
+        // we continue with the submission attempt
+        console.log(
+          'Submission check resulted in error, proceeding with submission:',
+          checkError
+        );
+      }
+
+      const result = await simulateContract(config, {
+        address: process.env.CONTRACT_ADDRESS as `0x${string}`,
         abi: repNetManagerAbi,
         functionName: 'submit',
         args: [
@@ -84,9 +115,10 @@ export async function POST(request: NextRequest) {
           modelHashBytes32,
           owner_address as `0x${string}`,
         ],
-        chain: config.chains[0],
         account,
       });
+
+      const hash = await writeContract(config, result.request as any);
 
       console.log('Model submitted to contract, transaction hash:', hash);
 
@@ -102,6 +134,22 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (contractError) {
+      // Check if the error is because the model was already submitted
+      if (contractError.toString().includes('SolutionAlreadySubmitted')) {
+        return Response.json(
+          {
+            success: false,
+            message: 'Model has already been submitted for this bounty',
+            data: {
+              bounty_id: bounty_id,
+              model_hash: model_hash,
+              owner_address: owner_address,
+            },
+          },
+          { status: 409 }
+        );
+      }
+
       console.error('Error submitting to contract:', contractError);
       return Response.json(
         { error: 'Failed to submit model to contract' },
