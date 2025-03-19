@@ -6,11 +6,11 @@ networks:
     contracts:
       - name: RepNetManager
         address:
-          - 0x035b6eFB3AD2067cd74ed8AE9Eb584F46Fe9dBd8
+          - 0xe62EEfF3FCf111F6186fA6eeb9499a2806a11eA7
         abi_file_path: abis/RepNetManager.abi.json
         handler: src/EventHandlers.ts
         events:
-          - event: CrowdfundingCreated(uint256 indexed crowdfundingId, address indexed creator, address indexed tokenAddress, uint256 fundingPhaseEnd, uint256 submissionPhaseEnd, uint256 votingPhaseEnd, uint256 raiseCap)
+          - event: CrowdfundingCreated(uint256 indexed crowdfundingId, address indexed creator, address indexed tokenAddress, uint256 fundingPhaseEnd, uint256 submissionPhaseEnd, uint256 votingPhaseEnd, uint256 raiseCap, uint256 developerFeePercentage)
           - event: CrowdfundingFinalized(uint256 indexed crowdfundingId, address indexed winner)
           - event: CrowdfundingFinalizedWithoutWinner(uint256 indexed crowdfundingId)
           - event: CrowdfundingFunded(uint256 indexed crowdfundingId, address indexed sender, uint256 amount)

@@ -13,6 +13,7 @@ query GetCrowdfunding($id: String = "") {
     creator_id
     numSubmissions
     token_id
+    developerFeePercentage
     funders {
       funder_id
       timestamp

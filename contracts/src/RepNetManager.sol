@@ -372,7 +372,8 @@ contract RepNetManager is Ownable, ReentrancyGuard {
             _params.fundingPhaseEnd,
             _params.submissionPhaseEnd,
             _params.votingPhaseEnd,
-            _params.raiseCap
+            _params.raiseCap,
+            _params.developerFeePercentage
         );
         // ok to use since it's not gonna overflow
         unchecked {
