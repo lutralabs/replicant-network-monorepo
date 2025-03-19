@@ -4,31 +4,41 @@ import type { NextRequest } from 'next/server';
 export async function POST(request: NextRequest) {
   const requestBody = await request.json();
   if (!requestBody.prompt) {
-    return new Response('Prompt is required', { status: 400 });
+    return Response.json(
+      { message: 'Please enter a prompt to generate images' },
+      { status: 400 }
+    );
   }
-  const body = {
+
+  const modelHash = requestBody.modelHash;
+
+  if (!modelHash) {
+    return Response.json(
+      { message: 'Model hash is required' },
+      { status: 400 }
+    );
+  }
+
+  // Define our static images - select based on hash
+  const staticImages = [
+    'https://i.imgur.com/LObP9J9.png',
+    'https://i.imgur.com/SoKZUZQ.png',
+  ];
+
+  // Use last character of hash to determine which image to use (pseudo-random but deterministic)
+  const imageIndex = Number.parseInt(modelHash.slice(-1), 16) % 2;
+
+  // Create fake result
+  const result = {
     id: randomUUID(),
-    model_id:
-      'f886220c83f69e67456d45bc36875f065cf93f54aad60b9e60c6700409f64f3a',
-    prompt: requestBody.prompt,
-    negative_prompt: 'blurry, low quality',
-    num_inference_steps: 30,
-    guidance_scale: 7.5,
-    width: 512,
-    height: 512,
-    num_images: 1,
+    images: [
+      {
+        url: staticImages[imageIndex],
+        height: 256,
+        width: 256,
+      },
+    ],
   };
 
-  const res = await fetch(`${process.env.API_ENDPOINT}/v1/infer`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.API_KEY}`,
-    },
-    body: JSON.stringify(body),
-  });
-
-  const data = await res.json();
-
-  return Response.json({ data });
+  return Response.json({ data: result });
 }

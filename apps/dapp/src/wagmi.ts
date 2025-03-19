@@ -9,7 +9,7 @@ export const monad = defineChain({
   rpcUrls: {
     default: {
       http: [
-        process.env.NEXT_PUBLIC_RPC_URL || 'https://testnet-rpc.monad.xyz/',
+        /*process.env.NEXT_PUBLIC_RPC_URL || */ 'https://testnet-rpc.monad.xyz/',
       ],
     },
   },

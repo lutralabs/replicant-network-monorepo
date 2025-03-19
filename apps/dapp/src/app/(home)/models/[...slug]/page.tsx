@@ -26,9 +26,14 @@ const findWinningBounty = (bounties: BountyCard[], modelHash: string) => {
 };
 
 export default function Page() {
-  const [images, setImages] = useState([]);
+  const [image, setImage] = useState<{
+    url: string;
+    height: number;
+    width: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [prompt, setPrompt] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState('A house on a field next to a river');
   const params = useParams();
 
   const modelHash = params?.slug[0] || '';
@@ -49,6 +54,8 @@ export default function Page() {
     if (!prompt.trim() || !modelHash) return;
 
     setLoading(true);
+    setError(null);
+
     try {
       const res = await fetch('/api/inferPublic', {
         method: 'POST',
@@ -57,19 +64,36 @@ export default function Page() {
         },
         body: JSON.stringify({
           prompt,
-          modelHash: modelHash.split('0x')[1],
+          modelHash,
         }),
       });
 
       if (!res.ok) {
-        throw new Error('Failed to generate image');
+        const contentType = res.headers.get('content-type');
+        if (contentType?.includes('application/json')) {
+          const errorResponse = await res.json();
+          const errorMessage =
+            typeof errorResponse === 'string'
+              ? errorResponse
+              : errorResponse.message || res.statusText;
+          throw new Error(errorMessage);
+        }
+        throw new Error(
+          `Failed to generate image: ${res.status} ${res.statusText}`
+        );
       }
 
       const data = await res.json();
-      setImages(data.data.images || []);
+      if (data.data?.images && data.data.images.length > 0) {
+        setImage(data.data.images[0]);
+      } else {
+        throw new Error('No image data returned from the API');
+      }
     } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Failed to generate image';
+      setError(errorMessage);
       console.error('Error generating image:', error);
-      // You might want to show an error message to the user here
     } finally {
       setLoading(false);
     }
@@ -157,17 +181,23 @@ export default function Page() {
         </div>
       </div>
 
+      {error && (
+        <div className="mt-4 bg-red-50 text-red-700 p-3 rounded-md border border-red-200">
+          <p className="font-medium">Error: {error}</p>
+        </div>
+      )}
+
       <div className="mt-8 md:mt-12 flex-grow flex flex-col items-center justify-center min-h-[300px] md:min-h-[512px] border-2 border-dashed border-gray-200 rounded-lg p-4">
         {loading ? (
           <Skeleton className="w-full max-w-[512px] h-[300px] md:h-[512px] rounded-lg" />
         ) : (
           <>
-            {images.length > 0 ? (
+            {image ? (
               <DynamicImage
-                alt="generated image"
-                height={images[0].height}
-                width={images[0].width}
-                src={images[0].url}
+                alt="Generated image"
+                height={image.height}
+                width={image.width}
+                src={image.url}
               />
             ) : (
               <div className="text-gray-500 text-center flex flex-col items-center justify-center h-full">
@@ -182,10 +212,9 @@ export default function Page() {
       <div className="flex flex-col gap-y-2 mt-auto pt-8">
         <div className="flex items-center justify-between rounded-full bg-white border-2 border-sidebar-border pr-2 pl-4">
           <input
-            className="grow outline-none border-0 field-sizing-fixed h-[50px] text-sm md:text-base"
-            placeholder="What can I generate for you?"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
+            className="grow outline-none border-0 field-sizing-fixed h-[50px]"
+            value="A house on a field next to a river"
+            onChange={() => {}}
             disabled={loading}
           />
           <button
@@ -213,10 +242,12 @@ export default function Page() {
             )}
           </button>
         </div>
-        <p className="text-xs text-gray-500 px-2">
+        <p className="text-xs text-red-500 px-2">
           {loading
-            ? 'Generating images...'
-            : 'Enter a prompt to generate an image.'}
+            ? 'Generating image...'
+            : error
+              ? 'There was an error generating your image'
+              : 'Prompts are fixed for testing purposes.'}
         </p>
       </div>
     </div>

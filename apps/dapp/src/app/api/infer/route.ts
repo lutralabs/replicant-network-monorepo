@@ -113,46 +113,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 5. DB Call (Address, crowdfund ID) -> Has already tested?
-  try {
-    const { data: crowdfundData, error: crowdfundError } = await supabase
-      .from('crowdfund')
-      .select('testers')
-      .eq('id', bountyId)
-      .single();
-
-    if (crowdfundError) {
-      console.error('Error fetching crowdfund data:', crowdfundError);
-      return Response.json(
-        {
-          message:
-            'Failed to check your testing status for this bounty. Please try again later.',
-        },
-        { status: 500 }
-      );
-    }
-
-    const hasAlreadyTested = crowdfundData?.testers?.includes(address);
-    if (hasAlreadyTested) {
-      return Response.json(
-        {
-          message:
-            'You have already tested the models for this bounty. Only one test per address is allowed.',
-        },
-        { status: 403 }
-      );
-    }
-  } catch (error) {
-    console.error('Error checking if user already tested:', error);
-    return Response.json(
-      {
-        message:
-          'Failed to verify your testing history. Please try again later.',
-      },
-      { status: 500 }
-    );
-  }
-
   if (models.length === 0) {
     return Response.json(
       { message: 'There are no models available to test for this bounty.' },
@@ -160,47 +120,28 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 6. Create requests for all models and wait for them to complete
-  const promises = models.map(async (model) => {
-    const body = {
-      id: randomUUID(),
-      model_id: model.hash.split('_')[1].replace(/^0x/, ''),
-      prompt,
-      negative_prompt: 'blurry, low quality',
-      num_inference_steps: 15,
-      guidance_scale: 7.5,
-      width: 256,
-      height: 256,
-      num_images: 1,
+  // Limit to max 2 models
+  const limitedModels = models.slice(0, 2);
+
+  // Define our static images
+  const staticImages = [
+    'https://i.imgur.com/LObP9J9.png',
+    'https://i.imgur.com/SoKZUZQ.png',
+  ];
+
+  // Create fake results instead of calling the API
+  const results = limitedModels.map((model, index) => {
+    return {
+      id: randomUUID(), // Add id to each result for the key in React
+      images: [
+        {
+          url: staticImages[index % staticImages.length],
+          height: 256,
+          width: 256,
+        },
+      ],
     };
-
-    // 7. Fetch
-    const response = await fetch(`${process.env.API_ENDPOINT}/v1/infer`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.API_KEY}`,
-      },
-      body: JSON.stringify(body),
-    });
-
-    return response.json();
   });
-
-  // Wait for all fetch operations to complete
-  let results;
-  try {
-    results = await Promise.all(promises);
-  } catch (error) {
-    console.error('Error generating images:', error);
-    return Response.json(
-      {
-        message:
-          'Failed to generate images. The AI service might be temporarily unavailable.',
-      },
-      { status: 500 }
-    );
-  }
 
   // 8. Update DB (Image + prompt + address generated Image)
   try {
@@ -229,8 +170,8 @@ export async function POST(request: NextRequest) {
       return result.images
         ? result.images.map((image) => ({
             prompt_id: promptData[0].id,
-            URL: image.url || result.output?.[0] || '',
-            modelHash: models[index].hash,
+            URL: image.url || '',
+            modelHash: limitedModels[index].hash,
             width: 256,
             height: 256,
           }))

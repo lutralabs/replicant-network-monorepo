@@ -1,11 +1,18 @@
-import { randomUUID } from 'node:crypto';
-import { supabaseServiceRoleClient } from '@/lib/supabase/serviceRoleClient';
+import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
-import { verifyMessage } from '@wagmi/core';
+import {
+  readContract,
+  simulateContract,
+  verifyMessage,
+  writeContract,
+} from '@wagmi/core';
 import type { NextRequest } from 'next/server';
+import { privateKeyToAccount } from 'viem/accounts';
+
+const PRIVATE_KEY = process.env.OWNER_PRIVATE_KEY;
 
 /**
- * Handle POST requests to submit a new model to the database
+ * Handle POST requests to submit a new model to the contract
  */
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +21,7 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     const requiredFields = [
       'owner_address',
-      'model_url',
+      'model_hash',
       'signature',
       'message',
       'bounty_id',
@@ -28,7 +35,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const { owner_address, model_url, signature, message, bounty_id } =
+    const { owner_address, model_hash, signature, message, bounty_id } =
       requestBody;
 
     // Step 1: Verify the signed message
@@ -42,82 +49,113 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: 'Invalid signature' }, { status: 401 });
     }
 
-    // Step 2: Verify that the URL in the message matches the submitted URL
-    if (!message.includes(model_url)) {
+    // Step 2: Verify that the model hash in the message matches the submitted hash
+    if (!message.includes(model_hash)) {
       return Response.json(
-        { error: 'Signature does not match the provided model URL' },
+        { error: 'Signature does not match the provided model hash' },
         { status: 401 }
       );
     }
 
     // Step 3: Verify that the bounty ID in the message matches the submitted ID
-    const bountyIdPattern = /bounty ID: (\d+)/i;
-    const bountyIdMatch = message.match(bountyIdPattern);
-
-    if (!bountyIdMatch || bountyIdMatch[1] !== bounty_id.toString()) {
+    if (!message.includes(`bounty ID: ${bounty_id}`)) {
       return Response.json(
         { error: 'Signature does not match the provided bounty ID' },
         { status: 401 }
       );
     }
 
-    const supabase = supabaseServiceRoleClient();
+    // Step 4: Setup wallet with private key for contract interaction
+    const account = privateKeyToAccount(`0x${PRIVATE_KEY}`);
 
-    // Step 4: Check if user already submitted a model for this bounty
-    const { data: existingSubmission, error: queryError } = await supabase
-      .from('submitted_models')
-      .select('*')
-      .eq('owner_address', owner_address)
-      .eq('crowdfund_id', bounty_id)
-      .single();
+    // Step 5: Submit the model directly to the contract
+    // Convert model_hash to proper bytes32 if needed
+    const modelHashBytes32 = model_hash as `0x${string}`;
 
-    if (queryError && queryError.code !== 'PGRST116') {
-      // PGRST116 = no rows returned
-      console.error('Error checking existing submission:', queryError);
+    try {
+      // Check if the model is already submitted
+      try {
+        const submission = await readContract(config, {
+          address: process.env.CONTRACT_ADDRESS as `0x${string}`,
+          abi: repNetManagerAbi,
+          functionName: 'submission',
+          args: [BigInt(bounty_id), modelHashBytes32],
+        });
+
+        // If we can fetch the submission and it has a timestamp > 0, it already exists
+        if (submission && submission.timestamp > 0) {
+          return Response.json(
+            {
+              success: false,
+              message: 'Model has already been submitted for this bounty',
+              data: {
+                bounty_id: bounty_id,
+                model_hash: model_hash,
+                owner_address: owner_address,
+              },
+            },
+            { status: 409 }
+          ); // 409 Conflict for duplicate resource
+        }
+      } catch (checkError) {
+        // If there's an error reading the submission (like if it doesn't exist),
+        // we continue with the submission attempt
+        console.log(
+          'Submission check resulted in error, proceeding with submission:',
+          checkError
+        );
+      }
+
+      const result = await simulateContract(config, {
+        address: process.env.CONTRACT_ADDRESS as `0x${string}`,
+        abi: repNetManagerAbi,
+        functionName: 'submit',
+        args: [
+          BigInt(bounty_id),
+          modelHashBytes32,
+          owner_address as `0x${string}`,
+        ],
+        account,
+      });
+
+      const hash = await writeContract(config, result.request as any);
+
+      console.log('Model submitted to contract, transaction hash:', hash);
+
+      // Return success response with the created data
+      return Response.json({
+        success: true,
+        message: 'Model submitted successfully to contract',
+        data: {
+          transaction_hash: hash,
+          bounty_id: bounty_id,
+          model_hash: model_hash,
+          owner_address: owner_address,
+        },
+      });
+    } catch (contractError) {
+      // Check if the error is because the model was already submitted
+      if (contractError.toString().includes('SolutionAlreadySubmitted')) {
+        return Response.json(
+          {
+            success: false,
+            message: 'Model has already been submitted for this bounty',
+            data: {
+              bounty_id: bounty_id,
+              model_hash: model_hash,
+              owner_address: owner_address,
+            },
+          },
+          { status: 409 }
+        );
+      }
+
+      console.error('Error submitting to contract:', contractError);
       return Response.json(
-        { error: 'Error checking existing submissions' },
+        { error: 'Failed to submit model to contract' },
         { status: 500 }
       );
     }
-
-    if (existingSubmission) {
-      return Response.json(
-        { error: 'You have already submitted a model for this bounty' },
-        { status: 409 }
-      );
-    }
-
-    // Prepare model submission data
-    const modelData = {
-      hash: randomUUID(),
-      owner_address,
-      model_url,
-      crowdfund_id: Number(bounty_id),
-      accepted: false,
-      submitted_at: new Date().toISOString(),
-    };
-
-    // Insert new model submission into the database
-    const { data, error } = await supabase
-      .from('submitted_models')
-      .insert(modelData)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error submitting model:', error);
-      return Response.json(
-        { error: 'Failed to submit model' },
-        { status: 500 }
-      );
-    }
-
-    // Return success response with the created data
-    return Response.json({
-      success: true,
-      message: 'Model submitted successfully',
-      data,
-    });
   } catch (error) {
     console.error('Unexpected error during model submission:', error);
     return Response.json(

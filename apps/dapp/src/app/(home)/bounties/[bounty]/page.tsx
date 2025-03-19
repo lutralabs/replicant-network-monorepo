@@ -9,6 +9,7 @@ import SwapCard from '@/components/SwapCard';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useFinalizeBounty } from '@/hooks/useFinalizeBounty';
 import { useGetBounty } from '@/hooks/useGetBounty';
 import { bountyStatus, formatBalance } from '@/lib/utils';
 import { config } from '@/wagmi';
@@ -80,6 +81,10 @@ export default function Page() {
   const { bounty, isLoading } = useGetBounty(Number(slug));
   const { wallets } = useWallets();
   const wallet = wallets?.[0];
+  const { mutateAsync: finalizeBounty, isPending: isFinalizingBounty } =
+    useFinalizeBounty();
+
+  console.log('bnty', bounty);
 
   // Determine current status
 
@@ -154,11 +159,14 @@ export default function Page() {
               failed.
             </p>
             <div className="flex flex-col gap-3">
-              <Link href={`/bounties/${bounty.id}/finalize`} className="w-full">
-                <Button variant="cta-gradient" className="w-full">
-                  Finalize Bounty
-                </Button>
-              </Link>
+              <Button
+                variant="cta-gradient"
+                className="w-full"
+                onClick={() => finalizeBounty({ id: BigInt(bounty.id) })}
+                disabled={isFinalizingBounty}
+              >
+                {isFinalizingBounty ? 'Finalizing...' : 'Finalize Bounty'}
+              </Button>
             </div>
           </div>
         ) : status === 'voting' && isUserFunder ? (
@@ -317,14 +325,14 @@ export default function Page() {
                 failed.
               </p>
               <div className="flex flex-col gap-3">
-                <Link
-                  href={`/bounties/${bounty.id}/finalize`}
+                <Button
+                  variant="cta-gradient"
                   className="w-full"
+                  onClick={() => finalizeBounty({ id: BigInt(bounty.id) })}
+                  disabled={isFinalizingBounty}
                 >
-                  <Button variant="cta-gradient" className="w-full">
-                    Finalize Bounty
-                  </Button>
-                </Link>
+                  {isFinalizingBounty ? 'Finalizing...' : 'Finalize Bounty'}
+                </Button>
               </div>
             </div>
           ) : status === 'voting' && isUserFunder ? (

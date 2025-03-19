@@ -9,10 +9,13 @@ export const useHasVoted = (bountyId: number | undefined) => {
   const wallet = wallets[0];
   const walletAddress = wallet?.address;
 
+  console.log('Checking if user has voted:', bountyId, walletAddress);
+
   return useQuery({
     queryKey: ['hasVoted', bountyId, walletAddress],
     queryFn: async () => {
-      if (!bountyId || !walletAddress) {
+      console.log('here....');
+      if (bountyId === null || !walletAddress) {
         return true;
       }
 
@@ -24,6 +27,8 @@ export const useHasVoted = (bountyId: number | undefined) => {
           functionName: 'hasVoted',
           args: [BigInt(bountyId), walletAddress as `0x${string}`],
         });
+
+        console.log('Has voted:', hasVoted);
 
         return hasVoted as boolean;
       } catch (error) {

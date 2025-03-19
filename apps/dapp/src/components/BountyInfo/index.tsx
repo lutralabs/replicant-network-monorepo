@@ -4,9 +4,10 @@ import { bountyStatus } from '@/lib/utils';
 import { useWallets } from '@privy-io/react-auth';
 import { CalendarIcon, Clock, FileText, Users } from 'lucide-react';
 import Link from 'next/link';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { formatEther } from 'viem';
 import { BountyPhasesStepper } from '../BountyPhaseStepper';
+import { ErrorToast, SuccessToast } from '../Toast';
 import { Button } from '../ui/button';
 import {
   Tooltip,
@@ -26,6 +27,7 @@ export const BountyInfo = ({
 }) => {
   const { wallets } = useWallets();
   const wallet = wallets[0];
+  const [isChangingPhase, setIsChangingPhase] = useState(false);
 
   // Helper function to format remaining time
   const getTimeRemaining = (endTimestamp: number) => {
@@ -91,9 +93,7 @@ export const BountyInfo = ({
         status:
           status === 'crowdfunding'
             ? ('current' as const)
-            : status === 'failed'
-              ? ('failed' as const)
-              : ('complete' as const),
+            : ('complete' as const), // Always mark crowdfunding as complete if it's not the current phase
       },
       {
         id: 'submissions',
@@ -134,6 +134,48 @@ export const BountyInfo = ({
     ];
 
     return phases;
+  };
+
+  // Check if current user is the bounty creator
+  const isCreator =
+    wallet?.address?.toLowerCase() === bounty.creator?.toLowerCase();
+
+  // Function to advance the bounty phase (debug only)
+  const advancePhase = async () => {
+    if (!isCreator) return;
+
+    setIsChangingPhase(true);
+    try {
+      const response = await fetch('/api/debug/change-phase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          bountyId: bounty.id.toString(),
+          currentPhase: bountyStatus(bounty),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to change phase');
+      }
+
+      SuccessToast({
+        message: 'Phase Changed',
+      });
+
+      // Reload the page to reflect the changes
+      window.location.reload();
+    } catch (error) {
+      console.error('Error changing phase:', error);
+      ErrorToast({
+        error: `Failed to change phase: ${error.message}`,
+      });
+    } finally {
+      setIsChangingPhase(false);
+    }
   };
 
   return (
@@ -191,6 +233,28 @@ export const BountyInfo = ({
           </div>
         </div>
       </div>
+
+      {isCreator &&
+        (bountyStatus(bounty) === 'crowdfunding' ||
+          bountyStatus(bounty) === 'submissions' ||
+          bountyStatus(bounty) === 'voting') && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-amber-600">
+                TESTNET TOOLS
+              </span>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={advancePhase}
+                disabled={isChangingPhase}
+                className="bg-amber-100 text-amber-800 hover:bg-amber-200"
+              >
+                {isChangingPhase ? 'Changing Phase...' : 'Next Phase'}
+              </Button>
+            </div>
+          </div>
+        )}
 
       {showStepper && (
         <div className="mt-6 pt-6 border-t-2 border-gray-200/80">
