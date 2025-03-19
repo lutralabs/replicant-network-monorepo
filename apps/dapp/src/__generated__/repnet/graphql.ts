@@ -3209,7 +3209,7 @@ export type GetCrowdfundingQuery = { __typename?: 'query_root', Crowdfunding: Ar
 export type GetCrowdfundingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCrowdfundingsQuery = { __typename?: 'query_root', Crowdfunding: Array<{ __typename?: 'Crowdfunding', id: string, fundingPhaseEnd: any, submissionPhaseEnd: any, votingPhaseEnd: any, totalRaised: any, numFunders: any, raiseCap: any, developerFeePercentage: any, creator_id: string, numSubmissions: any, finalized: boolean, winner_id?: string | null, submissions: Array<{ __typename?: 'Submission', creator_id: string, id: string, totalVotesPower: any, timestamp: any, votes: Array<{ __typename?: 'Vote', id: string, votePower: any, voter_id: string, timestamp: any }> }> }> };
+export type GetCrowdfundingsQuery = { __typename?: 'query_root', Crowdfunding: Array<{ __typename?: 'Crowdfunding', id: string, fundingPhaseEnd: any, submissionPhaseEnd: any, votingPhaseEnd: any, totalRaised: any, numFunders: any, raiseCap: any, developerFeePercentage: any, creator_id: string, numSubmissions: any, finalized: boolean, winner_id?: string | null, token_id: string, submissions: Array<{ __typename?: 'Submission', creator_id: string, id: string, totalVotesPower: any, timestamp: any, votes: Array<{ __typename?: 'Vote', id: string, votePower: any, voter_id: string, timestamp: any }> }> }> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -3278,6 +3278,7 @@ export const GetCrowdfundingsDocument = new TypedDocumentString(`
     numSubmissions
     finalized
     winner_id
+    token_id
     submissions {
       creator_id
       id

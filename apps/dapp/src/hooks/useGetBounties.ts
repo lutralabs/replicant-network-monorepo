@@ -26,6 +26,7 @@ export type BountyCard = {
   numFunders: bigint;
   finalized: boolean;
   winner: string | null;
+  token: string;
   submissions?: Submission[];
   // Supabase metadata
   title?: string;
@@ -72,6 +73,7 @@ async function fetchBounties() {
         numFunders: BigInt(crowdfunding.numFunders || 0),
         finalized: crowdfunding.finalized,
         winner: crowdfunding.winner_id ?? null,
+        token: crowdfunding.token_id,
         submissions: crowdfunding.submissions,
         ...(supabaseData && {
           title: supabaseData.title,
