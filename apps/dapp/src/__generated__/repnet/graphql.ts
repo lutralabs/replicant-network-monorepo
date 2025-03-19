@@ -42,6 +42,7 @@ export type Crowdfunding = {
   creator?: Maybe<User>;
   creator_id: Scalars['String']['output'];
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>;
+  developerFeePercentage: Scalars['numeric']['output'];
   finalized: Scalars['Boolean']['output'];
   /** An array relationship */
   funders: Array<Funding>;
@@ -101,6 +102,7 @@ export type Crowdfunding_Aggregate_Order_By = {
 /** order by avg() on columns of table "Crowdfunding" */
 export type Crowdfunding_Avg_Order_By = {
   createdAt?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
   numSubmissions?: InputMaybe<Order_By>;
@@ -119,6 +121,7 @@ export type Crowdfunding_Bool_Exp = {
   creator?: InputMaybe<User_Bool_Exp>;
   creator_id?: InputMaybe<String_Comparison_Exp>;
   db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>;
+  developerFeePercentage?: InputMaybe<Numeric_Comparison_Exp>;
   finalized?: InputMaybe<Boolean_Comparison_Exp>;
   funders?: InputMaybe<Funding_Bool_Exp>;
   fundingPhaseEnd?: InputMaybe<Numeric_Comparison_Exp>;
@@ -141,6 +144,7 @@ export type Crowdfunding_Max_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   creator_id?: InputMaybe<Order_By>;
   db_write_timestamp?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
@@ -158,6 +162,7 @@ export type Crowdfunding_Min_Order_By = {
   createdAt?: InputMaybe<Order_By>;
   creator_id?: InputMaybe<Order_By>;
   db_write_timestamp?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
@@ -176,6 +181,7 @@ export type Crowdfunding_Order_By = {
   creator?: InputMaybe<User_Order_By>;
   creator_id?: InputMaybe<Order_By>;
   db_write_timestamp?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   finalized?: InputMaybe<Order_By>;
   funders_aggregate?: InputMaybe<Funding_Aggregate_Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
@@ -201,6 +207,8 @@ export enum Crowdfunding_Select_Column {
   CreatorId = 'creator_id',
   /** column name */
   DbWriteTimestamp = 'db_write_timestamp',
+  /** column name */
+  DeveloperFeePercentage = 'developerFeePercentage',
   /** column name */
   Finalized = 'finalized',
   /** column name */
@@ -228,6 +236,7 @@ export enum Crowdfunding_Select_Column {
 /** order by stddev() on columns of table "Crowdfunding" */
 export type Crowdfunding_Stddev_Order_By = {
   createdAt?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
   numSubmissions?: InputMaybe<Order_By>;
@@ -240,6 +249,7 @@ export type Crowdfunding_Stddev_Order_By = {
 /** order by stddev_pop() on columns of table "Crowdfunding" */
 export type Crowdfunding_Stddev_Pop_Order_By = {
   createdAt?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
   numSubmissions?: InputMaybe<Order_By>;
@@ -252,6 +262,7 @@ export type Crowdfunding_Stddev_Pop_Order_By = {
 /** order by stddev_samp() on columns of table "Crowdfunding" */
 export type Crowdfunding_Stddev_Samp_Order_By = {
   createdAt?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
   numSubmissions?: InputMaybe<Order_By>;
@@ -274,6 +285,7 @@ export type Crowdfunding_Stream_Cursor_Value_Input = {
   createdAt?: InputMaybe<Scalars['numeric']['input']>;
   creator_id?: InputMaybe<Scalars['String']['input']>;
   db_write_timestamp?: InputMaybe<Scalars['timestamp']['input']>;
+  developerFeePercentage?: InputMaybe<Scalars['numeric']['input']>;
   finalized?: InputMaybe<Scalars['Boolean']['input']>;
   fundingPhaseEnd?: InputMaybe<Scalars['numeric']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
@@ -290,6 +302,7 @@ export type Crowdfunding_Stream_Cursor_Value_Input = {
 /** order by sum() on columns of table "Crowdfunding" */
 export type Crowdfunding_Sum_Order_By = {
   createdAt?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
   numSubmissions?: InputMaybe<Order_By>;
@@ -302,6 +315,7 @@ export type Crowdfunding_Sum_Order_By = {
 /** order by var_pop() on columns of table "Crowdfunding" */
 export type Crowdfunding_Var_Pop_Order_By = {
   createdAt?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
   numSubmissions?: InputMaybe<Order_By>;
@@ -314,6 +328,7 @@ export type Crowdfunding_Var_Pop_Order_By = {
 /** order by var_samp() on columns of table "Crowdfunding" */
 export type Crowdfunding_Var_Samp_Order_By = {
   createdAt?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
   numSubmissions?: InputMaybe<Order_By>;
@@ -326,6 +341,7 @@ export type Crowdfunding_Var_Samp_Order_By = {
 /** order by variance() on columns of table "Crowdfunding" */
 export type Crowdfunding_Variance_Order_By = {
   createdAt?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   numFunders?: InputMaybe<Order_By>;
   numSubmissions?: InputMaybe<Order_By>;
@@ -513,6 +529,7 @@ export type RepNetManager_CrowdfundingCreated = {
   creator: Scalars['String']['output'];
   crowdfundingId: Scalars['numeric']['output'];
   db_write_timestamp?: Maybe<Scalars['timestamp']['output']>;
+  developerFeePercentage: Scalars['numeric']['output'];
   fundingPhaseEnd: Scalars['numeric']['output'];
   id: Scalars['String']['output'];
   raiseCap: Scalars['numeric']['output'];
@@ -529,6 +546,7 @@ export type RepNetManager_CrowdfundingCreated_Bool_Exp = {
   creator?: InputMaybe<String_Comparison_Exp>;
   crowdfundingId?: InputMaybe<Numeric_Comparison_Exp>;
   db_write_timestamp?: InputMaybe<Timestamp_Comparison_Exp>;
+  developerFeePercentage?: InputMaybe<Numeric_Comparison_Exp>;
   fundingPhaseEnd?: InputMaybe<Numeric_Comparison_Exp>;
   id?: InputMaybe<String_Comparison_Exp>;
   raiseCap?: InputMaybe<Numeric_Comparison_Exp>;
@@ -542,6 +560,7 @@ export type RepNetManager_CrowdfundingCreated_Order_By = {
   creator?: InputMaybe<Order_By>;
   crowdfundingId?: InputMaybe<Order_By>;
   db_write_timestamp?: InputMaybe<Order_By>;
+  developerFeePercentage?: InputMaybe<Order_By>;
   fundingPhaseEnd?: InputMaybe<Order_By>;
   id?: InputMaybe<Order_By>;
   raiseCap?: InputMaybe<Order_By>;
@@ -558,6 +577,8 @@ export enum RepNetManager_CrowdfundingCreated_Select_Column {
   CrowdfundingId = 'crowdfundingId',
   /** column name */
   DbWriteTimestamp = 'db_write_timestamp',
+  /** column name */
+  DeveloperFeePercentage = 'developerFeePercentage',
   /** column name */
   FundingPhaseEnd = 'fundingPhaseEnd',
   /** column name */
@@ -585,6 +606,7 @@ export type RepNetManager_CrowdfundingCreated_Stream_Cursor_Value_Input = {
   creator?: InputMaybe<Scalars['String']['input']>;
   crowdfundingId?: InputMaybe<Scalars['numeric']['input']>;
   db_write_timestamp?: InputMaybe<Scalars['timestamp']['input']>;
+  developerFeePercentage?: InputMaybe<Scalars['numeric']['input']>;
   fundingPhaseEnd?: InputMaybe<Scalars['numeric']['input']>;
   id?: InputMaybe<Scalars['String']['input']>;
   raiseCap?: InputMaybe<Scalars['numeric']['input']>;
@@ -3182,14 +3204,12 @@ export type GetCrowdfundingQueryVariables = Exact<{
 }>;
 
 
-export type GetCrowdfundingQuery = { __typename?: 'query_root', Crowdfunding: Array<{ __typename?: 'Crowdfunding', id: string, fundingPhaseEnd: any, submissionPhaseEnd: any, votingPhaseEnd: any, totalRaised: any, numFunders: any, finalized: boolean, createdAt: any, winner_id?: string | null, raiseCap: any, creator_id: string, numSubmissions: any, token_id: string, funders: Array<{ __typename?: 'Funding', funder_id: string, timestamp: any, amount: any }>, submissions: Array<{ __typename?: 'Submission', creator_id: string, id: string, totalVotesPower: any, timestamp: any, votes: Array<{ __typename?: 'Vote', id: string, votePower: any, voter_id: string, timestamp: any }> }> }> };
+export type GetCrowdfundingQuery = { __typename?: 'query_root', Crowdfunding: Array<{ __typename?: 'Crowdfunding', id: string, fundingPhaseEnd: any, submissionPhaseEnd: any, votingPhaseEnd: any, totalRaised: any, numFunders: any, finalized: boolean, createdAt: any, winner_id?: string | null, raiseCap: any, creator_id: string, numSubmissions: any, token_id: string, developerFeePercentage: any, funders: Array<{ __typename?: 'Funding', funder_id: string, timestamp: any, amount: any }>, submissions: Array<{ __typename?: 'Submission', creator_id: string, id: string, totalVotesPower: any, timestamp: any, votes: Array<{ __typename?: 'Vote', id: string, votePower: any, voter_id: string, timestamp: any }> }> }> };
 
-export type GetCrowdfundingsQueryVariables = Exact<{
-  finalized?: InputMaybe<Scalars['Boolean']['input']>;
-}>;
+export type GetCrowdfundingsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCrowdfundingsQuery = { __typename?: 'query_root', Crowdfunding: Array<{ __typename?: 'Crowdfunding', id: string, fundingPhaseEnd: any, submissionPhaseEnd: any, votingPhaseEnd: any, totalRaised: any, numFunders: any, raiseCap: any, creator_id: string, numSubmissions: any, finalized: boolean, winner_id?: string | null, token_id: string, submissions: Array<{ __typename?: 'Submission', creator_id: string, id: string, totalVotesPower: any, timestamp: any, votes: Array<{ __typename?: 'Vote', id: string, votePower: any, voter_id: string, timestamp: any }> }> }> };
+export type GetCrowdfundingsQuery = { __typename?: 'query_root', Crowdfunding: Array<{ __typename?: 'Crowdfunding', id: string, fundingPhaseEnd: any, submissionPhaseEnd: any, votingPhaseEnd: any, totalRaised: any, numFunders: any, raiseCap: any, developerFeePercentage: any, creator_id: string, numSubmissions: any, finalized: boolean, winner_id?: string | null, submissions: Array<{ __typename?: 'Submission', creator_id: string, id: string, totalVotesPower: any, timestamp: any, votes: Array<{ __typename?: 'Vote', id: string, votePower: any, voter_id: string, timestamp: any }> }> }> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -3222,6 +3242,7 @@ export const GetCrowdfundingDocument = new TypedDocumentString(`
     creator_id
     numSubmissions
     token_id
+    developerFeePercentage
     funders {
       funder_id
       timestamp
@@ -3252,11 +3273,11 @@ export const GetCrowdfundingsDocument = new TypedDocumentString(`
     totalRaised
     numFunders
     raiseCap
+    developerFeePercentage
     creator_id
     numSubmissions
     finalized
     winner_id
-    token_id
     submissions {
       creator_id
       id
