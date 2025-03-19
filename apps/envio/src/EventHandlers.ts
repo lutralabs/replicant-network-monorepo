@@ -46,6 +46,7 @@ RepNetManager.CrowdfundingCreated.handlerWithLoader({
       submissionPhaseEnd: event.params.submissionPhaseEnd,
       votingPhaseEnd: event.params.votingPhaseEnd,
       raiseCap: event.params.raiseCap,
+      developerFeePercentage: event.params.developerFeePercentage,
     };
     await ensureUserExists(loaderReturn, context, event.params.creator);
 
@@ -71,6 +72,7 @@ RepNetManager.CrowdfundingCreated.handlerWithLoader({
       submissionPhaseEnd: event.params.submissionPhaseEnd,
       votingPhaseEnd: event.params.votingPhaseEnd,
       raiseCap: event.params.raiseCap,
+      developerFeePercentage: event.params.developerFeePercentage,
       finalized: false,
     });
   },

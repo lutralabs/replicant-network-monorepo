@@ -45,6 +45,7 @@ describe('RepNetManager contract CrowdfundingCreated event tests', () => {
         submissionPhaseEnd: event.params.submissionPhaseEnd,
         votingPhaseEnd: event.params.votingPhaseEnd,
         raiseCap: event.params.raiseCap,
+        developerFeePercentage: event.params.developerFeePercentage,
       };
     // Asserting that the entity in the mock database is the same as the expected entity
     assert.deepEqual(
@@ -132,6 +133,7 @@ describe('RepNetManager contract CrowdfundingCreated event tests', () => {
       numFunders: BigInt(0),
       numSubmissions: BigInt(0),
       createdAt: BigInt(event.block.timestamp),
+      developerFeePercentage: BigInt(0),
     };
 
     // Asserting that the crowdfunding entity in the mock database is the same as the expected entity
@@ -168,6 +170,7 @@ describe('RepNetManager contract CrowdfundingFinalized event tests', async () =>
     totalRaised: BigInt(0),
     numFunders: BigInt(0),
     numSubmissions: BigInt(0),
+    developerFeePercentage: BigInt(0),
   };
 
   beforeEach(() => {
@@ -265,6 +268,7 @@ describe('RepNetManager contract CrowdfundingFinalizedWithoutWinner event tests'
     numFunders: BigInt(1),
     numSubmissions: BigInt(0),
     createdAt: BigInt(event.block.timestamp),
+    developerFeePercentage: BigInt(0),
   };
 
   beforeEach(() => {
@@ -361,6 +365,7 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
       raiseCap: BigInt(5000),
       finalized: false,
       createdAt: BigInt(event.block.timestamp),
+      developerFeePercentage: BigInt(0),
     };
     const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
 
@@ -409,6 +414,7 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
       raiseCap: BigInt(5000),
       finalized: false,
       createdAt: BigInt(event.block.timestamp),
+      developerFeePercentage: BigInt(0),
     };
     const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
     const mockDbUpdated = await RepNetManager.CrowdfundingFunded.processEvent({
@@ -449,6 +455,7 @@ describe('RepNetManager contract CrowdfundingFunded event tests', () => {
       submissionPhaseEnd: BigInt(2000),
       votingPhaseEnd: BigInt(3000),
       raiseCap: BigInt(5000),
+      developerFeePercentage: BigInt(0),
       finalized: false,
       createdAt: BigInt(event.block.timestamp),
     };
@@ -545,6 +552,7 @@ describe('RepNetManager contract SolutionSubmitted event tests', () => {
       submissionPhaseEnd: BigInt(2000),
       votingPhaseEnd: BigInt(3000),
       raiseCap: BigInt(5000),
+      developerFeePercentage: BigInt(0),
       finalized: false,
       numFunders: BigInt(0),
       totalRaised: BigInt(0),
@@ -592,6 +600,7 @@ describe('RepNetManager contract SolutionSubmitted event tests', () => {
       submissionPhaseEnd: BigInt(2000),
       votingPhaseEnd: BigInt(3000),
       raiseCap: BigInt(5000),
+      developerFeePercentage: BigInt(0),
       finalized: false,
       numFunders: BigInt(0),
       totalRaised: BigInt(0),
@@ -637,6 +646,7 @@ describe('RepNetManager contract SolutionSubmitted event tests', () => {
       finalized: false,
       numFunders: BigInt(0),
       totalRaised: BigInt(0),
+      developerFeePercentage: BigInt(0),
     };
     const newDb = mockDb.entities.Crowdfunding.set(mockCrowdfunding);
     const mockDbUpdated = await RepNetManager.SolutionSubmitted.processEvent({
@@ -730,6 +740,7 @@ describe('RepNetManager contract Vote event tests', () => {
     finalized: false,
     numFunders: BigInt(0),
     totalRaised: BigInt(0),
+    developerFeePercentage: BigInt(0),
   });
 
   const mockDbWithSubmission = mockDbWithCrowdfunding.entities.Submission.set({
