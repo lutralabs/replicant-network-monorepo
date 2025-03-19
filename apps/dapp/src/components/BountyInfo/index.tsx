@@ -152,7 +152,7 @@ export const BountyInfo = ({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          bountyId: bounty.id,
+          bountyId: bounty.id.toString(),
           currentPhase: bountyStatus(bounty),
         }),
       });
@@ -234,12 +234,11 @@ export const BountyInfo = ({
         </div>
       </div>
 
-      {/* Debug button for advancing phase - only visible to creator */}
-      {process.env.NEXT_PUBLIC_NETWORK_ENV === 'testnet' && isCreator && (
+      {isCreator && (
         <div className="mt-4 pt-4 border-t border-gray-200">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-amber-600">
-              DEBUG TOOLS
+              TESTNET TOOLS
             </span>
             <Button
               variant="secondary"
@@ -248,7 +247,7 @@ export const BountyInfo = ({
               disabled={isChangingPhase}
               className="bg-amber-100 text-amber-800 hover:bg-amber-200"
             >
-              {isChangingPhase ? 'Changing Phase...' : 'Advance Phase (Debug)'}
+              {isChangingPhase ? 'Changing Phase...' : 'Next Phase'}
             </Button>
           </div>
         </div>

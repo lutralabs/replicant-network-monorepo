@@ -5,13 +5,8 @@ import type { NextRequest } from 'next/server';
 import { http, createWalletClient } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
-// Contract address for RepNetManager
-const REP_NET_MANAGER_ADDRESS = '0x123456789abcdef123456789abcdef123456789a'; // Replace with actual contract address
-
-// Private key for contract interaction
-// WARNING: Never use hardcoded private keys in production!
-// This is for development/demo purposes only
-const PRIVATE_KEY = '0x0'; // This would be replaced with an actual private key in a secure environment
+const REP_NET_MANAGER_ADDRESS = process.env.CONTRACT_ADDRESS;
+const PRIVATE_KEY = process.env.OWNER_PRIVATE_KEY;
 
 /**
  * Handle POST requests to submit a new model to the contract

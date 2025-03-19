@@ -1,18 +1,12 @@
 import { repNetManagerAbi } from '@/generated/RepNetManager';
 import { config } from '@/wagmi';
+import { simulateContract, writeContract } from '@wagmi/core';
 import { NextResponse } from 'next/server';
 import { http, createWalletClient } from 'viem';
 import { defineChain } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 
-// Contract address for RepNetManager
-const REP_NET_MANAGER_ADDRESS = '0x123456789abcdef123456789abcdef123456789a'; // Replace with actual contract address
-
-// Private key for contract interaction
-// WARNING: Never use hardcoded private keys in production!
-// This is for development/demo purposes only
-const PRIVATE_KEY = '0x0'; // This would be replaced with an actual private key in a secure environment
-
+const PRIVATE_KEY = process.env.OWNER_PRIVATE_KEY;
 // Define CrowdfundingPhase enum to match contract
 enum CrowdfundingPhase {
   Funding = 0,
@@ -37,14 +31,6 @@ function getNextPhase(currentPhase: string): CrowdfundingPhase {
 }
 
 export async function POST(request: Request) {
-  // Only allow this in testnet environments
-  if (process.env.NEXT_PUBLIC_NETWORK_ENV !== 'testnet') {
-    return NextResponse.json(
-      { error: 'This endpoint is only available in testnet environment' },
-      { status: 403 }
-    );
-  }
-
   try {
     const body = await request.json();
     const { bountyId, currentPhase } = body;
@@ -57,25 +43,31 @@ export async function POST(request: Request) {
     }
 
     // Step 4: Setup wallet with private key for contract interaction
-    const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
+    const account = privateKeyToAccount(`0x${PRIVATE_KEY}` as `0x${string}`);
     const client = createWalletClient({
       account,
       chain: config.chains[0], // Use the first chain from config
       transport: http(),
     });
 
+    console.log('ACCOUNT ADDRESS', account.address.toString());
+    console.log('config', config.chains[0]);
+
     // Get next phase from current phase
     const nextPhase = getNextPhase(currentPhase);
 
     // Call the _changePhase function
-    const transactionHash = await client.writeContract({
-      address: REP_NET_MANAGER_ADDRESS as `0x${string}`,
+    const result = await simulateContract(config, {
+      address: process.env.CONTRACT_ADDRESS as `0x${string}`,
       abi: repNetManagerAbi,
       functionName: '_changePhase',
-      args: [BigInt(bountyId), nextPhase],
-      chain: config.chains[0],
+      args: [Number(bountyId), Number(nextPhase)],
       account,
     });
+
+    console.log(result);
+
+    const transactionHash = await writeContract(config, result.request as any);
 
     return NextResponse.json({
       success: true,

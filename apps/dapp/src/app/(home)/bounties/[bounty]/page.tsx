@@ -84,6 +84,8 @@ export default function Page() {
   const { mutateAsync: finalizeBounty, isPending: isFinalizingBounty } =
     useFinalizeBounty();
 
+  console.log('bnty', bounty);
+
   // Determine current status
 
   const isUserFunder = useMemo(() => {
