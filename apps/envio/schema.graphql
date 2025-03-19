@@ -7,6 +7,7 @@ type RepNetManager_CrowdfundingCreated {
   submissionPhaseEnd: BigInt!
   votingPhaseEnd: BigInt!
   raiseCap: BigInt!
+  developerFeePercentage: BigInt!
 }
 
 type RepNetManager_Vote {
@@ -68,6 +69,7 @@ type Crowdfunding @entity {
   creator: User!
   token: Token!
   fundingPhaseEnd: BigInt!
+  developerFeePercentage: BigInt!
   submissionPhaseEnd: BigInt!
   totalRaised: BigInt!
   numFunders: BigInt!
